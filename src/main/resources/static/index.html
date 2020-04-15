@@ -2,53 +2,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-    <script type="text/javascript" src="js/jquery-1.12.0.min.js"></script>
-    <script type="text/javascript" src="js/cityData.js"></script>
-	<script type="text/javascript">
-        var cityname = '';
-        $(document).ready(function(){
-            updateCityname()
-        });
-		function updateCityname() {
-            cityname = $("#selectId1").val();
-            $("input[name=city]").val(cityname);
-		}
-	</script>
+<title>study map tool</title>
 </head>
 <body>
-<p1>请选择要导入哪个城市的数据</p1>
-<select id="selectId1" onchange="updateCityname()">
-	<option value="xian">西安</option>
-	<option value="guiyang">贵阳</option>
-	<option value="zhangjiakou">张家口</option>
-	<option value="jinan">济南</option>
-</select>
-<form name="Form1" action="./static/importAreaRoadRtic" method="post"  enctype="multipart/form-data">
-	<h3>配置表关系表(t_area_road_roadsection_rtic.txt)导入</h3>
-	<input type="file" name="file">
-	<input name="city" style="display:none">
-	<input type="submit" value="upload"/>
-</form>
-<form name="Form1" action="./static/importRtic" method="post"  enctype="multipart/form-data">
-	<h3>rtic表(t_rtic.txt)导入</h3>
-	<input type="file" name="file">
-    <input name="city" style="display:none">
-	<input type="submit" value="upload"/>
-</form>
-<hr>
-<form name="Form1" action="./static/importRticLink" method="post"  enctype="multipart/form-data">
-	<h3>rtic_link关系(导入correspondingOfxian表)导入</h3>
-	<input type="file" name="file">
-    <input name="city" style="display:none">
-	<input type="submit" value="upload"/>
-</form>
-<hr>
-<form name="Form1" action="./static/importLink" method="post"  enctype="multipart/form-data">
-	<h3>link关系(r表)导入-将R.mid和R.mif打包成zip压缩包</h3>
-	<input type="file" name="file">
-    <input name="city" style="display:none">
-	<input type="submit" value="upload"/>
-</form>
+Hello World!
 </body>
 </html>
