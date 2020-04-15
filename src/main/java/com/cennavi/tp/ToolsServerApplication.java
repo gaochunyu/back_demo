@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TpToolsServerApplication {
+public class ToolsServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TpToolsServerApplication.class, args);
+		SpringApplication.run(ToolsServerApplication.class, args);
 	}
 
 }
