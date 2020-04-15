@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cennavi.tp</groupId>
-	<artifactId>tp_tools_server</artifactId>
+	<artifactId>study_map_tool</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tp_tools_server</name>
+	<name>study_map_tool</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -71,7 +71,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>tp_tools_server</finalName>
+		<finalName>study_map_tool</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
