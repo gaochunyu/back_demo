@@ -12,4 +12,11 @@ public interface UserService {
      * @return
      */
     List<User> getUserList(Integer page, Integer pageSize);
+
+    /**
+     * 根据id获取用户
+     * @param id
+     * @return
+     */
+    User getUserById(Integer id);
 }

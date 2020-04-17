@@ -21,8 +21,15 @@ public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
 
 
     @Override
-    public List<User> getUserList(Integer page, Integer pageSize) {
-        String sql = "select id,username,password,create_time from \"public\".\"user\"";
+    public List<User> getUserList(Integer start, Integer pageSize) {
+        String sql = "select id,username,password,create_time from \"public\".\"user\" limit "+pageSize+" offset "+start;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(User.class));
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        String sql = "select * from \"public\".\"user\" where id = "+id;
+        List<User> list = jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(User.class));
+        return list.size()==0?null:list.get(0);
     }
 }

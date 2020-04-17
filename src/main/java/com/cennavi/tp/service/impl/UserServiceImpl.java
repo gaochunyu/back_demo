@@ -22,6 +22,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUserList(Integer page, Integer pageSize) {
-        return userDao.getUserList(page,pageSize);
+        int start = (page-1)*pageSize;
+        return userDao.getUserList(start,pageSize);
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        //userDao.getUserById(id);//自己手写实现
+        return userDao.findById(id);//调用已经封装好的通用方法
     }
 }
