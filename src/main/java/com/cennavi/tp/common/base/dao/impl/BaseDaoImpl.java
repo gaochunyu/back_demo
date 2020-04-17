@@ -1,9 +1,9 @@
-package com.cennavi.tp.common.dao.impl;
+package com.cennavi.tp.common.base.dao.impl;
 
 import com.cennavi.tp.common.IgnoreColumn;
 import com.cennavi.tp.common.MyTable;
 import com.cennavi.tp.common.PageResult;
-import com.cennavi.tp.common.dao.BaseDao;
+import com.cennavi.tp.common.base.dao.BaseDao;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
