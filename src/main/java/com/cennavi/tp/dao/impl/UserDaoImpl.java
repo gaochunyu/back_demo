@@ -1,7 +1,7 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.User;
-import com.cennavi.tp.common.dao.impl.BaseDaoImpl;
+import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
