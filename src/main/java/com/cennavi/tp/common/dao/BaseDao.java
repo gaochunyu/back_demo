@@ -1,4 +1,4 @@
-package com.cennavi.tp.common.base.dao;
+package com.cennavi.tp.common.dao;
 
 
 import com.cennavi.tp.common.PageResult;
