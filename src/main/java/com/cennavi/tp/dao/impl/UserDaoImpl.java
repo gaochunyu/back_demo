@@ -14,7 +14,8 @@ import java.util.List;
  *
  */
 @Repository
-public class UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
+public class
+UserDaoImpl extends BaseDaoImpl<User> implements UserDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
