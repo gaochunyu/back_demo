@@ -2,8 +2,8 @@ package com.cennavi.tp.beans;
 
 import com.cennavi.tp.common.MyTable;
 
-@MyTable("public.user")
-public class User {
+@MyTable("userinfo")
+public class UserinfoBean {
     private int id;
     private String username;
     private String password;

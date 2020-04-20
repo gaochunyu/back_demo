@@ -1,22 +1,22 @@
 package com.cennavi.tp.service;
 
-import com.cennavi.tp.beans.User;
+import com.cennavi.tp.beans.UserinfoBean;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserinfoService {
     /**
      * 分页获取用户列表
      * @param page
      * @param pageSize
      * @return
      */
-    List<User> getUserList(Integer page, Integer pageSize);
+    List<UserinfoBean> getUserList(Integer page, Integer pageSize);
 
     /**
      * 根据id获取用户
      * @param id
      * @return
      */
-    User getUserById(Integer id);
+    UserinfoBean getUserById(Integer id);
 }

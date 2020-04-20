@@ -1,9 +1,9 @@
 package com.cennavi.tp.controller;
 
-import com.cennavi.tp.beans.User;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.common.result.Result;
-import com.cennavi.tp.service.UserService;
+import com.cennavi.tp.service.UserinfoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class HelloWorld {
 
     @Resource
-    private UserService userService;
+    private UserinfoService userService;
 
     /**
      * 获取用户列表
@@ -29,7 +29,7 @@ public class HelloWorld {
     @ResponseBody
     @RequestMapping("/getUsers")
     public ResultModel getUsers(int page,int pageSize) {
-        List<User> userList = userService.getUserList(page,pageSize);
+        List<UserinfoBean> userList = userService.getUserList(page,pageSize);
         return Result.success("成功获取数据",userList);
     }
 
@@ -42,7 +42,7 @@ public class HelloWorld {
     @RequestMapping("/getUserById")
     public ResultModel getUserById(int id) {
         try{
-            User user = userService.getUserById(id);
+            UserinfoBean user = userService.getUserById(id);
             return Result.success("成功获取用户数据",user);
         }catch (Exception e){
             e.getStackTrace();
