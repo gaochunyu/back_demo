@@ -6,18 +6,12 @@ import com.cennavi.tp.common.MyTable;
  * Created by zhangxin on 2020/04/17.
  */
 @MyTable("menu")
-public class MenuSubtitle {
+public class MenuSubtitleBean {
     private int id;
     private String name;
     private int parent;
     private int sort;
 
-    public MenuSubtitle(int id, String name, int parent, int sort) {
-        this.id = id;
-        this.name = name;
-        this.parent = parent;
-        this.sort = sort;
-    }
 
     public int getId() {
         return id;

@@ -1,11 +1,12 @@
 package com.cennavi.tp.dao;
 
 
-import com.cennavi.tp.beans.MenuSubtitle;
-import com.cennavi.tp.common.dao.BaseDao;
+import com.cennavi.tp.beans.MenuSubtitleBean;
 
 import java.util.List;
 
 public interface MenuDataDao {
-    List<MenuSubtitle> getMenuSubtitles();
+
+    List<MenuSubtitleBean> getMenuSubtitles();
+    List<MenuSubtitleBean> getParentMenuList(Integer rootValue);
 }

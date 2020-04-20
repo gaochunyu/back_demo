@@ -1,25 +1,33 @@
 package com.cennavi.tp.dao.impl;
 
-import com.cennavi.tp.beans.MenuSubtitle;
-import com.cennavi.tp.common.dao.impl.BaseDaoImpl;
+import com.cennavi.tp.beans.MenuSubtitleBean;
+import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.MenuDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Created by zhangxin  on 2020/4/17.
  */
-public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitle> implements MenuDataDao{
+@Repository
+public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements MenuDataDao{
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<MenuSubtitle> getMenuSubtitles() {
+    public List<MenuSubtitleBean> getMenuSubtitles() {
         String sql = "select id , name , parent ,sort from menu";
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitle.class));
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
+    }
+
+    @Override
+    public List<MenuSubtitleBean> getParentMenuList(Integer rootValue) {
+        String sql = "select * from menu where parent = " + rootValue;
+        return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }
 }
