@@ -1,7 +1,9 @@
 package com.cennavi.tp.service;
 
 import com.cennavi.tp.beans.UserinfoBean;
+import com.cennavi.tp.common.result.ResultModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface UserinfoService {
@@ -19,4 +21,11 @@ public interface UserinfoService {
      * @return
      */
     UserinfoBean getUserById(Integer id);
+
+    /**
+     * 登录
+     * @param username
+     * @return
+     */
+    ResultModel login(String username, String password, HttpServletRequest request);
 }
