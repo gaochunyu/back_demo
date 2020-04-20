@@ -2,7 +2,7 @@ package com.cennavi.tp.dao;
 
 
 import com.cennavi.tp.beans.BaseRtic;
-import com.cennavi.tp.common.dao.BaseDao;
+import com.cennavi.tp.common.base.dao.BaseDao;
 
 import java.util.List;
 import java.util.Map;
