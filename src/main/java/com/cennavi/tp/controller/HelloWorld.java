@@ -1,9 +1,9 @@
 package com.cennavi.tp.controller;
 
-import com.cennavi.tp.beans.User;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.common.result.Result;
-import com.cennavi.tp.service.UserService;
+import com.cennavi.tp.service.UserinfoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,23 +18,36 @@ import java.util.Map;
 public class HelloWorld {
 
     @Resource
-    private UserService userService;
+    private UserinfoService userService;
 
+    /**
+     * 获取用户列表
+     * @param page 页码 从1开始
+     * @param pageSize 页大小
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/getUsers")
-    public ResultModel getUsers() {
-        List<User> userList = userService.getUserList(0,10);
+    public ResultModel getUsers(int page,int pageSize) {
+        List<UserinfoBean> userList = userService.getUserList(page,pageSize);
         return Result.success("成功获取数据",userList);
     }
 
+    /**
+     * 根据id查询用户信息
+     * @param id
+     * @return
+     */
     @ResponseBody
-    @RequestMapping("/test")
-    public ResultModel test() {
-        Map<String,String> map = new HashMap<>();
-        map.put("name","mage");
-        map.put("age","18");
-        map.put("sex","男");
-        return Result.success("成功获取数据",map);
+    @RequestMapping("/getUserById")
+    public ResultModel getUserById(int id) {
+        try{
+            UserinfoBean user = userService.getUserById(id);
+            return Result.success("成功获取用户数据",user);
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
     }
 
     //返回结果json中，去除不需要的属性信息
