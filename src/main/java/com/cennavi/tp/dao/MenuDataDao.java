@@ -6,6 +6,6 @@ import com.cennavi.tp.common.dao.BaseDao;
 
 import java.util.List;
 
-public interface MenuDataDao extends BaseDao<Object> {
+public interface MenuDataDao {
     List<MenuSubtitle> getMenuSubtitles();
 }
