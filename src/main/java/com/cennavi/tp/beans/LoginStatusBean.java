@@ -19,6 +19,7 @@ public class LoginStatusBean {
     /**
      * 主键
      */
+    @IgnoreColumn("id")
     private int id;
     /**
      * 用户表主键
