@@ -6,8 +6,6 @@ import com.cennavi.tp.service.ContentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 姚文帅 on 2020/4/17 14:50.
@@ -20,22 +18,25 @@ public class ContentServiceImpl implements ContentService {
 
     //新增一条数据
     @Override
-    public void addANewItem(ContentBean contentBean){
-        contentDao.save(contentBean);
+    public long addANewItem(ContentBean contentBean){
+//        contentDao.save(contentBean);
+        return contentDao.insertItemReturnId(contentBean);
+
     }
 
     // 删除一条数据
     public void deleteItemById(int id){
         contentDao.delete(id);
     }
-    // 更新数据
-    public void updateItem(ContentBean item){
 
+    // 更新数据
+    public void updateItemById(int id, ContentBean contentBean){
+        contentDao.updateItemById(id, contentBean);
     }
+
     // 查找数据
     public ContentBean getItemById(int id){
         ContentBean contentBean = contentDao.getItemById(id);
-
         return contentBean;
     }
 
