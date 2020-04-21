@@ -25,4 +25,10 @@ public interface LoginStatusService{
      * @param loginStatusBean
      */
     void insert(LoginStatusBean loginStatusBean);
+
+    /**
+     * 根据用户id删除登录记录
+     * @param uid
+     */
+    void removeByUid(int uid);
 }

@@ -33,4 +33,10 @@ public class LoginStatusDaoImpl extends BaseDaoImpl<LoginStatusBean> implements 
         String sql = "update login_status set login_time = '"+time+"' where token = '"+token+"'";
         jdbcTemplate.execute(sql);
     }
+
+    @Override
+    public void removeByUid(int uid) {
+        String sql = "delete from login_status where uid = "+uid;
+        jdbcTemplate.execute(sql);
+    }
 }

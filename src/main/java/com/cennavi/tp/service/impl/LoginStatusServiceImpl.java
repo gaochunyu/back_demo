@@ -57,4 +57,9 @@ public class LoginStatusServiceImpl implements LoginStatusService {
         loginStatusDao.save(loginStatusBean);
     }
 
+    @Override
+    public void removeByUid(int uid) {
+        loginStatusDao.removeByUid(uid);
+    }
+
 }

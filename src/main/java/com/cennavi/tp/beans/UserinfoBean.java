@@ -14,6 +14,7 @@ public class UserinfoBean {
     private String password;
     private String createTime;
     private int enables;
+    private int role;
 
     public int getId() {
         return id;
@@ -55,6 +56,14 @@ public class UserinfoBean {
 
     public void setEnables(int enables) {
         this.enables = enables;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 
     @Override

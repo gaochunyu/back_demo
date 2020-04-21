@@ -19,4 +19,10 @@ public interface LoginStatusDao extends BaseDao<LoginStatusBean> {
      * @param token
      */
     void updateLastVisitTime(String token,String time);
+
+    /**
+     * 根据用户id删除登录记录
+     * @param uid
+     */
+    void removeByUid(int uid);
 }

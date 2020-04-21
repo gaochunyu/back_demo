@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -54,6 +52,8 @@ public class UserinfoServiceImpl implements UserinfoService {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(600);
             session.setAttribute("user",user);
+            //清空之前的登录状态
+            loginStatusService.removeByUid(user.getId());
             //记录登录状态
             LoginStatusBean loginStatus = new LoginStatusBean();
             String token = UUID.randomUUID().toString().replace("-","");
@@ -65,8 +65,11 @@ public class UserinfoServiceImpl implements UserinfoService {
             loginStatus.setFlag(1);
             loginStatusService.insert(loginStatus);
             //处理返回数据
-            ResultModel resultModel = Result.success("登录成功");
-            resultModel.putExcludes("password","enable");
+            Map<String,Object> map = new HashMap<>();
+            map.put("token",token);
+            map.put("user",user);
+            ResultModel resultModel = Result.success("登录成功",map);
+            resultModel.putExcludes("username","password","createTime");
             return resultModel;
         }else{
             return Result.fail("登录失败");
