@@ -21,10 +21,17 @@ public class UserinfoDaoImpl extends BaseDaoImpl<UserinfoBean> implements Userin
 
 
     @Override
-    public List<UserinfoBean> getUserList(Integer start, Integer pageSize) {
-        String sql = "select id,username,password,create_time from userinfo limit "+pageSize+" offset "+start;
+    public List<UserinfoBean> getUsers(Integer start, Integer pageSize) {
+        String sql = "select id,username,password,create_time from userinfo order by create_time desc limit "+pageSize+" offset "+start;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(UserinfoBean.class));
     }
+
+    @Override
+    public int getUsersCount(Integer start, Integer pageSize) {
+        String sql = "select count(*) from userinfo";
+        return jdbcTemplate.queryForObject(sql,Integer.class);
+    }
+
 
     @Override
     public UserinfoBean getUserById(Integer id) {
@@ -37,5 +44,17 @@ public class UserinfoDaoImpl extends BaseDaoImpl<UserinfoBean> implements Userin
     public List<UserinfoBean> login(String username) {
         String sql = "select * from userinfo where username = '"+username+"' and enable = 0 ";
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(UserinfoBean.class));
+    }
+
+    @Override
+    public int getUsersCountByUserName(String username) {
+        String sql = "select count(*) from userinfo where username = '"+username+"'";
+        return jdbcTemplate.queryForObject(sql,Integer.class);
+    }
+
+    @Override
+    public int getUsersCountByIdAndUserName(Integer id, String username) {
+        String sql = "select count(*) from userinfo where id != "+id+" and username = '"+username+"'";
+        return jdbcTemplate.queryForObject(sql,Integer.class);
     }
 }

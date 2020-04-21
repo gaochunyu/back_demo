@@ -1,5 +1,6 @@
 package com.cennavi.tp.beans;
 
+import com.cennavi.tp.common.IgnoreColumn;
 import com.cennavi.tp.common.MyTable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @MyTable("userinfo")
 public class UserinfoBean {
+    @IgnoreColumn("id")
     private int id;
     @NotBlank
     private String username;

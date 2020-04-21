@@ -23,19 +23,6 @@ public class UserinfoServiceImpl implements UserinfoService {
     @Autowired
     private LoginStatusService loginStatusService;
 
-
-    @Override
-    public List<UserinfoBean> getUserList(Integer page, Integer pageSize) {
-        int start = (page-1)*pageSize;
-        return userinfoDao.getUserList(start,pageSize);
-    }
-
-    @Override
-    public UserinfoBean getUserById(Integer id) {
-        //userDao.getUserById(id);//自己手写实现
-        return userinfoDao.findById(id);//调用已经封装好的通用方法
-    }
-
     @Override
     public ResultModel login(String username, String password,HttpServletRequest request) {
         List<UserinfoBean> list = userinfoDao.login(username);
@@ -75,4 +62,64 @@ public class UserinfoServiceImpl implements UserinfoService {
             return Result.fail("登录失败");
         }
     }
+
+    @Override
+    public List<UserinfoBean> getUsers(Integer page, Integer pageSize) {
+        int start = (page-1)*pageSize;
+        return userinfoDao.getUsers(start,pageSize);
+    }
+
+    @Override
+    public int getUsersCount(Integer start, Integer pageSize) {
+        return userinfoDao.getUsersCount(start,pageSize);
+    }
+
+    @Override
+    public UserinfoBean getUserById(Integer id) {
+        return userinfoDao.findById(id);
+    }
+
+    @Override
+    public boolean updateUser(UserinfoBean userinfoBean) {
+        try{
+            userinfoDao.update(userinfoBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeUser(Integer id) {
+        try{
+            userinfoDao.delete(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addUser(UserinfoBean userinfoBean) {
+        try{
+            userinfoDao.save(userinfoBean);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int getUsersCountByUserName(String username) {
+        return userinfoDao.getUsersCountByUserName(username);
+    }
+
+    @Override
+    public int getUsersCountByIdAndUserName(Integer id, String username) {
+        return userinfoDao.getUsersCountByIdAndUserName(id,username);
+    }
+
 }
