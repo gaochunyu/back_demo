@@ -44,4 +44,14 @@ public class MenuSubtitleBean {
     public void setSort(int sort) {
         this.sort = sort;
     }
+
+    @Override
+    public String toString() {
+        return "MenuSubtitleBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parent=" + parent +
+                ", sort=" + sort +
+                '}';
+    }
 }

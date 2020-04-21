@@ -46,4 +46,18 @@ public class MenuDataServiceImpl implements MenuDataService {
         return menuDataDao.getParentMenuList(rootValue);
     }
 
+    @Override
+    public MenuSubtitleBean getMenuSubtitleBeanById(Integer id) {
+        return menuDataDao.getMenuSubtitleBeanById(id);
+    }
+
+    @Override
+    public Integer deleteMenuSubtitleBeanById(Integer id) {
+        return menuDataDao.deleteMenuSubtitleBeanById(id);
+    }
+
+    @Override
+    public void addMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
+        menuDataDao.save(menuSubtitleBean);
+    }
 }

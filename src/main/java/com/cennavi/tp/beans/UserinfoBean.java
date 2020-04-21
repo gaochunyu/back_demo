@@ -1,9 +1,11 @@
 package com.cennavi.tp.beans;
 
+import com.cennavi.tp.common.IgnoreColumn;
 import com.cennavi.tp.common.MyTable;
 
 @MyTable("userinfo")
 public class UserinfoBean {
+    @IgnoreColumn("id")
     private int id;
     private String username;
     private String password;
