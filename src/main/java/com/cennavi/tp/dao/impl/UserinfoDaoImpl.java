@@ -32,4 +32,10 @@ public class UserinfoDaoImpl extends BaseDaoImpl<UserinfoBean> implements Userin
         List<UserinfoBean> list = jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(UserinfoBean.class));
         return list.size()==0?null:list.get(0);
     }
+
+    @Override
+    public List<UserinfoBean> login(String username) {
+        String sql = "select * from userinfo where username = '"+username+"' and enable = 0 ";
+        return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(UserinfoBean.class));
+    }
 }

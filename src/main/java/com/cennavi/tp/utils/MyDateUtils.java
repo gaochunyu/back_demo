@@ -13,7 +13,29 @@ import java.util.LinkedList;
  * 日期工具类
  * 
  */
-public class DateUtils {
+public class MyDateUtils {
+	/**
+	 * 根据Date返回String
+	 * @param value 时间
+	 * @param format 格式
+	 * @return
+	 */
+	public static String format(Date value,String format){
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.format(value);
+	}
+
+	/**
+	 * 根据String返回Date
+	 * @param value 时间
+	 * @param format 格式
+	 * @return
+	 */
+	public static Date parse(String value,String format) throws ParseException{
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		return sdf.parse(value);
+	}
+
 	/**
 	 * 给日期加年
 	 * @param date 日期
@@ -67,7 +89,6 @@ public class DateUtils {
 	}
 
     /**
-	 * 向下取整5分钟 6789都是5
      * 根据当前时间获取相邻的分钟
      * @param date date
      * @return date
@@ -527,7 +548,7 @@ public class DateUtils {
 	
 	// 常量属性
 	/** 日志对象 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(DateUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(MyDateUtils.class);
 
 	/** 一周最后一天 */
 	public static final int WEEK_END = 7;
@@ -543,7 +564,7 @@ public class DateUtils {
 	 */
 	public enum DateFormatUnit {
 		/** 枚举元素 */
-		DAY("dd"),DATE("yyyy-MM-dd"), TIME("HH:mm:ss"),SHORT_TIME("HHmmss"),DATE_TIME("yyyy-MM-dd HH:mm:ss"), SHORT_DATE("yyyyMMdd"), SHORT_DATE_TIME("yyyyMMddHHmmss"), YEAR_AND_MONTH("yyyy-MM"),DATE_AND_HOUR(
+		DAY("dd"),DATE("yyyy-MM-dd"), TIME("HH:mm:ss"),DATE_TIME("yyyy-MM-dd HH:mm:ss"), SHORT_DATE("yyyyMMdd"), SHORT_DATE_TIME("yyyyMMddHHmmss"), YEAR_AND_MONTH("yyyy-MM"),DATE_AND_HOUR(
 				"yyyy-MM-dd HH"), HOUR_AND_MIN("HH:mm"), DAY_AND_MIN("yyyyMMddHHmm"),DATE_AND_MIN("yyyy-MM-dd HH:mm"), HOUR_AND_DAY("yyyyMMddHH"),YEAR("yyyy"),DATE_SLASH("yyyy/MM/dd")
 		,DATE2("yyyy年MM月dd日"),YEAR_AND_MONTH2("yyyy年MM月");
 
@@ -684,7 +705,6 @@ public class DateUtils {
 	 * @param endTime "06:00"
 	 * @param startEquals true:包含开始时间 false: 不包含开始时间
 	 * @param endEquals true:包含结束时间 false: 不包含结束时间
-	 * @param endEquals true:包含结束时间 false: 不包含结束时间
 	 * @return
 	 */
 	public static boolean isNowTimeInRange(String startTime, String endTime, boolean startEquals, boolean endEquals) {
@@ -722,30 +742,5 @@ public class DateUtils {
 			return !start.after(nowTime) && nowTime.before(end);
 		}
 		return false;
-	}
-
-    /**
-     * 判断time 是否在时间范围中
-     * @param starttime HH:mm
-     * @param endtime HH:mm
-     * @param time HH:mm
-     * @return
-     */
-    public static boolean isTimeInRange(String starttime,String endtime,String time) {
-        long _starttime = DateFormatUnit.HOUR_AND_MIN.getDateByStr(starttime).getTime();
-        long _endtime = DateFormatUnit.HOUR_AND_MIN.getDateByStr(endtime).getTime();
-        long _time = DateFormatUnit.HOUR_AND_MIN.getDateByStr(time).getTime();
-        long time_0 = DateFormatUnit.HOUR_AND_MIN.getDateByStr("00:00").getTime();
-        long time_24 = DateFormatUnit.HOUR_AND_MIN.getDateByStr("23:59").getTime();
-		if(_starttime>_endtime) { // 跨天
-            if((_time>=_starttime && _time<=time_24) || (_time>=time_0 && _time<=_endtime)) {
-                return true;
-            }
-		}  else {
-            if(_time>=_starttime && _time<=_endtime) {
-                return true;
-            }
-        }
-        return false;
 	}
 }
