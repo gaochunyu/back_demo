@@ -3,7 +3,10 @@ package com.cennavi.tp.config;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import javax.annotation.Resource;
 
 /**
  * Created by sunpengyan on 2018/12/14.
@@ -11,13 +14,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class MyWebConfig implements WebMvcConfigurer {
 
-//    @Autowired
-//    private CommonInterceptor commonInterceptor;
-//
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(commonInterceptor).addPathPatterns("/**").excludePathPatterns();
-//        //registry.addInterceptor(new CommonInterceptor2());
-//    }
+    @Resource
+    MyInterceptor myInterceptor;
+
+    /**
+     * 设置过滤路径
+     */
+    @Override
+    public  void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(myInterceptor)
+//                .excludePathPatterns("/logout","/userinfo/login","/error/**","/resources/**") //管理后台
+                .excludePathPatterns("/**") //管理后台
+                .addPathPatterns("/**");
+    }
 
     /**
      * 过滤器两种方案 1.过滤器注册配置类：如下即可

@@ -20,4 +20,11 @@ public interface UserinfoDao extends BaseDao<UserinfoBean> {
      * @return
      */
     UserinfoBean getUserById(Integer id);
+
+    /**
+     * 登录
+     * @param username
+     * @return
+     */
+    List<UserinfoBean> login(String username);
 }

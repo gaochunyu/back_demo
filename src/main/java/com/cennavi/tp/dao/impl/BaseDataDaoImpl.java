@@ -16,7 +16,8 @@ import java.util.Map;
  * Created by sunpengyan on 2019/9/7.
  */
 @Repository
-public class BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
+public class
+BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
