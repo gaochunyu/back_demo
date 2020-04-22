@@ -122,9 +122,9 @@ public class MenuDataController {
             String time = MyDateUtils.format(new Date(),format);
             menuSubtitleBean.setCreateTime(time);
             if(user.getRole()==0){//超级管理员
-                menuSubtitleBean.setStatus(1);//已发布
+                menuSubtitleBean.setStatus(2);//已发布
             }else if(user.getRole()==1){//管理员
-                menuSubtitleBean.setStatus(0);//待审核
+                menuSubtitleBean.setStatus(1);//待审核
             }
             menuDataService.addMenuSubtitleBean(menuSubtitleBean);
             return Result.success("新增成功",1);

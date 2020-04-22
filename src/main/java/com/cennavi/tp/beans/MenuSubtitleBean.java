@@ -18,7 +18,7 @@ public class MenuSubtitleBean {
     private int uid;
     //创建时间
     private String createTime;
-    //状态0待审核 1审核通过 2被拒绝
+    //状态0录入中 1待审核 2审核通过 3被拒绝
     private int status;
 
 
