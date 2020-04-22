@@ -23,7 +23,7 @@ public class UserinfoController {
     private UserinfoService userService;
 
     /**
-     * 获取用户列表
+     * 用户登录
      * @param username 用户名
      * @param password 密码
      * @return
@@ -32,6 +32,31 @@ public class UserinfoController {
     @GetMapping(value = "/login",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultModel login(String username, String password, HttpServletRequest request) {
         return userService.login(username,password,request);
+    }
+
+    /**
+     * 获取用户列表
+     * @param page
+     * @param pageSize
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("getUsers")
+    public ResultModel getUsers(Integer page,Integer pageSize,HttpServletRequest request){
+        try {
+            Map<String,Object> map = new HashMap<>();
+            List<UserinfoBean> list = userService.getUsers(page,pageSize);
+            int count = userService.getUsersCount(page,pageSize);
+            map.put("list",list);
+            map.put("total",count);
+            ResultModel resultModel = Result.success("查询成功",map);
+            resultModel.putExcludes("password");
+            return resultModel;
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.build500("查询出现异常");
+        }
     }
 
     /**
@@ -51,18 +76,82 @@ public class UserinfoController {
         }
     }
 
-    //返回结果json中，去除不需要的属性信息
+
+    /**
+     * 修改用户信息
+     * @param id
+     * @return
+     */
     @ResponseBody
-    @RequestMapping("/test2")
-    public ResultModel test2() {
-        Map<String,String> map = new HashMap<>();
-        map.put("name","mage");
-        map.put("age","18");
-        map.put("sex","男");
-        ResultModel resultModel = Result.success("success",map);
-        //name属性信息不会在返回结果中出现，过滤掉了
-        resultModel.putExcludes("name");
-        return resultModel;
+    @RequestMapping("/updateUser")
+    public ResultModel updateUser(Integer id,String username,Integer enable,Integer role) {
+        try{
+            int count = userService.getUsersCountByIdAndUserName(id,username);
+            if(count>0){
+                return Result.fail("该用户名已存在，请更换其它用户名");
+            }
+            UserinfoBean user = userService.getUserById(id);
+            if(user==null){
+                return Result.fail("id参数无效");
+            }
+            user.setUsername(username);
+            user.setEnables(enable);
+            user.setRole(role);
+            boolean flag = userService.updateUser(user);
+            if(flag){
+                return Result.success("修改成功");
+            }else{
+                return Result.fail("修改失败");
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
+    /**
+     * 删除用户信息
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/removeUser")
+    public ResultModel removeUser(Integer id) {
+        boolean flag = userService.removeUser(id);
+        if(flag){
+            return Result.success("删除成功");
+        }else{
+            return Result.fail("删除失败");
+        }
+    }
+
+    /**
+     * 添加用户信息
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/saveUser")
+    public ResultModel saveUser(Integer id,String username,Integer enable,Integer role) {
+        try{
+            int count = userService.getUsersCountByUserName(username);
+            if(count>0){
+                return Result.fail("该用户名已存在，请更换其它用户名");
+            }
+            UserinfoBean user = new UserinfoBean();
+            user.setUsername(username);
+            user.setPassword("123456");
+            user.setEnables(enable);
+            user.setRole(role);
+            boolean flag = userService.addUser(user);
+            if(flag){
+                return Result.success("添加成功");
+            }else{
+                return Result.fail("添加失败");
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
     }
 
 }
