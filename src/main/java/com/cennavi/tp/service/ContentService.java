@@ -8,8 +8,8 @@ import java.util.List;
  * Created by 姚文帅 on 2020/4/17 14:34.
  */
 public interface ContentService {
-    // 新增一条数据,返回这条数据的id
-    long addANewItem(ContentBean item);
+    // 新增一条数据
+    int addANewItem(ContentBean item);
     // 删除一条数据
     void deleteItemById(int id);
     // 更新数据

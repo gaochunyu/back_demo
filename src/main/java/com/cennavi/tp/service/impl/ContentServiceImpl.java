@@ -18,9 +18,9 @@ public class ContentServiceImpl implements ContentService {
 
     //新增一条数据
     @Override
-    public long addANewItem(ContentBean contentBean){
+    public int addANewItem(ContentBean contentBean){
 //        contentDao.save(contentBean);
-        return contentDao.insertItemReturnId(contentBean);
+        return contentDao.insertItem(contentBean);
 
     }
 

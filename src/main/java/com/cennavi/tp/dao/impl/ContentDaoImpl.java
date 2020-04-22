@@ -5,17 +5,17 @@ import com.cennavi.tp.dao.ContentDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+//import org.springframework.jdbc.core.PreparedStatementCreator;
+//import org.springframework.jdbc.support.GeneratedKeyHolder;
+//import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+//import java.sql.Connection;
+//import java.sql.PreparedStatement;
+//import java.sql.SQLException;
+//import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
+//import java.util.Objects;
 
 
 /**
@@ -26,18 +26,19 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public long insertItemReturnId(ContentBean contentBean){
+    public int insertItem(ContentBean contentBean){
 
-        String sql = "insert into content(title,content,tags,file,create_time) values ('"+contentBean.getTitle()+"','"+contentBean.getContent()+"','"+contentBean.getTags()+"','"+contentBean.getFile()+"','"+contentBean.getCreate_time()+"')";
-
-        //获取插入数据的自增主键
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql,new String [] {"id"});
-            return ps;
-        }, keyHolder);
-        long insertId = keyHolder.getKey().longValue();
-        return insertId;
+        String sql = "insert into content(id,title,sub_title,content,tags,file,create_time) values ('"+contentBean.getId()+"','"+contentBean.getTitle()+"','"+contentBean.getSub_title()+"','"+contentBean.getContent()+"','"+contentBean.getTags()+"','"+contentBean.getFile()+"','"+contentBean.getCreate_time()+"')";
+        int result = jdbcTemplate.update(sql);
+        return result;
+//        //获取插入数据的自增主键
+//        KeyHolder keyHolder = new GeneratedKeyHolder();
+//        jdbcTemplate.update(connection -> {
+//            PreparedStatement ps = connection.prepareStatement(sql,new String [] {"id"});
+//            return ps;
+//        }, keyHolder);
+//        long insertId = keyHolder.getKey().longValue();
+//        return insertId;
     };
 
     // 根据 id 查询某条数据
@@ -50,10 +51,9 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
 
     // 修改某条数据
     public void updateItemById(int id, ContentBean contentBean){
-        if(contentBean.getTitle() != null) {
-            String sql = "update content set title='"+contentBean.getTitle() + "' where id = " + id;
+        if(contentBean.getSub_title() != null) {
+            String sql = "update content set sub_title='"+contentBean.getTitle() + "' where id = " + id;
             jdbcTemplate.update(sql);
-
         }
         if(contentBean.getContent() != null) {
             String sql = "update content set content='"+contentBean.getContent() + "' where id = " + id;

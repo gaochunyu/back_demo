@@ -11,7 +11,7 @@ import com.cennavi.tp.common.base.dao.BaseDao;
 
 public interface ContentDao extends BaseDao<ContentBean> {
 
-      long insertItemReturnId(ContentBean contentBean);
+      int insertItem(ContentBean contentBean);
 
       /**
        * 根据id获取用户
