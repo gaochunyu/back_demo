@@ -40,10 +40,53 @@ public class MenuDataServiceImpl implements MenuDataService {
         return list;
     }
 
+    @Override
+    public List getMenuAllAttrTree(List<MenuSubtitleBean> menuSubtitleBeans, Map<Integer, List<MenuSubtitleBean>> myMap) {
+        List<Map<String,Object>> list = new LinkedList<>();
+        menuSubtitleBeans.forEach(menu -> {
+            if(menu != null){
+                List<MenuSubtitleBean> menuList = myMap.get(menu.getId());
+                Map<String,Object> map = new HashMap<>();
+                map.put("id",menu.getId());
+                map.put("name",menu.getName());
+                map.put("parent",menu.getParent());
+                map.put("sort",menu.getSort());
+                map.put("uid",menu.getUid());
+                map.put("create_time",menu.getCreateTime());
+                map.put("status",menu.getStatus());
+                map.put("username",menu.getUsername());
+                if(menuList != null && menuList.size()!=0){
+                    map.put("children",getMenuAllAttrTree(menuList,myMap));
+                }
+                list.add(map);
+            }
+        });
+        return list;
+    }
+
 
     @Override
     public List<MenuSubtitleBean> getParentMenuListByIndex(Integer rootValue) {
         return menuDataDao.getParentMenuList(rootValue);
     }
 
+    @Override
+    public MenuSubtitleBean getMenuSubtitleBeanById(Integer id) {
+        return menuDataDao.getMenuSubtitleBeanById(id);
+    }
+
+    @Override
+    public Integer deleteMenuSubtitleBeanById(Integer id) {
+        return menuDataDao.deleteMenuSubtitleBeanById(id);
+    }
+
+    @Override
+    public void addMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
+        menuDataDao.save(menuSubtitleBean);
+    }
+
+    @Override
+    public void updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
+        menuDataDao.update(menuSubtitleBean);
+    }
 }

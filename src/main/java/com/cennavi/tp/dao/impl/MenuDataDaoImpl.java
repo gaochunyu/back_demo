@@ -21,7 +21,8 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
 
     @Override
     public List<MenuSubtitleBean> getMenuSubtitles() {
-        String sql = "select id , name , parent ,sort from menu";
+        String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,u.username " +
+                "from menu m inner join userinfo u on m.uid = u.id order by sort asc ";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }
 
@@ -30,4 +31,19 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
         String sql = "select * from menu where parent = " + rootValue;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }
+
+    @Override
+    public MenuSubtitleBean getMenuSubtitleBeanById(Integer id) {
+        String sql = "select * from menu where id = " + id;
+        List<MenuSubtitleBean> list = jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
+        return list.size()==0?null:list.get(0);
+    }
+
+    @Override
+    public Integer deleteMenuSubtitleBeanById(Integer id) {
+        String sql = "delete from menu where id = " + id;
+        int i = jdbcTemplate.update(sql);
+        return i;
+    }
+
 }
