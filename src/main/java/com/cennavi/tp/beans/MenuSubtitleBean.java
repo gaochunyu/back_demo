@@ -1,5 +1,6 @@
 package com.cennavi.tp.beans;
 
+import com.cennavi.tp.common.IgnoreColumn;
 import com.cennavi.tp.common.MyTable;
 
 /**
@@ -7,6 +8,7 @@ import com.cennavi.tp.common.MyTable;
  */
 @MyTable("menu")
 public class MenuSubtitleBean {
+    @IgnoreColumn("id")
     private int id;
     //菜单名称
     private String name;
@@ -20,6 +22,8 @@ public class MenuSubtitleBean {
     private String createTime;
     //状态0录入中 1待审核 2审核通过 3被拒绝
     private int status;
+    @IgnoreColumn("username")
+    private String username;//创建者
 
 
     public int getId() {
@@ -76,6 +80,14 @@ public class MenuSubtitleBean {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override

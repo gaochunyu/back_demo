@@ -21,6 +21,14 @@ public interface MenuDataService {
     List<MenuSubtitleBean> getMenuTree(List<MenuSubtitleBean> menuSubtitleBeans,Map<Integer,List<MenuSubtitleBean>> myMap);
 
     /**
+     * 查询菜单列表  用于菜单管理使用
+     * @param menuSubtitleBeans
+     * @param myMap
+     * @return
+     */
+    List getMenuAllAttrTree(List<MenuSubtitleBean> menuSubtitleBeans, Map<Integer, List<MenuSubtitleBean>> myMap);
+
+    /**
      * 查询 父级id是0的一级菜单
      * @param rootValue
      * @return

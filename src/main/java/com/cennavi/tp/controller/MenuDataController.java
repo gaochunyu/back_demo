@@ -24,7 +24,7 @@ public class MenuDataController {
     private MenuDataService menuDataService;
 
     /**
-     * 获取菜单列表
+     * 获取菜单列表,供主页面左侧菜单使用
      * @return
      */
     @ResponseBody
@@ -45,6 +45,39 @@ public class MenuDataController {
         }
         try{
             List list = menuDataService.getMenuTree(menuDataService.getParentMenuListByIndex(0),map);
+            if(list == null && list.size() == 0){
+                return Result.fail("暂无数据",new ArrayList<>()); //1000
+            }else{
+                return Result.success("成功获取数据",list);  //200
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
+    /**
+     * 获取菜单列表,供菜单管理使用
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getMenus")
+    public ResultModel getMenus(){
+        List<MenuSubtitleBean> menuList = menuDataService.getMenuList();
+        Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
+        for(MenuSubtitleBean menu : menuList){
+            if(map.get(menu.getParent()) == null){
+                List<MenuSubtitleBean> mList = new ArrayList<>();
+                mList.add(menu);
+                map.put(menu.getParent(),mList);
+            }else{
+                List<MenuSubtitleBean> mList = map.get(menu.getParent());
+                mList.add(menu);
+                map.put(menu.getParent(),mList);
+            }
+        }
+        try{
+            List list = menuDataService.getMenuAllAttrTree(menuDataService.getParentMenuListByIndex(0),map);
             if(list == null && list.size() == 0){
                 return Result.fail("暂无数据",new ArrayList<>()); //1000
             }else{
