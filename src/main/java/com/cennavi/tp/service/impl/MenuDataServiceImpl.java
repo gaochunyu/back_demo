@@ -60,4 +60,9 @@ public class MenuDataServiceImpl implements MenuDataService {
     public void addMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
         menuDataDao.save(menuSubtitleBean);
     }
+
+    @Override
+    public void updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
+        menuDataDao.update(menuSubtitleBean);
+    }
 }

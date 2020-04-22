@@ -46,5 +46,11 @@ public interface MenuDataService {
      * @return
      */
     void addMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean);
+
+    /**
+     * 修改菜单信息
+     * @param menuSubtitleBean
+     */
+    void updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean);
 }
 

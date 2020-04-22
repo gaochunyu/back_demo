@@ -405,7 +405,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
                 }
                 boolean isColumn = fields[i].isAnnotationPresent(IgnoreColumn.class);//判断是否有自定义注解(排除bean中的某些字段),
                 if(!isColumn){
-                    sql.append(column).append("=").append("?,");
+//                    sql.append(column).append("=").append("?,");
                     if(isHump) {
                         sql.append(camelToUnderline(column)).append("=").append("?,");
                     } else {

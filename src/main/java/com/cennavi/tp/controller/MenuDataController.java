@@ -99,16 +99,53 @@ public class MenuDataController {
         }
     }
 
+    /**
+     * 菜单信息新增
+     * @param name
+     * @param parent
+     * @param sort
+     * @return
+     */
     @ResponseBody
     @RequestMapping("/addMenuSubtitle")
-    public ResultModel addMenuSubtitle(@RequestParam(value = "menuSubtitleObj") MenuSubtitleBean menuSubtitleObj){
+    public ResultModel addMenuSubtitle(@RequestParam(value = "name") String name,@RequestParam(value = "parent") Integer parent,@RequestParam(value = "sort") Integer sort){
         try{
-            menuDataService.addMenuSubtitleBean(menuSubtitleObj);
-            return Result.success("新增成功");
+            MenuSubtitleBean menuSubtitleBean = new MenuSubtitleBean();
+            menuSubtitleBean.setName(name);
+            menuSubtitleBean.setParent(parent);
+            menuSubtitleBean.setSort(sort);
+            menuDataService.addMenuSubtitleBean(menuSubtitleBean);
+            return Result.success("新增成功",1);
         }catch (Exception e){
             e.getStackTrace();
             return Result.build500("出现异常");
         }
     }
+
+    /**
+     * 修改菜单信息
+     * @param id
+     * @param name
+     * @param parent
+     * @param sort
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateMenuSubtitle")
+    public ResultModel updateMenuSubtitle(@RequestParam(value = "id") Integer id,@RequestParam(value = "name") String name,@RequestParam(value = "parent") Integer parent,@RequestParam(value = "sort") Integer sort){
+        try{
+            MenuSubtitleBean menuSubtitleBean = new MenuSubtitleBean();
+            menuSubtitleBean.setId(id);
+            menuSubtitleBean.setName(name);
+            menuSubtitleBean.setParent(parent);
+            menuSubtitleBean.setSort(sort);
+            menuDataService.updateMenuSubtitleBean(menuSubtitleBean);
+            return Result.success("修改成功",1);
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
 
 }
