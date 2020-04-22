@@ -5,6 +5,7 @@ import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.MenuDataService;
+import com.cennavi.tp.utils.MyDateUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller
 @RequestMapping("/menuData")
@@ -108,12 +107,25 @@ public class MenuDataController {
      */
     @ResponseBody
     @RequestMapping("/addMenuSubtitle")
-    public ResultModel addMenuSubtitle(@RequestParam(value = "name") String name,@RequestParam(value = "parent") Integer parent,@RequestParam(value = "sort") Integer sort){
+    public ResultModel addMenuSubtitle(@RequestParam(value = "name") String name,
+                                       @RequestParam(value = "parent") Integer parent,
+                                       @RequestParam(value = "sort") Integer sort,
+                                       HttpServletRequest request){
         try{
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
             MenuSubtitleBean menuSubtitleBean = new MenuSubtitleBean();
             menuSubtitleBean.setName(name);
             menuSubtitleBean.setParent(parent);
             menuSubtitleBean.setSort(sort);
+            menuSubtitleBean.setUid(user.getId());
+            String format = "yyyy-MM-dd HH:mm:ss";
+            String time = MyDateUtils.format(new Date(),format);
+            menuSubtitleBean.setCreateTime(time);
+            if(user.getRole()==0){//超级管理员
+                menuSubtitleBean.setStatus(1);//已发布
+            }else if(user.getRole()==1){//管理员
+                menuSubtitleBean.setStatus(0);//待审核
+            }
             menuDataService.addMenuSubtitleBean(menuSubtitleBean);
             return Result.success("新增成功",1);
         }catch (Exception e){
@@ -132,10 +144,15 @@ public class MenuDataController {
      */
     @ResponseBody
     @RequestMapping("/updateMenuSubtitle")
-    public ResultModel updateMenuSubtitle(@RequestParam(value = "id") Integer id,@RequestParam(value = "name") String name,@RequestParam(value = "parent") Integer parent,@RequestParam(value = "sort") Integer sort){
+    public ResultModel updateMenuSubtitle(@RequestParam(value = "id") Integer id,
+                                          @RequestParam(value = "name") String name,
+                                          @RequestParam(value = "parent") Integer parent,
+                                          @RequestParam(value = "sort") Integer sort){
         try{
-            MenuSubtitleBean menuSubtitleBean = new MenuSubtitleBean();
-            menuSubtitleBean.setId(id);
+            MenuSubtitleBean menuSubtitleBean = menuDataService.getMenuSubtitleBeanById(id);
+            if(menuSubtitleBean==null){
+                return Result.fail("id参数无效");
+            }
             menuSubtitleBean.setName(name);
             menuSubtitleBean.setParent(parent);
             menuSubtitleBean.setSort(sort);

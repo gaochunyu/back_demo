@@ -21,7 +21,7 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
 
     @Override
     public List<MenuSubtitleBean> getMenuSubtitles() {
-        String sql = "select id , name , parent ,sort from menu";
+        String sql = "select id , name , parent ,sort, uid, create_time createTime, status from menu ";
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }
 
