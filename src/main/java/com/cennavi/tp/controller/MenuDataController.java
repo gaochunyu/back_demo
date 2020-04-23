@@ -25,12 +25,17 @@ public class MenuDataController {
 
     /**
      * 获取菜单列表,供主页面左侧菜单使用
+     * @Param uid 用户id
+     * @Param model all获取所有 visit 普通访问，verify审核,mydata 我的内容
      * @return
      */
     @ResponseBody
     @RequestMapping("/getMenuList")
-    public ResultModel getMenuList(){
-        List<MenuSubtitleBean> menuList = menuDataService.getMenuList();
+    public ResultModel getMenuList(String model,HttpServletRequest request){
+        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        if(user==null)return Result.fail("id参数无效");
+        Integer uid = model.equals("mydata")?user.getId():0;
+        List<MenuSubtitleBean> menuList = menuDataService.getMenuList(uid,model);
         Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
         for(MenuSubtitleBean menu : menuList){
             if(map.get(menu.getParent()) == null){
@@ -63,7 +68,7 @@ public class MenuDataController {
     @ResponseBody
     @RequestMapping("/getMenus")
     public ResultModel getMenus(){
-        List<MenuSubtitleBean> menuList = menuDataService.getMenuList();
+        List<MenuSubtitleBean> menuList = menuDataService.getMenuList(null,"all");
         Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
         for(MenuSubtitleBean menu : menuList){
             if(map.get(menu.getParent()) == null){

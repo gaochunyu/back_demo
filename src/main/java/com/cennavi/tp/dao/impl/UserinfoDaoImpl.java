@@ -22,7 +22,7 @@ public class UserinfoDaoImpl extends BaseDaoImpl<UserinfoBean> implements Userin
 
     @Override
     public List<UserinfoBean> getUsers(Integer start, Integer pageSize) {
-        String sql = "select id,username,password,create_time from userinfo order by create_time desc limit "+pageSize+" offset "+start;
+        String sql = "select id,username,password,create_time,enable,role from userinfo order by create_time desc limit "+pageSize+" offset "+start;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(UserinfoBean.class));
     }
 

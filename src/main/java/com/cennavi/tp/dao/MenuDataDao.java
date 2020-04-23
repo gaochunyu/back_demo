@@ -11,9 +11,11 @@ public interface MenuDataDao extends BaseDao<MenuSubtitleBean> {
 
     /**
      * 获取所有菜单
+     * @Param uid 用户id
+     * @Param model visit 普通访问，verify审核
      * @return
      */
-    List<MenuSubtitleBean> getMenuSubtitles();
+    List<MenuSubtitleBean> getMenuSubtitles(Integer uid,String model);
 
     /**
      * 获取一级菜单

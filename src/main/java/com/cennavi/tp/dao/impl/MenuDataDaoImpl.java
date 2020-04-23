@@ -20,9 +20,18 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<MenuSubtitleBean> getMenuSubtitles() {
+    public List<MenuSubtitleBean> getMenuSubtitles(Integer uid,String model) {
         String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,u.username " +
-                "from menu m inner join userinfo u on m.uid = u.id order by sort asc ";
+                "from menu m inner join userinfo u on m.uid = u.id ";
+        if("visit".equals(model)){
+            sql+="and m.status = 2 ";
+        }else if("verify".equals(model)){
+            sql+="and m.status = 1 ";
+        }else if("mydata".equals(model)){
+            sql+="and m.uid = "+uid;
+        }
+        sql+="order by sort asc ";
+
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }
 

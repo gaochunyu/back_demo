@@ -15,7 +15,7 @@ public class UserinfoBean {
     @NotBlank
     private String password;
     private String createTime;
-    private int enables;
+    private int enable;
     private int role;
 
     public int getId() {
@@ -52,12 +52,12 @@ public class UserinfoBean {
         this.createTime = createTime;
     }
 
-    public int getEnables() {
-        return enables;
+    public int getEnable() {
+        return enable;
     }
 
-    public void setEnables(int enables) {
-        this.enables = enables;
+    public void setEnable(int enable) {
+        this.enable = enable;
     }
 
     public int getRole() {

@@ -24,7 +24,7 @@ import java.util.*;
  */
 public class BaseDaoImpl<T> implements BaseDao<T> {
 
-    public static boolean isHump = false;//makeSql 是否使用驼峰转下划线
+    public static boolean isHump = true;//makeSql 是否使用驼峰转下划线
     /** 设置一些操作的常量 */
     public static final String SQL_INSERT = "insert";
     public static final String SQL_UPDATE = "update";

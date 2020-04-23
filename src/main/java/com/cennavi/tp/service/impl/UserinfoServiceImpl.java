@@ -54,7 +54,8 @@ public class UserinfoServiceImpl implements UserinfoService {
             //处理返回数据
             Map<String,Object> map = new HashMap<>();
             map.put("token",token);
-            map.put("user",user);
+            map.put("id",user.getId());
+            map.put("role",user.getRole());
             ResultModel resultModel = Result.success("登录成功",map);
             resultModel.putExcludes("username","password","createTime");
             return resultModel;

@@ -4,6 +4,7 @@ import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.UserinfoService;
+import com.cennavi.tp.utils.MyDateUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +97,7 @@ public class UserinfoController {
                 return Result.fail("id参数无效");
             }
             user.setUsername(username);
-            user.setEnables(enable);
+            user.setEnable(enable);
             user.setRole(role);
             boolean flag = userService.updateUser(user);
             if(flag){
@@ -140,8 +142,11 @@ public class UserinfoController {
             UserinfoBean user = new UserinfoBean();
             user.setUsername(username);
             user.setPassword("123456");
-            user.setEnables(enable);
+            user.setEnable(enable);
             user.setRole(role);
+            String format = "yyyy-MM-dd HH:mm:ss";
+            String time = MyDateUtils.format(new Date(),format);
+            user.setCreateTime(time);
             boolean flag = userService.addUser(user);
             if(flag){
                 return Result.success("添加成功");
@@ -151,6 +156,25 @@ public class UserinfoController {
         }catch (Exception e){
             e.getStackTrace();
             return Result.build500("出现异常");
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/updatePass")
+    public ResultModel updatePass(Integer id,String oldPass,String newPass, HttpServletRequest request){
+        try{
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+            if(user.getPassword().equals(oldPass)){
+                user.setPassword(newPass);
+                request.getSession().setAttribute("user",user);
+                userService.updateUser(user);
+            }else{
+                return Result.fail("旧密码输入不正确");
+            }
+            return Result.success("密码修改成功");
+        }catch (Exception e){
+            return Result.fail("出现异常");
         }
     }
 
