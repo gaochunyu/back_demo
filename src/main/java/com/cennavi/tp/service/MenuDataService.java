@@ -8,9 +8,11 @@ import java.util.Map;
 public interface MenuDataService {
     /**
      * 查询菜单列表
+     * @Param uid 用户id
+     * @Param model visit 普通访问，verify审核
      * @return
      */
-    List<MenuSubtitleBean> getMenuList();
+    List<MenuSubtitleBean> getMenuList(Integer uid,String model);
 
     /**
      * 查询菜单列表tree结构

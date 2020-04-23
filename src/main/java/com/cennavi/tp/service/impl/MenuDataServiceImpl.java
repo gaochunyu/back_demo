@@ -18,8 +18,8 @@ public class MenuDataServiceImpl implements MenuDataService {
     private MenuDataDao menuDataDao;
 
     @Override
-    public List<MenuSubtitleBean> getMenuList() {
-        return menuDataDao.getMenuSubtitles();
+    public List<MenuSubtitleBean> getMenuList(Integer uid,String model) {
+        return menuDataDao.getMenuSubtitles(uid,model);
     }
 
     @Override
@@ -31,6 +31,7 @@ public class MenuDataServiceImpl implements MenuDataService {
                 Map<String,Object> map = new HashMap<>();
                 map.put("id",menu.getId());
                 map.put("label",menu.getName());
+                map.put("status",menu.getStatus());
                 if(menuList != null && menuList.size()!=0){
                     map.put("children",getMenuTree(menuList,myMap));
                 }
