@@ -33,6 +33,7 @@ public class MenuDataController {
     @RequestMapping("/getMenuList")
     public ResultModel getMenuList(String model,HttpServletRequest request){
         UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        if(user==null)return Result.fail("id参数无效");
         Integer uid = model.equals("mydata")?user.getId():0;
         List<MenuSubtitleBean> menuList = menuDataService.getMenuList(uid,model);
         Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
