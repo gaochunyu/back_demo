@@ -30,7 +30,7 @@ public class MenuDataServiceImpl implements MenuDataService {
                 List<MenuSubtitleBean> menuList = myMap.get(menu.getId());
                 Map<String,Object> map = new HashMap<>();
                 map.put("id",menu.getId());
-                map.put("label",menu.getName());
+                map.put("name",menu.getName());
                 map.put("status",menu.getStatus());
                 if(menuList != null && menuList.size()!=0){
                     map.put("children",getMenuTree(menuList,myMap));
