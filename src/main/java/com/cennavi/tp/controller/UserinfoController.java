@@ -159,4 +159,23 @@ public class UserinfoController {
         }
     }
 
+
+    @ResponseBody
+    @RequestMapping("/updatePass")
+    public ResultModel updatePass(Integer id,String oldPass,String newPass, HttpServletRequest request){
+        try{
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+            if(user.getPassword().equals(oldPass)){
+                user.setPassword(newPass);
+                request.getSession().setAttribute("user",user);
+                userService.updateUser(user);
+            }else{
+                return Result.fail("旧密码输入不正确");
+            }
+            return Result.success("密码修改成功");
+        }catch (Exception e){
+            return Result.fail("出现异常");
+        }
+    }
+
 }
