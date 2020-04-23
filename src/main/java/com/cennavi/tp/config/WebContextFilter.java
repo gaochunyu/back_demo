@@ -22,6 +22,13 @@ public class WebContextFilter implements Filter {
         httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", "Authentication");
 
+
+        httpServletResponse.setHeader("Access-Control-Allow-Headers", "content-type, accept");
+        httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST");
+        httpServletResponse.setStatus(200);
+        httpServletResponse.setContentType("text/plain;charset=utf-8");
+        httpServletResponse.setCharacterEncoding("utf-8");
+
         filterChain.doFilter(servletRequest, httpServletResponse);
     }
 
