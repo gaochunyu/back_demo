@@ -29,195 +29,160 @@ public class ContentController {
     private ContentService contentService;
 
 
-    // 1 新增一条数据, 带有文件的上传
+    // 新增 or 更新数据
     @ResponseBody
     @RequestMapping(value = "/addAContentItem", method = RequestMethod.POST)
-    public ResultModel addAContentItem(int id, String title, String subTitle, String content, int type, String tags, MultipartFile file) {
+    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags, MultipartFile file) {
 
+        // 首先去判断是新增还是更新
+        int type = 0;
         JSONObject json = new JSONObject();
+        try {
+            ContentBean contentBean1 =  contentService.getItemById(id);
+            if(contentBean1 != null) {
+                // 更新
+                type = 2;
+            } else {
+                type = 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            json = JsonUtils.packJsonErr(e.getMessage());
+            return Result.fail("查找数据失败", JsonUtils.objectToJson(json,new String[]{}));
+        }
 
         if(type == 1) {
             // 新增
-            try {
-                // 获取时间戳并转化格式
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-                Date date = new Date(System.currentTimeMillis());
-                String createTime = formatter.format(date);
-
-                int contentId = id;
-
-                ContentBean contentBean = new ContentBean();
-                contentBean.setTitle(title);
-                contentBean.setSub_title(subTitle);
-                contentBean.setContent(content);
-                contentBean.setTags(tags);
-                contentBean.setId(contentId);
-                contentBean.setCreate_time(createTime);
-
-                // 当文件不为空的时候进行文件的存储
-                if(file != null) {
-                    if(!file.isEmpty()){
-                        String fileName = file.getOriginalFilename();
-
-
-                        // 拼接文件从存放的路径，创建id文件夹，保存对应的文件进去
-                        String path = "E:/test/"+ String.valueOf(id);
-                        File dest = new File(path + "/" + fileName);
-
-                        if (!dest.getParentFile().exists()) {
-                            //判断文件父目录是否存在
-                            dest.getParentFile().mkdir();
-                        }
-
-                        try {
-                            file.transferTo(dest); //保存文件
-                            // 文件保存成功之后，将文件路径保存到 file 字段下面
-                            contentBean.setFile(path + "/" + fileName);
-                        } catch (IllegalStateException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-
-                        }
-                    }
-
-                }
-
-
-                // 获得刚刚插入的key值
-                int changeNumber = contentService.addANewItem(contentBean);
-
-                if(changeNumber == 1) {
-                    return Result.success("成功插入数据", contentService.getItemById(contentId));
-                } else {
-                    return Result.fail("插入数据失败", JsonUtils.objectToJson(json, new String[]{}));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                json = JsonUtils.packJsonErr(e.getMessage());
-                return Result.fail("插入数据失败", JsonUtils.objectToJson(json, new String[]{}));
-            }
-
+            return this.addItem(id, title,subTitle,content,tags,file);
         }
         else {
-            try {
-                ContentBean contentBean = new ContentBean();
-                contentBean.setTitle(title);
-                contentBean.setTitle(subTitle);
-                contentBean.setContent(content);
-                contentBean.setTags(tags);
-
-                if(file != null){
-                    // 当文件不为空的时候进行文件的存储
-                    if(!file.isEmpty()){
-                        String fileName = file.getOriginalFilename();
-
-                        // 拼接文件从存放的路径，拼接文件创建时间和文件夹
-                        String path = "E:/test/"+ id;
-                        File dest = new File(path + "/" + fileName);
-                        // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
-                        File unique = new File(path);
-                        deleteFile(unique);
-                        if (!dest.getParentFile().exists()) {
-                            //判断文件父目录是否存在
-                            dest.getParentFile().mkdir();
-                        }
-
-                        try {
-                            file.transferTo(dest); //保存文件
-                            // 文件保存成功之后，将文件路径保存到 file 字段下面
-                            contentBean.setFile(path + "/" + fileName);
-                        } catch (IllegalStateException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-
-                        }
-                    }
-                }
-                contentService.updateItemById(id, contentBean);
-                return Result.success("成功更新一条数据", contentBean);
-            } catch (Exception e) {
-                e.printStackTrace();
-                json = JsonUtils.packJsonErr(e.getMessage());
-                return Result.fail("更新数据失败", JsonUtils.objectToJson(json,new String[]{}));
-            }
-
+           return this.updateItem(id, title,subTitle,content,tags,file);
         }
     }
 
+    // 新增
+    private ResultModel addItem(int id, String title, String subTitle, String content, String tags, MultipartFile file) {
+        JSONObject json = new JSONObject();
+        try {
+            // 获取时间戳并转化格式
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+            Date date = new Date(System.currentTimeMillis());
+            String createTime = formatter.format(date);
+
+            int contentId = id;
+
+            ContentBean contentBean = new ContentBean();
+            contentBean.setTitle(title);
+            contentBean.setSub_title(subTitle);
+            contentBean.setContent(content);
+            contentBean.setTags(tags);
+            contentBean.setId(contentId);
+            contentBean.setCreate_time(createTime);
+
+            // 当文件不为空的时候进行文件的存储
+            if(file != null) {
+                if(!file.isEmpty()){
+                    String fileName = file.getOriginalFilename();
 
 
-//    // 2 更新某条数据内容, 如果包含文件的更新
-//    @ResponseBody
-//    @RequestMapping(value = "/updateItemById", method = RequestMethod.POST)
-//    public ResultModel updateItemById(@RequestParam Map<String,String> map, MultipartFile file){
-//        if (map.size() > 0) {
-//            JSONObject json = new JSONObject();
-//            try {
-//                ContentBean contentBean = new ContentBean();
-//                contentBean.setTitle(map.get("title"));
-//                contentBean.setTitle(map.get("subTitle"));
-//                contentBean.setContent(map.get("content"));
-//                contentBean.setTags(map.get("tags"));
-//
-//                int id = Integer.parseInt(map.get("id"));
-//
-//                if(file != null){
-//                    // 当文件不为空的时候进行文件的存储
-//                    if(!file.isEmpty()){
-//                        String fileName = file.getOriginalFilename();
-//
-//                        // 拼接文件从存放的路径，拼接文件创建时间和文件夹
-//                        String path = "E:/test/"+ map.get("id").toString();
-//                        File dest = new File(path + "/" + fileName);
-//                        // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
-//                        File unique = new File(path);
-//                        deleteFile(unique);
-//                        if (!dest.getParentFile().exists()) {
-//                            //判断文件父目录是否存在
-//                            dest.getParentFile().mkdir();
-//                        }
-//
-//                        try {
-//                            file.transferTo(dest); //保存文件
-//                            // 文件保存成功之后，将文件路径保存到 file 字段下面
-//                            contentBean.setFile(path + "/" + fileName);
-//                        } catch (IllegalStateException e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-//
-//                        } catch (IOException e) {
-//                            // TODO Auto-generated catch block
-//                            e.printStackTrace();
-//                            return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-//
-//                        }
-//                    }
-//                }
-//                contentService.updateItemById(id, contentBean);
-//                return Result.success("成功更新一条数据", contentBean);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                json = JsonUtils.packJsonErr(e.getMessage());
-//                return Result.fail("更新数据失败", JsonUtils.objectToJson(json,new String[]{}));
-//            }
-//        }
-//        return null;
-//
-//    }
+                    // 拼接文件从存放的路径，创建id文件夹，保存对应的文件进去
+                    String path = "E:/test/"+ String.valueOf(id);
+                    File dest = new File(path + "/" + fileName);
+
+                    if (!dest.getParentFile().exists()) {
+                        //判断文件父目录是否存在
+                        dest.getParentFile().mkdir();
+                    }
+
+                    try {
+                        file.transferTo(dest); //保存文件
+                        // 文件保存成功之后，将文件路径保存到 file 字段下面
+                        contentBean.setFile(path + "/" + fileName);
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
+
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
+
+                    }
+                }
+
+            }
+
+
+            // 获得刚刚插入的key值
+            int changeNumber = contentService.addANewItem(contentBean);
+
+            if(changeNumber == 1) {
+                return Result.success("成功插入数据", contentService.getItemById(contentId));
+            } else {
+                return Result.fail("插入数据失败", JsonUtils.objectToJson(json, new String[]{}));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            json = JsonUtils.packJsonErr(e.getMessage());
+            return Result.fail("插入数据失败", JsonUtils.objectToJson(json, new String[]{}));
+        }
+
+    }
+    // 更新
+    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags, MultipartFile file){
+        JSONObject json = new JSONObject();
+        try {
+            ContentBean contentBean = new ContentBean();
+            contentBean.setTitle(title);
+            contentBean.setTitle(subTitle);
+            contentBean.setContent(content);
+            contentBean.setTags(tags);
+
+            if(file != null){
+                // 当文件不为空的时候进行文件的存储
+                if(!file.isEmpty()){
+                    String fileName = file.getOriginalFilename();
+
+                    // 拼接文件从存放的路径，拼接文件创建时间和文件夹
+                    String path = "E:/test/"+ id;
+                    File dest = new File(path + "/" + fileName);
+                    // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
+                    File unique = new File(path);
+                    deleteFile(unique);
+                    if (!dest.getParentFile().exists()) {
+                        //判断文件父目录是否存在
+                        dest.getParentFile().mkdir();
+                    }
+
+                    try {
+                        file.transferTo(dest); //保存文件
+                        // 文件保存成功之后，将文件路径保存到 file 字段下面
+                        contentBean.setFile(path + "/" + fileName);
+                    } catch (IllegalStateException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
+
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                        return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
+
+                    }
+                }
+            }
+            contentService.updateItemById(id, contentBean);
+            return Result.success("成功更新一条数据", contentBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+            json = JsonUtils.packJsonErr(e.getMessage());
+            return Result.fail("更新数据失败", JsonUtils.objectToJson(json,new String[]{}));
+        }
+
+    }
+
 
 
     // 3. 删除一条数据(根据id删除一条数据)
