@@ -141,7 +141,7 @@ public class ContentController {
         try {
             ContentBean contentBean = new ContentBean();
             contentBean.setTitle(title);
-            contentBean.setTitle(subTitle);
+            contentBean.setSub_title(subTitle);
             contentBean.setContent(content);
             contentBean.setTags(tags);
             contentBean.setUid(uid);
