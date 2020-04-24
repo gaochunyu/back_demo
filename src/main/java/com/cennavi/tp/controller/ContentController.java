@@ -2,15 +2,19 @@ package com.cennavi.tp.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cennavi.tp.beans.ContentBean;
+import com.cennavi.tp.beans.MenuSubtitleBean;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.ContentService;
+import com.cennavi.tp.service.MenuDataService;
 import com.cennavi.tp.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -27,12 +31,14 @@ public class ContentController {
 
     @Autowired
     private ContentService contentService;
+    @Autowired
+    private MenuDataService menuDataService;
 
 
     // 新增 or 更新数据
     @ResponseBody
     @RequestMapping(value = "/addAContentItem", method = RequestMethod.POST)
-    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags, MultipartFile file) {
+    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,HttpServletRequest request) {
 
         // 首先去判断是新增还是更新
         int type = 0;
@@ -40,12 +46,17 @@ public class ContentController {
         try {
             content = content.replace("'","''");
             ContentBean contentBean1 =  contentService.getItemById(id);
+            Object obj = request.getSession().getAttribute("user");
+            if(obj==null){
+                return Result.buildUnLogin();
+            }
+            UserinfoBean user = (UserinfoBean) obj;
             if(contentBean1 != null) {
                 // 更新
-                return this.updateItem(id, title,subTitle,content,tags,file);
+                return this.updateItem(id, title,subTitle,content,tags,file,user.getId());
             } else {
                 // 新增
-                return this.addItem(id, title,subTitle,content,tags,file);
+                return this.addItem(id, title,subTitle,content,tags,file,user.getId());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,7 +66,7 @@ public class ContentController {
     }
 
     // 新增
-    private ResultModel addItem(int id, String title, String subTitle, String content, String tags, MultipartFile file) {
+    private ResultModel addItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,int uid) {
         JSONObject json = new JSONObject();
         try {
             // 获取时间戳并转化格式
@@ -72,7 +83,7 @@ public class ContentController {
             contentBean.setTags(tags);
             contentBean.setId(contentId);
             contentBean.setCreate_time(createTime);
-
+            contentBean.setUid(uid);
             // 当文件不为空的时候进行文件的存储
             if(file != null) {
                 if(!file.isEmpty()){
@@ -125,7 +136,7 @@ public class ContentController {
 
     }
     // 更新
-    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags, MultipartFile file){
+    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,int uid){
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean = new ContentBean();
@@ -133,7 +144,7 @@ public class ContentController {
             contentBean.setTitle(subTitle);
             contentBean.setContent(content);
             contentBean.setTags(tags);
-
+            contentBean.setUid(uid);
             if(file != null){
                 // 当文件不为空的时候进行文件的存储
                 if(!file.isEmpty()){
@@ -185,8 +196,16 @@ public class ContentController {
     public ResultModel deleteItemById(@RequestParam(value = "id") int id) {
         JSONObject json = new JSONObject();
         try {
+            MenuSubtitleBean menu = menuDataService.getMenuSubtitleBeanById(id);
+            if(menu==null){
+                return Result.fail("无效的id");
+            }
+            if(menu.getStatus()==2){
+                return Result.fail("该内容已发布，不能删除");
+            }
             ContentBean contentBean =  contentService.getItemById(id);
             contentService.deleteItemById(id);
+            menuDataService.deleteMenuSubtitleBeanById(id);
             return Result.success("成功删除一条数据,删除的数据是", contentBean);
         } catch (Exception e) {
             e.printStackTrace();

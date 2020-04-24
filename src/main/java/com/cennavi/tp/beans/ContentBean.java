@@ -20,6 +20,7 @@ public class ContentBean {
     private String tags;    // 类型
     private String file;    //
     private String create_time;  // 创建时间
+    private int uid;
 
 
     public int getId() {
@@ -78,6 +79,11 @@ public class ContentBean {
         this.create_time = create_time;
     }
 
+    public int getUid() {
+        return uid;
+    }
 
-
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 }

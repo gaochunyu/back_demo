@@ -4,6 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
@@ -23,9 +24,20 @@ public class MyWebConfig implements WebMvcConfigurer {
     @Override
     public  void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(myInterceptor)
-                .excludePathPatterns("/logout","/userinfo/login","/error/**","/resources/**")
+                .excludePathPatterns("/logout","/userinfo/login","/error/**","/resources/**","/file/**")
 //                .excludePathPatterns("/**")
                 .addPathPatterns("/**");
+    }
+
+    /**
+     * 配置资源过滤
+     * 注：配置外部的资源要使用file声明，配置jar包内部的使用classpath声明。
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
+        //访问jar包尾部资源
+        registry.addResourceHandler("/file/**").addResourceLocations("file:E:/test/");
     }
 
     /**
