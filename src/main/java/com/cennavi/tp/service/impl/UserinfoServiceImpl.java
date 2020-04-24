@@ -37,7 +37,7 @@ public class UserinfoServiceImpl implements UserinfoService {
             }
             //用户数据保持到session
             HttpSession session = request.getSession();
-            session.setMaxInactiveInterval(600);
+            session.setMaxInactiveInterval(3600);
             session.setAttribute("user",user);
             //清空之前的登录状态
             loginStatusService.removeByUid(user.getId());

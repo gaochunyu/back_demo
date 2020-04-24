@@ -38,25 +38,19 @@ public class ContentController {
         int type = 0;
         JSONObject json = new JSONObject();
         try {
+            content = content.replace("'","''");
             ContentBean contentBean1 =  contentService.getItemById(id);
             if(contentBean1 != null) {
                 // 更新
-                type = 2;
+                return this.updateItem(id, title,subTitle,content,tags,file);
             } else {
-                type = 1;
+                // 新增
+                return this.addItem(id, title,subTitle,content,tags,file);
             }
         } catch (Exception e) {
             e.printStackTrace();
             json = JsonUtils.packJsonErr(e.getMessage());
             return Result.fail("查找数据失败", JsonUtils.objectToJson(json,new String[]{}));
-        }
-
-        if(type == 1) {
-            // 新增
-            return this.addItem(id, title,subTitle,content,tags,file);
-        }
-        else {
-           return this.updateItem(id, title,subTitle,content,tags,file);
         }
     }
 
@@ -210,6 +204,10 @@ public class ContentController {
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean =  contentService.getItemById(id);
+            if(contentBean!=null){
+                String content = contentBean.getContent().replace("''","'");
+                contentBean.setContent(content);
+            }
             if(contentBean != null) {
                 return Result.success("成功找到一条数据", contentBean);
             } else {
