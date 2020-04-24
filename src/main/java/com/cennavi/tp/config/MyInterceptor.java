@@ -40,7 +40,7 @@ public class MyInterceptor implements HandlerInterceptor {
             logger.info("login："+uri);
             //访问延迟失效时间
             HttpSession session = request.getSession();
-            session.setMaxInactiveInterval(600);//单位：秒
+            session.setMaxInactiveInterval(3600);//单位：秒
             session.setAttribute("user",user);
             return true;
         }else{
