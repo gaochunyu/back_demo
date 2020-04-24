@@ -245,8 +245,10 @@ public class ContentController {
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean =  contentService.getItemById(id);
-            String content = contentBean.getContent().replace("''","'");
-            contentBean.setContent(content);
+            if(contentBean!=null){
+                String content = contentBean.getContent().replace("''","'");
+                contentBean.setContent(content);
+            }
             if(contentBean != null) {
                 return Result.success("成功找到一条数据", contentBean);
             } else {
