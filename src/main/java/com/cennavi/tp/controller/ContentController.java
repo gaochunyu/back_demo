@@ -35,7 +35,7 @@ public class ContentController {
     public ResultModel addAContentItem(int id, String title, String subTitle, String content, int type, String tags, MultipartFile file) {
 
         JSONObject json = new JSONObject();
-
+        content = content.replace("'","''");
         if(type == 1) {
             // 新增
             try {
@@ -245,6 +245,8 @@ public class ContentController {
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean =  contentService.getItemById(id);
+            String content = contentBean.getContent().replace("''","'");
+            contentBean.setContent(content);
             if(contentBean != null) {
                 return Result.success("成功找到一条数据", contentBean);
             } else {
