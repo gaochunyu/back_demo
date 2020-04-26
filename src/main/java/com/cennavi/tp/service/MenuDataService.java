@@ -1,7 +1,9 @@
 package com.cennavi.tp.service;
 
 import com.cennavi.tp.beans.MenuSubtitleBean;
+import com.cennavi.tp.common.result.ResultModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public interface MenuDataService {
      * @param id
      * @return
      */
-    Integer deleteMenuSubtitleBeanById(Integer id);
+    ResultModel deleteMenuSubtitleBeanById(Integer id, HttpServletRequest request);
 
     /**
      * 新增一条菜单信息

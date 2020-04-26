@@ -4,9 +4,9 @@ import com.cennavi.tp.beans.MenuSubtitleBean;
 import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
+import com.cennavi.tp.service.ContentService;
 import com.cennavi.tp.service.MenuDataService;
 import com.cennavi.tp.utils.MyDateUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +22,8 @@ public class MenuDataController {
 
     @Resource
     private MenuDataService menuDataService;
+    @Resource
+    private ContentService contentService;
 
     /**
      * 获取菜单列表,供主页面左侧菜单使用
@@ -112,18 +114,8 @@ public class MenuDataController {
      */
     @ResponseBody
     @RequestMapping("/deleteMenuSubtitle")
-    public ResultModel deleteMenuSubtitle(@RequestParam(value = "id") Integer id){
-        try{
-            Integer index = menuDataService.deleteMenuSubtitleBeanById(id);
-            if(index == 0){
-                return Result.fail("输入的id无对应数据",index);
-            }else{
-                return Result.success("删除成功",index);
-            }
-        }catch (Exception e){
-            e.getStackTrace();
-            return Result.build500("出现异常");
-        }
+    public ResultModel deleteMenuSubtitle(@RequestParam(value = "id",required = false) Integer id,HttpServletRequest request){
+        return menuDataService.deleteMenuSubtitleBeanById(id,request);
     }
 
     /**
@@ -213,5 +205,36 @@ public class MenuDataController {
         }
     }
 
+    /**
+     * 审核
+     * @param id 菜单id
+     * @param status 状态码：2通过 3拒绝
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/verify")
+    public ResultModel verify(Integer id,Integer status,HttpServletRequest request){
+        try{
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+            if(user==null)return Result.buildUnLogin();
+            if(user.getRole()!=0)return Result.fail("无操作权限");
+            MenuSubtitleBean menu = menuDataService.getMenuSubtitleBeanById(id);
+            if(status==2 || status==3){
+                menu.setStatus(status);
+                Integer count = menuDataService.updateMenuSubtitleBean(menu);
+                if(count>0){
+                    return Result.success("操作成功");
+                }else{
+                    return Result.fail("操作失败");
+                }
+            }else{
+                return Result.fail("状态码错误");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
 
 }
