@@ -1,0 +1,23 @@
+server:
+  servlet:
+    context-path: /study_map_tool
+  tomcat:
+    min-spare-threads: 20
+    max-threads: 300
+    max-connections: 5000
+
+spring:
+  freemarker:
+    check-template-location: false
+  profiles:
+    active: dev
+#设置上传文件大小
+  servlet:
+    multipart:
+      max-file-size:  -1
+      max-request-size: -1
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true

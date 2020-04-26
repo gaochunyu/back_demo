@@ -87,7 +87,7 @@ public class MenuDataServiceImpl implements MenuDataService {
     }
 
     @Override
-    public void updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
-        menuDataDao.update(menuSubtitleBean);
+    public Integer updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
+        return menuDataDao.updateMenu(menuSubtitleBean);
     }
 }

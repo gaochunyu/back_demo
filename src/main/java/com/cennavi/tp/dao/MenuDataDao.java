@@ -37,4 +37,10 @@ public interface MenuDataDao extends BaseDao<MenuSubtitleBean> {
      * @return
      */
     Integer deleteMenuSubtitleBeanById(Integer id);
+
+    /**
+     * 更新菜单信息，默认的update好像有问题
+     * @param menu
+     */
+    Integer updateMenu(MenuSubtitleBean menu);
 }

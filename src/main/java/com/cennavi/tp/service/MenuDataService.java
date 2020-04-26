@@ -61,6 +61,6 @@ public interface MenuDataService {
      * 修改菜单信息
      * @param menuSubtitleBean
      */
-    void updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean);
+    Integer updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean);
 }
 
