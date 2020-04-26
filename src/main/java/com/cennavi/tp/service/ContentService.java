@@ -16,5 +16,7 @@ public interface ContentService {
     void updateItemById(int id, ContentBean contentBean);
     // 查找数据
     ContentBean getItemById(int id);
+    //  检索数据
+    List<ContentBean> getContentsByTags(String tags);
 
 }

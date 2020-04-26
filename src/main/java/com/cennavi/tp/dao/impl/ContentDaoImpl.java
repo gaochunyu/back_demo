@@ -1,5 +1,6 @@
 package com.cennavi.tp.dao.impl;
 import com.cennavi.tp.beans.ContentBean;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.ContentDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +72,14 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
 
         }
 
-    };
+    }
 
+    @Override
+    public List<ContentBean> getContentsByTags(String tags) {
+        String sql = "select title,tags,create_time,sub_title,uid from content where tags like '%"+tags+"%'";
+        return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ContentBean.class));
+
+    };
 
 
 }

@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -323,5 +325,24 @@ public class ContentController {
         }
     }
 
+    /**
+     * 根据tags检索内容
+     * @param tags
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/searchContent")
+    public ResultModel searchContent(String tags){
+        JSONObject json = new JSONObject();
+        try {
+            List<ContentBean> contentBeanList = contentService.getContentsByTags(tags);
+            return Result.success("检索成功",contentBeanList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            json = JsonUtils.packJsonErr(e.getMessage());
+            return Result.fail("检索异常");
+
+        }
+    }
 }
 
