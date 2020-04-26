@@ -193,7 +193,7 @@ public class ContentController {
     // 3. 删除一条数据(根据id删除一条数据)
     @ResponseBody
     @RequestMapping(value = "/deleteItemById", method = RequestMethod.POST)
-    public ResultModel deleteItemById(@RequestParam(value = "id") int id) {
+    public ResultModel deleteItemById(@RequestParam(value = "id") int id,HttpServletRequest request) {
         JSONObject json = new JSONObject();
         try {
             MenuSubtitleBean menu = menuDataService.getMenuSubtitleBeanById(id);
@@ -205,7 +205,7 @@ public class ContentController {
             }
             ContentBean contentBean =  contentService.getItemById(id);
             contentService.deleteItemById(id);
-            menuDataService.deleteMenuSubtitleBeanById(id);
+            menuDataService.deleteMenuSubtitleBeanById(id,request);
             return Result.success("成功删除一条数据,删除的数据是", contentBean);
         } catch (Exception e) {
             e.printStackTrace();
