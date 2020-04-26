@@ -63,4 +63,12 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
         return i;
     }
 
+    @Override
+    public Integer updateMenuStatus(int id, int status){
+
+        String sql = " UPDATE menu SET status="+status+" WHERE id="+id;
+        int i = jdbcTemplate.update(sql);
+        return i;
+    }
+
 }

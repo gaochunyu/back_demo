@@ -38,7 +38,7 @@ public class ContentController {
     // 新增 or 更新数据
     @ResponseBody
     @RequestMapping(value = "/addAContentItem", method = RequestMethod.POST)
-    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,HttpServletRequest request) {
+    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags,String autoSave, MultipartFile file,HttpServletRequest request) {
 
         // 首先去判断是新增还是更新
         int type = 0;
@@ -53,10 +53,10 @@ public class ContentController {
             UserinfoBean user = (UserinfoBean) obj;
             if(contentBean1 != null) {
                 // 更新
-                return this.updateItem(id, title,subTitle,content,tags,file,user.getId());
+                return this.updateItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
             } else {
                 // 新增
-                return this.addItem(id, title,subTitle,content,tags,file,user.getId());
+                return this.addItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +66,7 @@ public class ContentController {
     }
 
     // 新增
-    private ResultModel addItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,int uid) {
+    private ResultModel addItem(int id, String title, String subTitle, String content, String tags, String autoSave,MultipartFile file,int uid) {
         JSONObject json = new JSONObject();
         try {
             // 获取时间戳并转化格式
@@ -112,15 +112,16 @@ public class ContentController {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                         return Result.fail("保存文件失败", JsonUtils.objectToJson(json, new String[]{}));
-
                     }
                 }
-
             }
-
 
             // 获得刚刚插入的key值
             int changeNumber = contentService.addANewItem(contentBean);
+            //
+            if(autoSave.equals("auto")) {
+                int changeNumber1 = menuDataService.updateMenuStatus(contentId, 0);
+            }
 
             if(changeNumber == 1) {
                 return Result.success("成功插入数据", contentService.getItemById(contentId));
@@ -136,7 +137,7 @@ public class ContentController {
 
     }
     // 更新
-    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags, MultipartFile file,int uid){
+    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags,String autoSave, MultipartFile file,int uid){
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean = new ContentBean();
@@ -177,6 +178,9 @@ public class ContentController {
 
                     }
                 }
+            }
+            if(autoSave.equals("auto")) {
+                menuDataService.updateMenuStatus(id, 0);
             }
             contentService.updateItemById(id, contentBean);
             return Result.success("成功更新一条数据", contentBean);

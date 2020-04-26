@@ -121,4 +121,11 @@ public class MenuDataServiceImpl implements MenuDataService {
     public Integer updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean) {
         return menuDataDao.updateMenu(menuSubtitleBean);
     }
+
+    // 更新菜单表的状态信息
+    @Override
+    public int updateMenuStatus(int id, int status){
+        return menuDataDao.updateMenuStatus(id, status);
+    }
+
 }

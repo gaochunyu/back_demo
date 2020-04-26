@@ -64,5 +64,8 @@ public interface MenuDataService {
      * @param menuSubtitleBean
      */
     Integer updateMenuSubtitleBean(MenuSubtitleBean menuSubtitleBean);
+
+    // 更新菜单表的状态信息
+    int updateMenuStatus(int id, int status);
 }
 

@@ -43,4 +43,10 @@ public interface MenuDataDao extends BaseDao<MenuSubtitleBean> {
      * @param menu
      */
     Integer updateMenu(MenuSubtitleBean menu);
+
+    /**
+     * 更新菜单状态信息
+     * @param
+     */
+    Integer updateMenuStatus(int id, int status);
 }
