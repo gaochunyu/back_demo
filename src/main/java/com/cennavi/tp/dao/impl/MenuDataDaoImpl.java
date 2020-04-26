@@ -30,7 +30,7 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
         }else if("mydata".equals(model)){
             sql+="and m.uid = "+uid;
         }
-        sql+="order by sort asc ";
+        sql+=" order by sort asc ";
 
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
     }

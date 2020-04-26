@@ -33,7 +33,7 @@ public class MenuDataController {
     @RequestMapping("/getMenuList")
     public ResultModel getMenuList(String model,HttpServletRequest request){
         UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
-        if(user==null)return Result.fail("id参数无效");
+        if(user==null)return Result.buildUnLogin();
         Integer uid = model.equals("mydata")?user.getId():0;
         List<MenuSubtitleBean> menuList = menuDataService.getMenuList(uid,model);
         Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
@@ -67,8 +67,19 @@ public class MenuDataController {
      */
     @ResponseBody
     @RequestMapping("/getMenus")
-    public ResultModel getMenus(){
-        List<MenuSubtitleBean> menuList = menuDataService.getMenuList(null,"all");
+    public ResultModel getMenus(HttpServletRequest request){
+        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        String model;
+        if(user==null)return Result.buildUnLogin();
+        if(user.getRole()==0){//超级管理员
+            model = "all";
+        }else if(user.getRole()==1){//管理员
+            model = "mydata";
+        }else{
+            return Result.fail("无权限访问");
+        }
+        Integer uid = model.equals("mydata")?user.getId():0;
+        List<MenuSubtitleBean> menuList = menuDataService.getMenuList(uid,model);
         Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
         for(MenuSubtitleBean menu : menuList){
             if(map.get(menu.getParent()) == null){
