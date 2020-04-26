@@ -6,6 +6,7 @@ import com.cennavi.tp.service.ContentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by 姚文帅 on 2020/4/17 14:50.
@@ -38,6 +39,12 @@ public class ContentServiceImpl implements ContentService {
     public ContentBean getItemById(int id){
         ContentBean contentBean = contentDao.getItemById(id);
         return contentBean;
+    }
+
+    @Override
+    public List<ContentBean> getContentsByTags(String tags) {
+        List<ContentBean> contentBeanList = contentDao.getContentsByTags(tags);
+        return contentBeanList;
     }
 
 }

@@ -32,7 +32,6 @@ public class UserinfoDaoImpl extends BaseDaoImpl<UserinfoBean> implements Userin
         return jdbcTemplate.queryForObject(sql,Integer.class);
     }
 
-
     @Override
     public UserinfoBean getUserById(Integer id) {
         String sql = "select * from userinfo where id = "+id;
