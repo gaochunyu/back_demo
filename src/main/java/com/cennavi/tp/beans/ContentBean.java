@@ -22,6 +22,16 @@ public class ContentBean {
     private String create_time;  // 创建时间
     private int uid;
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @IgnoreColumn("username")
+    private String username;//创建者
 
     public int getId() {
         return id;

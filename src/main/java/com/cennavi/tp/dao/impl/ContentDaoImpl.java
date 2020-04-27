@@ -1,6 +1,5 @@
 package com.cennavi.tp.dao.impl;
 import com.cennavi.tp.beans.ContentBean;
-import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.ContentDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Repository;
 //import java.sql.SQLException;
 //import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 //import java.util.Objects;
 
 
@@ -76,7 +76,8 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
 
     @Override
     public List<ContentBean> getContentsByTags(String tags) {
-        String sql = "select title,tags,create_time,sub_title,uid from content where tags like '%"+tags+"%'";
+        String sql = "select c.id, c.title,c.tags,c.create_time,c.sub_title,c.uid,u.username username from content c inner" +
+                " join userinfo u on c.uid = u.id where tags like '%"+tags+"%'";
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ContentBean.class));
 
     };
