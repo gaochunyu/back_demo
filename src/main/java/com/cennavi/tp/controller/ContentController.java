@@ -20,6 +20,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 姚文帅 on 2020/4/17 14:23.
@@ -335,13 +336,11 @@ public class ContentController {
     @ResponseBody
     @RequestMapping("/searchContent")
     public ResultModel searchContent(String tags){
-        JSONObject json = new JSONObject();
         try {
             List<ContentBean> contentBeanList = contentService.getContentsByTags(tags);
             return Result.success("检索成功",contentBeanList);
         } catch (Exception e) {
             e.printStackTrace();
-            json = JsonUtils.packJsonErr(e.getMessage());
             return Result.fail("检索异常");
 
         }
