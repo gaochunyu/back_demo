@@ -36,7 +36,7 @@ public class ContentController {
     @Autowired
     private MenuDataService menuDataService;
 
-    @Value("${spring.datasource.file_path}")
+    @Value("${file_path}")
     private String fileSavePath;
 
 

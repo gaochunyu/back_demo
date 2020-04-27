@@ -7,3 +7,4 @@ spring:
     jdbc-url: jdbc:postgresql://192.168.154.64:21191/study_map_tool?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&rewriteBatchedStatements=true
     username: postgres
     password: sjgt_2020
+file_path: /home/data/test/
