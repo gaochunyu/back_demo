@@ -121,6 +121,8 @@ public class ContentController {
             //
             if(autoSave.equals("auto")) {
                 int changeNumber1 = menuDataService.updateMenuStatus(contentId, 0);
+            }else{
+                int changeNumber1 = menuDataService.updateMenuStatus(contentId, 1);
             }
 
             if(changeNumber == 1) {
@@ -181,6 +183,8 @@ public class ContentController {
             }
             if(autoSave.equals("auto")) {
                 menuDataService.updateMenuStatus(id, 0);
+            }else{
+                menuDataService.updateMenuStatus(id, 1);
             }
             contentService.updateItemById(id, contentBean);
             return Result.success("成功更新一条数据", contentBean);
