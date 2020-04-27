@@ -10,6 +10,7 @@ import com.cennavi.tp.service.ContentService;
 import com.cennavi.tp.service.MenuDataService;
 import com.cennavi.tp.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,9 @@ public class ContentController {
     private ContentService contentService;
     @Autowired
     private MenuDataService menuDataService;
+
+    @Value("${spring.datasource.file_path}")
+    private String fileSavePath;
 
 
     // 新增 or 更新数据
@@ -90,9 +94,19 @@ public class ContentController {
                 if(!file.isEmpty()){
                     String fileName = file.getOriginalFilename();
 
+                    // 创建文件夹    E://test
+
+                    String rootPath = fileSavePath;
+                    File test = new File(rootPath + "/" + String.valueOf(id));
+
+                    if (!test.getParentFile().exists()) {
+                        // 判断 test 文件夹是否存在，如果不存在就新建
+                        test.getParentFile().mkdir();
+                    }
+
 
                     // 拼接文件从存放的路径，创建id文件夹，保存对应的文件进去
-                    String path = "E:/test/"+ String.valueOf(id);
+                    String path = fileSavePath + String.valueOf(id);
                     File dest = new File(path + "/" + fileName);
 
                     if (!dest.getParentFile().exists()) {
@@ -103,7 +117,7 @@ public class ContentController {
                     try {
                         file.transferTo(dest); //保存文件
                         // 文件保存成功之后，将文件路径保存到 file 字段下面
-                        contentBean.setFile(path + "/" + fileName);
+                        contentBean.setFile(String.valueOf(id) + "/" + fileName);
                     } catch (IllegalStateException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -153,9 +167,19 @@ public class ContentController {
                 // 当文件不为空的时候进行文件的存储
                 if(!file.isEmpty()){
                     String fileName = file.getOriginalFilename();
+                    // 创建文件夹    E://test
+
+                    String rootPath = fileSavePath;
+                    File test = new File(rootPath + "/" + String.valueOf(id));
+
+                    if (!test.getParentFile().exists()) {
+                        // 判断 test 文件夹是否存在，如果不存在就新建
+                        test.getParentFile().mkdir();
+                    }
+
 
                     // 拼接文件从存放的路径，拼接文件创建时间和文件夹
-                    String path = "E:/test/"+ id;
+                    String path = fileSavePath + id;
                     File dest = new File(path + "/" + fileName);
                     // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
                     File unique = new File(path);
@@ -168,7 +192,7 @@ public class ContentController {
                     try {
                         file.transferTo(dest); //保存文件
                         // 文件保存成功之后，将文件路径保存到 file 字段下面
-                        contentBean.setFile(path + "/" + fileName);
+                        contentBean.setFile(String.valueOf(id) + "/" + fileName);
                     } catch (IllegalStateException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -199,32 +223,7 @@ public class ContentController {
 
 
 
-    // 3. 删除一条数据(根据id删除一条数据)
-    @ResponseBody
-    @RequestMapping(value = "/deleteItemById", method = RequestMethod.POST)
-    public ResultModel deleteItemById(@RequestParam(value = "id") int id,HttpServletRequest request) {
-        JSONObject json = new JSONObject();
-        try {
-            MenuSubtitleBean menu = menuDataService.getMenuSubtitleBeanById(id);
-            if(menu==null){
-                return Result.fail("无效的id");
-            }
-            if(menu.getStatus()==2){
-                return Result.fail("该内容已发布，不能删除");
-            }
-            ContentBean contentBean =  contentService.getItemById(id);
-            contentService.deleteItemById(id);
-            menuDataService.deleteMenuSubtitleBeanById(id,request);
-            return Result.success("成功删除一条数据,删除的数据是", contentBean);
-        } catch (Exception e) {
-            e.printStackTrace();
-            json = JsonUtils.packJsonErr(e.getMessage());
-            return Result.fail("删除数据失败", JsonUtils.objectToJson(json,new String[]{}));
-        }
-    }
-
-
-    // 4. 查找数据：根据id获取一条表数据  RequestParam 默认参数是必填
+    // 3. 查找数据：根据id获取一条表数据  RequestParam 默认参数是必填
     @ResponseBody
     @PostMapping("/getItemById")
     public ResultModel getItemById(@RequestParam(value = "id") int id) {
@@ -232,11 +231,10 @@ public class ContentController {
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean =  contentService.getItemById(id);
-            if(contentBean!=null){
+            if(contentBean != null) {
                 String content = contentBean.getContent().replace("''","'");
                 contentBean.setContent(content);
-            }
-            if(contentBean != null) {
+                contentBean.setFile(fileSavePath + contentBean.getFile());
                 return Result.success("成功找到一条数据", contentBean);
             } else {
                 return Result.success("没有找到对应id的数据", null);
