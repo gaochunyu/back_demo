@@ -157,7 +157,7 @@ public class ContentController {
     private ResultModel updateItem(int id, String title, String subTitle, String content, String tags,String autoSave, MultipartFile file,int uid){
         JSONObject json = new JSONObject();
         try {
-            ContentBean contentBean = new ContentBean();
+            ContentBean contentBean = contentService.getItemById(id);//new ContentBean();
             contentBean.setTitle(title);
             contentBean.setSub_title(subTitle);
             contentBean.setContent(content);
@@ -205,6 +205,9 @@ public class ContentController {
 
                     }
                 }
+            }else{
+                //删除逻辑
+//                contentBean.setFile("");
             }
             if(autoSave.equals("auto")) {
                 menuDataService.updateMenuStatus(id, 0);

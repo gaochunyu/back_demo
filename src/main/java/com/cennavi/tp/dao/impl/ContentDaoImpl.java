@@ -52,26 +52,12 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
 
     // 修改某条数据
     public void updateItemById(int id, ContentBean contentBean){
-        if(contentBean.getSub_title() != null) {
-            String sql = "update content set sub_title='"+contentBean.getSub_title() + "' where id = " + id;
+        String sql = "update content set sub_title='"+contentBean.getSub_title() +
+                "', content='"+contentBean.getContent() +
+                "', file='"+contentBean.getFile() +
+                "', tags='"+contentBean.getTags() +
+                "' where id = "+contentBean.getId();
             jdbcTemplate.update(sql);
-        }
-        if(contentBean.getContent() != null) {
-            String sql = "update content set content='"+contentBean.getContent() + "' where id = " + id;
-            jdbcTemplate.update(sql);
-
-        }
-        if(contentBean.getTags() != null) {
-            String sql = "update content set tags='"+contentBean.getTags() + "' where id = " + id;
-            jdbcTemplate.update(sql);
-
-        }
-        if(contentBean.getFile() != null) {
-            String sql = "update content set file='"+contentBean.getFile() + "' where id = " + id;
-            jdbcTemplate.update(sql);
-
-        }
-
     }
 
     @Override
