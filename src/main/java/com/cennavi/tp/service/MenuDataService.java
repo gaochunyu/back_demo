@@ -67,5 +67,19 @@ public interface MenuDataService {
 
     // 更新菜单表的状态信息
     int updateMenuStatus(int id, int status);
+
+    /**
+     * 获取状态类型列表
+     * @return
+     */
+    List<MenuSubtitleBean> getCategoryList();
+
+    /**
+     * 获取类型树
+     * @param menuSubtitleBeans
+     * @param myMap
+     * @return
+     */
+    List getCategoryTree(List<MenuSubtitleBean> menuSubtitleBeans, Map<Integer, List<MenuSubtitleBean>> myMap);
 }
 

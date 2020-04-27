@@ -34,24 +34,41 @@ public class MenuDataController {
     @ResponseBody
     @RequestMapping("/getMenuList")
     public ResultModel getMenuList(String model,HttpServletRequest request){
-        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
-        if(user==null)return Result.buildUnLogin();
-        Integer uid = model.equals("mydata")?user.getId():0;
-        List<MenuSubtitleBean> menuList = menuDataService.getMenuList(uid,model);
-        Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
-        for(MenuSubtitleBean menu : menuList){
-            if(map.get(menu.getParent()) == null){
-                List<MenuSubtitleBean> mList = new ArrayList<>();
-                mList.add(menu);
-                map.put(menu.getParent(),mList);
-            }else{
-                List<MenuSubtitleBean> mList = map.get(menu.getParent());
-                mList.add(menu);
-                map.put(menu.getParent(),mList);
-            }
-        }
         try{
-            List list = menuDataService.getMenuTree(menuDataService.getParentMenuListByIndex(0),map);
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+            if(user==null)return Result.buildUnLogin();
+            List list;
+            if(model.equals("mydata")){
+                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(user.getId(),model);
+                Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
+                for(MenuSubtitleBean menu : menuList){
+                    if(map.get(menu.getStatus()) == null){
+                        List<MenuSubtitleBean> mList = new ArrayList<>();
+                        mList.add(menu);
+                        map.put(menu.getStatus(),mList);
+                    }else{
+                        List<MenuSubtitleBean> mList = map.get(menu.getStatus());
+                        mList.add(menu);
+                        map.put(menu.getStatus(),mList);
+                    }
+                }
+                list = menuDataService.getCategoryTree(menuDataService.getCategoryList(),map);
+            }else{
+                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(0,model);
+                Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
+                for(MenuSubtitleBean menu : menuList){
+                    if(map.get(menu.getParent()) == null){
+                        List<MenuSubtitleBean> mList = new ArrayList<>();
+                        mList.add(menu);
+                        map.put(menu.getParent(),mList);
+                    }else{
+                        List<MenuSubtitleBean> mList = map.get(menu.getParent());
+                        mList.add(menu);
+                        map.put(menu.getParent(),mList);
+                    }
+                }
+                list = menuDataService.getMenuTree(menuDataService.getParentMenuListByIndex(0),map);
+            }
             if(list == null && list.size() == 0){
                 return Result.fail("暂无数据",new ArrayList<>()); //1000
             }else{
@@ -162,11 +179,7 @@ public class MenuDataController {
             String format = "yyyy-MM-dd HH:mm:ss";
             String time = MyDateUtils.format(new Date(),format);
             menuSubtitleBean.setCreateTime(time);
-            if(user.getRole()==0){//超级管理员
-                menuSubtitleBean.setStatus(2);//已发布
-            }else if(user.getRole()==1){//管理员
-                menuSubtitleBean.setStatus(1);//待审核
-            }
+            menuSubtitleBean.setStatus(0);//编辑中
             menuDataService.addMenuSubtitleBean(menuSubtitleBean);
             return Result.success("新增成功",1);
         }catch (Exception e){

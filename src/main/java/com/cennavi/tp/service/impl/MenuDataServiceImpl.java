@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class MenuDataServiceImpl implements MenuDataService {
@@ -128,4 +125,40 @@ public class MenuDataServiceImpl implements MenuDataService {
         return menuDataDao.updateMenuStatus(id, status);
     }
 
+    @Override
+    public List<MenuSubtitleBean> getCategoryList(){
+        String[] titles = {"录入中","待审核","已通过","被拒绝",};
+        List<MenuSubtitleBean> list = new ArrayList<>();
+        for(int i=0;i<titles.length;i++){
+            String info = titles[i];
+            MenuSubtitleBean menu = new MenuSubtitleBean();
+            menu.setId(i);
+            menu.setUid(0);
+            menu.setName(info);
+            menu.setParent(0);
+            menu.setSort(0);
+            menu.setStatus(0);
+            list.add(menu);
+        }
+        return list;
+    }
+
+    @Override
+    public List getCategoryTree(List<MenuSubtitleBean> menuSubtitleBeans, Map<Integer, List<MenuSubtitleBean>> myMap) {
+        List<Map<String,Object>> list = new LinkedList<>();
+        menuSubtitleBeans.forEach(menu -> {
+            if(menu != null){
+                List<MenuSubtitleBean> menuList = myMap.get(menu.getId());
+                Map<String,Object> map = new HashMap<>();
+                map.put("id",menu.getId());
+                map.put("name",menu.getName());
+                map.put("status",menu.getStatus());
+                if(menuList != null && menuList.size()!=0){
+                    map.put("children",getCategoryTree(menuList,myMap));
+                }
+                list.add(map);
+            }
+        });
+        return list;
+    }
 }
