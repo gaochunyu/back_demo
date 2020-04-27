@@ -163,10 +163,13 @@ public class ContentController {
             contentBean.setContent(content);
             contentBean.setTags(tags);
             contentBean.setUid(uid);
+
+
             if(file != null){
                 // 当文件不为空的时候进行文件的存储
+                String fileName = file.getOriginalFilename();
                 if(!file.isEmpty()){
-                    String fileName = file.getOriginalFilename();
+
                     // 创建文件夹    E://test
 
                     String rootPath = fileSavePath;
@@ -184,6 +187,7 @@ public class ContentController {
                     // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
                     File unique = new File(path);
                     deleteFile(unique);
+
                     if (!dest.getParentFile().exists()) {
                         //判断文件父目录是否存在
                         dest.getParentFile().mkdir();
@@ -207,7 +211,14 @@ public class ContentController {
                 }
             }else{
                 //删除逻辑
-//                contentBean.setFile("");
+                String path = fileSavePath + id;
+                File dest = new File(path + "/" + 1111);
+                // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
+                File unique = new File(path);
+                deleteFile(unique);
+
+                contentBean.setFile("");
+
             }
             if(autoSave.equals("auto")) {
                 menuDataService.updateMenuStatus(id, 0);
