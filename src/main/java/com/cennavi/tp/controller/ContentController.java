@@ -58,10 +58,10 @@ public class ContentController {
             UserinfoBean user = (UserinfoBean) obj;
             if(contentBean1 != null) {
                 // 更新
-                return this.updateItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
+                return updateItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
             } else {
                 // 新增
-                return this.addItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
+                return addItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -186,7 +186,11 @@ public class ContentController {
                     File dest = new File(path + "/" + fileName);
                     // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
                     File unique = new File(path);
-                    deleteFile(unique);
+                    try{
+                        deleteFile(unique);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                     if (!dest.getParentFile().exists()) {
                         //判断文件父目录是否存在
