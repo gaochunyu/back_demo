@@ -63,10 +63,9 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
     @Override
     public List<ContentBean> getContentsByTags(String tags) {
         String sql = "select c.id, c.title,c.tags,c.create_time,c.sub_title,c.uid,u.username username from content c inner" +
-                " join userinfo u on c.uid = u.id inner join menu m on c.id = m.id and m.status = 2 where tags like '%"+tags+"%'";
+                " join userinfo u on c.uid = u.id inner join menu m on c.id = m.id and m.status = 2 where c.tags like '%"+tags+"%'";
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ContentBean.class));
 
     };
-
 
 }
