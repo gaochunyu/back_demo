@@ -5,7 +5,9 @@ import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.UserinfoService;
 import com.cennavi.tp.utils.MyDateUtils;
+import com.wf.captcha.ArithmeticCaptcha;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/userinfo")
@@ -34,6 +37,21 @@ public class UserinfoController {
     @GetMapping(value = "/login",produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultModel login(String username, String password, HttpServletRequest request) {
         return userService.login(username,password,request);
+    }
+
+    @GetMapping(value = "/code")
+    public ResponseEntity<Object> getCode(HttpServletRequest request){
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
+        // 几位数运算，默认是两位
+        captcha.setLen(2);
+        // 获取运算的结果
+        String result = captcha.text();
+        // 验证码信息
+        Map<String,Object> imgResult = new HashMap<String,Object>(2){{
+            put("img", captcha.toBase64());
+            put("uuid", result);
+        }};
+        return ResponseEntity.ok(imgResult);
     }
 
     /**
