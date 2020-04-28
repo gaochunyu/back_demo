@@ -24,7 +24,12 @@ public class UserinfoServiceImpl implements UserinfoService {
     private LoginStatusService loginStatusService;
 
     @Override
-    public ResultModel login(String username, String password,HttpServletRequest request) {
+    public ResultModel login(String username, String password,String code,HttpServletRequest request) {
+        Object obj = request.getSession().getAttribute("code");
+        String saveCode = (String) request.getSession().getAttribute("code");
+        if(!code.equals(saveCode)){
+            return Result.fail("验证码不正确");
+        }
         List<UserinfoBean> list = userinfoDao.login(username);
         if(list.isEmpty()){
             return Result.fail("用户名不存在");

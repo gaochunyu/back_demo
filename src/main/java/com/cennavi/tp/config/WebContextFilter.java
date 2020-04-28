@@ -2,6 +2,7 @@ package com.cennavi.tp.config;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -18,18 +19,14 @@ public class WebContextFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "Authentication");
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        response.setHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));//支持跨域请求
+        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Credentials", "true");//是否支持cookie跨域
+        response.setHeader("Access-Control-Allow-Headers", "Authorization,Origin, X-Requested-With, Content-Type, Accept,Access-Token");//Origin, X-Requested-With, Content-Type, Accept,Access-Token
 
-
-        httpServletResponse.setHeader("Access-Control-Allow-Headers", "content-type, accept");
-        httpServletResponse.setHeader("Access-Control-Allow-Methods", "POST");
-        httpServletResponse.setStatus(200);
-        httpServletResponse.setContentType("text/plain;charset=utf-8");
-        httpServletResponse.setCharacterEncoding("utf-8");
-
-        filterChain.doFilter(servletRequest, httpServletResponse);
+        filterChain.doFilter(servletRequest, response);
     }
 
     @Override

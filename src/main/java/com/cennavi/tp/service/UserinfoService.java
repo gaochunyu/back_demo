@@ -13,7 +13,7 @@ public interface UserinfoService {
      * @param username
      * @return
      */
-    ResultModel login(String username, String password, HttpServletRequest request);
+    ResultModel login(String username, String password, String code, HttpServletRequest request);
 
     /**
      * 分页获取用户列表

@@ -6,19 +6,21 @@ import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.UserinfoService;
 import com.cennavi.tp.utils.MyDateUtils;
 import com.wf.captcha.ArithmeticCaptcha;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/userinfo")
@@ -35,21 +37,29 @@ public class UserinfoController {
      */
     @ResponseBody
     @GetMapping(value = "/login",produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultModel login(String username, String password, HttpServletRequest request) {
-        return userService.login(username,password,request);
+    public ResultModel login(String username, String password,String code,HttpSession session, HttpServletRequest request) {
+        if(StringUtils.isBlank(username))
+            return Result.fail("用户名不能为空");
+        else if(StringUtils.isBlank(password))
+            return Result.fail("密码不能为空");
+        else if(StringUtils.isBlank(code))
+            return Result.fail("验证码不能为空");
+        else if(request.getSession().getAttribute("code")==null)
+            return Result.fail("验证码已失效");
+        return userService.login(username,password,code,request);
     }
 
     @GetMapping(value = "/code")
-    public ResponseEntity<Object> getCode(HttpServletRequest request){
+    public ResponseEntity<Object> getCode(HttpSession session,HttpServletRequest request){
         ArithmeticCaptcha captcha = new ArithmeticCaptcha(111, 36);
         // 几位数运算，默认是两位
         captcha.setLen(2);
         // 获取运算的结果
         String result = captcha.text();
+        session.setAttribute("code",result);
         // 验证码信息
         Map<String,Object> imgResult = new HashMap<String,Object>(2){{
             put("img", captcha.toBase64());
-            put("uuid", result);
         }};
         return ResponseEntity.ok(imgResult);
     }
