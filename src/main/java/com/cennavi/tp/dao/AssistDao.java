@@ -19,6 +19,9 @@ public interface AssistDao extends BaseDao<AssistBean> {
     // 删除数据
     Integer deleteAssistItem(Integer id);
 
+    // 获取一条数据
+    AssistBean getAssistItemById(Integer id);
+
     // 获取列表数据
 //    List<AssistBean> getAssistItemList(Integer page);
 

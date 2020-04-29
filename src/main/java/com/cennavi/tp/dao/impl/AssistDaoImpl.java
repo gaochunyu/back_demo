@@ -1,7 +1,6 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.AssistBean;
-import com.cennavi.tp.beans.MenuSubtitleBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.AssistDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +66,14 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         int i = jdbcTemplate.update(sql);
         return i;
     }
+
+
+    // 根据 id 查询某条数据
+    public AssistBean getAssistItemById(Integer id){
+        String sql = "select * from assist where id = "+id;
+        List<AssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
+        return list.size()==0?null:list.get(0);
+    };
 
 //    @Override
 //    public List<AssistBean> getAssistItemList(Integer page) {
