@@ -1,8 +1,5 @@
 package com.cennavi.tp.controller;
 
-import com.cennavi.tp.beans.AssistBean;
-import com.cennavi.tp.beans.MenuSubtitleBean;
-import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.AssistService;
@@ -11,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by 姚文帅 on 2020/4/29 14:30. 帮助接口
@@ -71,40 +66,9 @@ public class AssistController {
      */
     @ResponseBody
     @RequestMapping("/deleteItemById")
-
     // 请求帮助页的列表数据
     public ResultModel deleteItemById(int id, HttpServletRequest request){
-        try {
-
-            return Result.success("成功获取数据",null);
-
-
-        } catch (Exception e){
-            e.getStackTrace();
-            return Result.build500("出现异常");
-        }
-
-    }
-
-    /**
-     * 更新单个item的信息
-     * @Param id 本条信息的id
-     * @return
-     */
-    @ResponseBody
-    @RequestMapping("/updateItemById")
-    // 请求帮助页的列表数据
-    public ResultModel updateItemById(int id, HttpServletRequest request){
-        try {
-
-            return Result.success("成功获取数据",null);
-
-
-        } catch (Exception e){
-            e.getStackTrace();
-            return Result.build500("出现异常");
-        }
-
+        return assistService.deleteAssistItemById(id);
     }
 
 
@@ -119,21 +83,16 @@ public class AssistController {
     // 请求帮助页的列表数据
     public ResultModel getItemById(int id, HttpServletRequest request){
         try {
-
-            return Result.success("成功获取数据",null);
-
-
+            if(assistService.getAssistItemById(id) != null) {
+                return Result.success("成功获取数据",null);
+            } else {
+                return Result.success("没有获取到数据",null);
+            }
         } catch (Exception e){
             e.getStackTrace();
             return Result.build500("出现异常");
         }
-
     }
-
-
-
-
-
 
 
 }

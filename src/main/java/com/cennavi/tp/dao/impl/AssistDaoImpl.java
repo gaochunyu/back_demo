@@ -1,6 +1,7 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.AssistBean;
+import com.cennavi.tp.beans.MenuSubtitleBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.AssistDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,24 +74,28 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         String sql = "select * from assist where id = "+id;
         List<AssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
         return list.size()==0?null:list.get(0);
-    };
+    }
 
-//    @Override
-//    public List<AssistBean> getAssistItemList(Integer page) {
-//        String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,u.username " +
-//                "from menu m inner join userinfo u on m.uid = u.id ";
-////        if("visit".equals(model)){
-////            sql+="and m.status = 2 ";
-////        }else if("verify".equals(model)){
-////            sql+="and m.status = 1 ";
-////        }else if("mydata".equals(model)){
-////            sql+="and m.uid = "+uid;
-////        }
-////        sql+=" order by sort asc ";
-////
-//        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(MenuSubtitleBean.class));
-//    }
+    @Override
+   public List<AssistBean> getAssistList(Integer page)  {
+//        查询第m条到第n条记录：
+        String sql="select top n-m+1 * from test where (id not in(select top m-1 id from test))";
+//        Integer start = (page-1) * 10;
+//        Integer end = page * 10;
+//        Integer first = end - start +1;
 
+//        String sql = "select top "+ first + " * from assist where (id not in(select top m-1 id from assist))";
+//        if("visit".equals(model)){
+//            sql+="and m.status = 2 ";
+//        }else if("verify".equals(model)){
+//            sql+="and m.status = 1 ";
+//        }else if("mydata".equals(model)){
+//            sql+="and m.uid = "+uid;
+//        }
+//        sql+=" order by sort asc ";
+
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
+    }
 
 
 }

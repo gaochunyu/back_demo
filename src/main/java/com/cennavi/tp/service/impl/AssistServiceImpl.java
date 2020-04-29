@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,12 +67,27 @@ public class AssistServiceImpl implements AssistService {
     }
 
     @Override
-    public Integer deleteAssistItem(Integer id) {
-        return assistDao.deleteAssistItem(id);
+    public ResultModel deleteAssistItemById(Integer id) {
+        try{
+            if(assistDao.deleteAssistItem(id) == 1) {
+                return Result.success("成功删除数据",null);
+            } else {
+                return Result.fail("删除数据异常",null);
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+
     }
 
     @Override
     public AssistBean getAssistItemById(Integer id) {
         return assistDao.getAssistItemById(id);
+    }
+
+    @Override
+    public List<AssistBean> getAssistList(Integer page) {
+        return assistDao.getAssistList(page);
     }
 }

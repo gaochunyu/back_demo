@@ -23,6 +23,8 @@ public interface AssistDao extends BaseDao<AssistBean> {
     AssistBean getAssistItemById(Integer id);
 
     // 获取列表数据
-//    List<AssistBean> getAssistItemList(Integer page);
+    List<AssistBean> getAssistList(Integer page);
+
+
 
 }
