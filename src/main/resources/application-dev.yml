@@ -1,5 +1,7 @@
 server:
   port: 9085
+  servlet:
+    context-path: /study_map_tool_server
 #postgresql
 spring:
   datasource:

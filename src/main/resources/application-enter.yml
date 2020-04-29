@@ -1,0 +1,12 @@
+server:
+  port: 8521
+  servlet:
+    context-path: /study_map_tool_server_enter
+#postgresql
+spring:
+  datasource:
+    driver-class-name:  org.postgresql.Driver
+    jdbc-url: jdbc:postgresql://192.168.154.29:21191/study_map_tool?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&rewriteBatchedStatements=true
+    username: postgres
+    password: sjgt_2020
+file_path: /data/cennavi/service/tp_files/map_tool/
