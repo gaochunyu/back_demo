@@ -18,5 +18,14 @@ public interface ResourcesService {
 
     List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags);
 
-    public  Boolean deleteResource(Integer id);
+    Boolean deleteResource(Integer id);
+
+    List<ResourcesBean> getTopFiveByCreateTime();
+
+    List<ResourcesBean> getTopFiveByViews();
+//    修改资料的状态
+    Boolean updateResourcesStatus(Integer id,Integer status);
+//    修改资料的views
+    Boolean updateResourcesViews(Integer id);
+
 }

@@ -35,8 +35,7 @@ public class ResourcesController {
     @RequestMapping(value = "/addResources",method = RequestMethod.POST)
     public ResultModel addResources(Integer uid, String name, String tags, MultipartFile file, String description, String link, Integer type){
         try {
-            resourcesService.addResourcesItem( uid, name, tags, file, description, link, type);
-            return Result.success("添加成功");
+            return resourcesService.addResourcesItem( uid, name, tags, file, description, link, type);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("添加失败");
@@ -93,7 +92,7 @@ public class ResourcesController {
     }
 
     /**
-     * 根据删除资料
+     * 根据id删除资料
      * @param id
      * @return
      */
@@ -103,13 +102,68 @@ public class ResourcesController {
         try {
              Boolean flag =  resourcesService.deleteResource(id);
              if(flag){
-                 return Result.success("删除异常");
+                 return Result.success("删除成功");
              }else{
                  return Result.fail("删除失败");
              }
         } catch (Exception e) {
             e.printStackTrace();
             return Result.success("删除异常");
+        }
+    }
+    /**
+     * 根据id获取资料
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getResourceById")
+    public ResultModel getResourceById(Integer id){
+        try {
+            return Result.success("查询成功",resourcesService.getResourcesById(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.success("查询异常");
+        }
+    }
+
+    /**
+     * 根据创建时间获取top5
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getTopFiveByCreateTime")
+    public ResultModel getTopFiveByCreateTime(){
+        try {
+            return Result.fail("查询成功",resourcesService.getTopFiveByCreateTime());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("查询异常");
+        }
+    }
+    /**
+     * 根据点击量获取top5
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getTopFiveByViews")
+    public ResultModel getTopFiveByViews(){
+        try {
+            return Result.fail("查询成功",resourcesService.getTopFiveByViews());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("查询异常");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/downLoadFile")
+    public ResultModel downLoadFile(){
+        try {
+            return Result.success("下载成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.success("下载失败");
         }
     }
 

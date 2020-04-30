@@ -6,6 +6,7 @@ import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.ResourcesDao;
 import com.cennavi.tp.service.ResourcesService;
 import com.cennavi.tp.utils.MyDateUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Date;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ResourcesServiceImpl implements ResourcesService {
@@ -30,6 +33,7 @@ public class ResourcesServiceImpl implements ResourcesService {
     @Override
     public ResourcesBean getResourcesById(Integer id){
         ResourcesBean resourcesBean = resourcesDao.getResourcesById(id);
+
         return resourcesBean;
     }
 
@@ -61,7 +65,6 @@ public class ResourcesServiceImpl implements ResourcesService {
                         String time2 = MyDateUtils.format(new Date(),format2);
                         String path = fileSavePath+time2;
                         resourcesBean.setFile(path+"/"+fileName);
-                        resourcesDao.addResourcesItem(resourcesBean);
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -73,10 +76,10 @@ public class ResourcesServiceImpl implements ResourcesService {
 
                 }
             }
-            return Result.fail("添加成功");
-
-
-//            resourcesDao.save(resourcesBean);
+            int id = resourcesDao.addResourcesItem(resourcesBean);
+            Map<String,Object> map = new HashMap<>();
+            map.put("id",id);
+            return Result.success("添加成功",map);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("添加异常");
@@ -147,8 +150,13 @@ public class ResourcesServiceImpl implements ResourcesService {
     @Override
     public List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags) {
         int start = (page-1)*pageSize;
+        if(StringUtils.isNotBlank(tags)){//判断检索条件是否为空
+            return resourcesDao.getResourcesList(start,pageSize);
+        }else{
+            return resourcesDao.getResourcesListByTags(start,pageSize,tags);
 
-        return resourcesDao.getResourcesList(start,pageSize,tags);
+        }
+
     }
 
     @Override
@@ -160,6 +168,28 @@ public class ResourcesServiceImpl implements ResourcesService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<ResourcesBean> getTopFiveByCreateTime() {
+        return resourcesDao.getTopFiveByCreateTime();
+    }
+
+    @Override
+    public List<ResourcesBean> getTopFiveByViews() {
+        return resourcesDao.getTopFiveByViews();
+    }
+
+    @Override
+    public Boolean updateResourcesStatus(Integer id,Integer status) {
+
+        return resourcesDao.updateResourcesStatus(id,status);
+    }
+
+    @Override
+    public Boolean updateResourcesViews(Integer id) {
+
+        return resourcesDao.updateResourcesViews(id);
     }
 
 

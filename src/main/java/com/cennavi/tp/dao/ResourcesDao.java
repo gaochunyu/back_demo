@@ -13,7 +13,17 @@ public interface ResourcesDao  extends BaseDao<ResourcesBean> {
     int updateResourcesItem(ResourcesBean resourcesBean);
 
     int getResourcesCount();
+    
+    List<ResourcesBean> getResourcesList(Integer start, Integer pageSize);
 
-    List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags);
+    List<ResourcesBean> getResourcesListByTags(int start, Integer pageSize, String tags);
+
+    List<ResourcesBean> getTopFiveByCreateTime();
+    
+    List<ResourcesBean> getTopFiveByViews();
+
+    Boolean updateResourcesStatus(Integer id,Integer status);
+
+    Boolean updateResourcesViews(Integer id);
 
 }
