@@ -1,17 +1,21 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.AssistBean;
-import com.cennavi.tp.beans.MenuSubtitleBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.AssistDao;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,25 +81,71 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
     }
 
     @Override
-   public List<AssistBean> getAssistList(Integer page)  {
-//        查询第m条到第n条记录：
-        String sql="select top n-m+1 * from test where (id not in(select top m-1 id from test))";
-//        Integer start = (page-1) * 10;
-//        Integer end = page * 10;
-//        Integer first = end - start +1;
+    // 分页查询
+    public List<AssistBean> getAssistList(Integer page, Integer pageSize, Integer pageIndex)  {
+//        SELECT * FROM
+//                (
+//                        SELECT A.*, ROWNUM RN
+//                        FROM (SELECT * FROM TABLE_NAME) A  创建临时表
+//                        WHERE ROWNUM <= 40
+//                )
+//        WHERE RN >= 21
+//        查询记录 21至40的数据记录
+//
+//        页数page pagesize
+//
+//        开始记录值 RN>=(page-1)*pagesize+1
+//
+//        结束记录索引值ROWNUM<=page*pagesize
+//        Integer start = (page-1)*pagesize+1;
+//        Integer end = page*pagesize;
 
-//        String sql = "select top "+ first + " * from assist where (id not in(select top m-1 id from assist))";
-//        if("visit".equals(model)){
-//            sql+="and m.status = 2 ";
-//        }else if("verify".equals(model)){
-//            sql+="and m.status = 1 ";
-//        }else if("mydata".equals(model)){
-//            sql+="and m.uid = "+uid;
-//        }
-//        sql+=" order by sort asc ";
+        String sql = "SELECT * FROM( SELECT ROWNUM NUM, * FROM assist) WHERE NUM >="
+                    + pageIndex + "*" + pageSize + "+1 and num<=(" + pageIndex + "+1)*" + pageSize;
+
+//        String sql="SELECT * FROM (SELECT A.*, ROWNUM RN FROM (SELECT * FROM assist) A WHERE ROWNUM <=" + end +
+//                " ) WHERE RN >=" +start;
 
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
     }
 
+    public Object queryOneColumnForSigetonRow(String sql,Object[] params,Class cla){
+        Object result=null;
+        try{
+            if(params==null||params.length>0){
+                result=jdbcTemplate.queryForObject(sql,params,cla);
+            }else{
+                result=jdbcTemplate.queryForObject(sql,cla);
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return result;
+    }
+
+
+    /**
+     * 查询分页
+     */
+    public List<AssistBean> getAssistList(int page, int pagerow) {
+
+        String rowsql="select count(*) from assist";   //查询总行数sql
+//
+        int pages = 0;   //总页数
+        int rows=(Integer)queryOneColumnForSigetonRow(rowsql, null, Integer.class);  //查询总行数
+        // 判断页数,如果是页大小的整数倍就为rows/pageRow如果不是整数倍就为rows/pageRow+1
+        if (rows % pagerow == 0) {
+            pages = rows / pagerow;
+        } else {
+            pages = rows / pagerow + 1;
+        }
+        Integer start = 0;
+
+
+        String sql = "select * from persons limit 10 offset" + start;
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
+
+
+    }
 
 }
