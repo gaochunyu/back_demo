@@ -1,6 +1,4 @@
 server:
-  servlet:
-    context-path: /study_map_tool
   tomcat:
     min-spare-threads: 20
     max-threads: 300
@@ -11,7 +9,7 @@ spring:
     check-template-location: false
   profiles:
     active: dev
-#设置上传文件大小
+  #璁剧疆涓婁紶鏂囦欢澶у皬
   servlet:
     multipart:
       max-file-size:  -1
