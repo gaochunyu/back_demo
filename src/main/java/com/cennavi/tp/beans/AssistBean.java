@@ -14,7 +14,16 @@ public class AssistBean {
 
     @IgnoreColumn("id")        // 自增型key值
     private int id;
-    private int user_id;       // 用户id
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    private int userId;       // 用户id
     private String question;   // 问题
     private String answer;     // 答案
     private String createTime; // 创建时间
@@ -30,13 +39,6 @@ public class AssistBean {
         this.id = id;
     }
 
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
 
     public String getQuestion() {
         return question;

@@ -4,6 +4,7 @@ import com.cennavi.tp.beans.AssistBean;
 import com.cennavi.tp.common.base.dao.BaseDao;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 姚文帅 on 2020/4/29 14:32.
@@ -23,8 +24,6 @@ public interface AssistDao extends BaseDao<AssistBean> {
     AssistBean getAssistItemById(Integer id);
 
     // 获取列表数据
-    List<AssistBean> getAssistList(Integer page);
-
-
+    Map<String,Object> getAssistList(Integer page, Integer pageSize);
 
 }

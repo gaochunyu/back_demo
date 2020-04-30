@@ -1,13 +1,17 @@
 package com.cennavi.tp.controller;
 
+import com.cennavi.tp.beans.AssistBean;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.AssistService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 姚文帅 on 2020/4/29 14:30. 帮助接口
@@ -16,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/assist")
 public class AssistController {
 
-    @Resource
+    @Autowired
     private AssistService assistService;
 
 
@@ -27,11 +31,13 @@ public class AssistController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getTableList")
+    @RequestMapping("/getAssistTableList")
     // 请求帮助页的列表数据
-    public ResultModel getTableList(int page, HttpServletRequest request){
+    public ResultModel getAssistTableList(int page, int pageSize,HttpServletRequest request){
         try {
-            return Result.success("成功获取数据",null);
+
+            Map<String,Object> list =  assistService.getAssistList(page,pageSize);
+            return Result.success("成功获取数据",list);
 
         } catch (Exception e){
             e.getStackTrace();
@@ -46,15 +52,16 @@ public class AssistController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/addOrUpdateItem", method = RequestMethod.POST)
+    @RequestMapping(value = "/addOrUpdateAssistItem", method = RequestMethod.POST)
     // 请求帮助页的列表数据
-    public ResultModel addOrUpdateItem(@RequestParam(value = "question") String question,
+    public ResultModel addOrUpdateAssistItem(@RequestParam(value = "question") String question,
                                             @RequestParam(value = "answer") String answer,
                                             @RequestParam(value = "category") String category,
                                             int id,
                                             HttpServletRequest request)
     {
-        return assistService.addOrUpdateAssiatantListItem(question, answer,category,id);
+
+        return assistService.addOrUpdateAssiatantListItem(question, answer,category,id,request);
 
     }
 
@@ -65,9 +72,9 @@ public class AssistController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/deleteItemById")
+    @RequestMapping("/deleteAssistItemById")
     // 请求帮助页的列表数据
-    public ResultModel deleteItemById(int id, HttpServletRequest request){
+    public ResultModel deleteAssistItemById(int id, HttpServletRequest request){
         return assistService.deleteAssistItemById(id);
     }
 
@@ -79,12 +86,13 @@ public class AssistController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getItemById")
+    @RequestMapping("/getAssistItemById")
     // 请求帮助页的列表数据
-    public ResultModel getItemById(int id, HttpServletRequest request){
+    public ResultModel getAssistItemById(int id, HttpServletRequest request){
         try {
-            if(assistService.getAssistItemById(id) != null) {
-                return Result.success("成功获取数据",null);
+            AssistBean assistBean = assistService.getAssistItemById(id);
+            if(assistBean!= null) {
+                return Result.success("成功获取数据",assistBean);
             } else {
                 return Result.success("没有获取到数据",null);
             }

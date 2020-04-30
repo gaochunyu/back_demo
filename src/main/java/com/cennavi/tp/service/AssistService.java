@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by 姚文帅 on 2020/4/29 14:31.
@@ -21,7 +22,7 @@ public interface AssistService {
      * @return
      */
 
-    ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id);
+    ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id,HttpServletRequest request);
 
     // 删除数据
     ResultModel deleteAssistItemById(Integer id);
@@ -30,11 +31,11 @@ public interface AssistService {
     AssistBean getAssistItemById(Integer id);
 
     /**
-     * 帮助列表
+     * 帮助列表分页查询数据
      * @Param 分页
      * @return
      */
-    List<AssistBean> getAssistList(Integer page);
+    Map<String,Object> getAssistList(Integer page, Integer pageSize);
 
 
 }

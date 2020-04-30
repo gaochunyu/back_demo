@@ -1,6 +1,7 @@
 package com.cennavi.tp.service.impl;
 
 import com.cennavi.tp.beans.AssistBean;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.AssistDao;
@@ -9,6 +10,7 @@ import com.cennavi.tp.service.AssistService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,16 +24,18 @@ import java.util.Map;
 public class AssistServiceImpl implements AssistService {
 
     @Resource
-    AssistDao assistDao;
+    private AssistDao assistDao;
 
     @Override
-    public ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id) {
+    public ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id, HttpServletRequest request) {
         try{
+            UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
             AssistBean assistBean = new AssistBean();
 
             assistBean.setQuestion(question);
             assistBean.setAnswer(answer);
             assistBean.setCategory(category);
+            assistBean.setUserId(user.getId());
 
             if(id==-1) {
                 // 获取时间戳并转化格式
@@ -39,6 +43,7 @@ public class AssistServiceImpl implements AssistService {
                 Date date = new Date(System.currentTimeMillis());
                 String createTime = formatter.format(date);
                 assistBean.setCreateTime(createTime);
+
 
                 // 如果新增成功，返回新增的id
                 Map<String,Object> map = new HashMap<>();
@@ -86,8 +91,9 @@ public class AssistServiceImpl implements AssistService {
         return assistDao.getAssistItemById(id);
     }
 
+
     @Override
-    public List<AssistBean> getAssistList(Integer page) {
-        return assistDao.getAssistList(page);
+    public Map<String,Object> getAssistList(Integer page, Integer pageSize){
+        return assistDao.getAssistList(page, pageSize);
     }
 }
