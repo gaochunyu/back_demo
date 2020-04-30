@@ -8,3 +8,4 @@ spring:
     username: postgres
     password: sjgt_2020
 file_path: E:/test/
+
