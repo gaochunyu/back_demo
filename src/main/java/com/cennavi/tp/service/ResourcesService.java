@@ -12,7 +12,7 @@ public interface ResourcesService {
 
     ResultModel addResourcesItem(Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type);
 
-    ResultModel updateResourcesItem(Integer id,String name,String tags,MultipartFile file,String description,String link, Integer type);
+    boolean updateResourcesItem(Integer id,Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type);
 
     int getResourcesCount();
 

@@ -42,17 +42,18 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
     }
 
     @Override
-    public int updateResourcesItem(ResourcesBean resourcesBean) {
+    public boolean updateResourcesItem(ResourcesBean resourcesBean) {
         String sql = "update resources set name ='" + resourcesBean.getName()
-                + "', tags = '" + resourcesBean.getTags()
+                + "', uid = " + resourcesBean.getUid()
+                + ", tags = '" + resourcesBean.getTags()
                 + "', file = '" + resourcesBean.getFile()
                 + "', description = '" + resourcesBean.getDescription()
                 + "', link = '" + resourcesBean.getLink()
                 + "', create_time = '" + resourcesBean.getCreate_time()
-                + "', type = '" + resourcesBean.getType()
-                +"'where id =" +resourcesBean.getId();
+                + "', type = " + resourcesBean.getType()
+                +"where id = " +resourcesBean.getId();
         int result = jdbcTemplate.update(sql);
-        return result;
+        return result == 1?true:false;
     }
 
     @Override
@@ -63,27 +64,27 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
 
     @Override
     public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize){
-        String sql = "select * from resources order by create_time desc limit " +pageSize+" offset "+start+"where status = 2";
+        String sql = "select * from resources where status = 2 order by create_time desc limit " +pageSize+" offset "+start;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
     }
 
     @Override
-    public List<ResourcesBean> getResourcesListByTags(int start, Integer pageSize, String tags) {
-        String sql = "select * from resources order by create_time desc limit " +pageSize+" offset "+start+"where status = 2 and tags like '%" +tags +"'%";
+    public List<ResourcesBean> getResourcesListByTags(Integer start, Integer pageSize, String tags) {
+        String sql = "select * from resources where status = 2 and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
 
     }
 
     @Override
     public List<ResourcesBean> getTopFiveByCreateTime(){
-        String sql = "select * from resources order by create_time desc limit 5";
+        String sql = "select * from resources where status = 2 order by create_time desc limit 5";
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
 
     }
 
     @Override
     public List<ResourcesBean> getTopFiveByViews(){
-        String sql = "select * from resources order by views desc limit 5";
+        String sql = "select * from resources where status = 2 order by views desc limit 5";
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
 
     }
@@ -96,8 +97,9 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
     }
 
     @Override
-    public Boolean updateResourcesViews(Integer id) {
-        String sql = "update resources set views = views"+1;
+    public Boolean updateResourcesViews(Integer id,Integer views) {
+
+        String sql = "update resources set views = "+ views +" where id = "+id;
         int result = jdbcTemplate.update(sql);
         return result == 1?true:false;
     }

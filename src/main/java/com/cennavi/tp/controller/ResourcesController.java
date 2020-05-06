@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,15 +57,22 @@ public class ResourcesController {
      */
     @ResponseBody
     @RequestMapping(value = "/updateResources",method = RequestMethod.POST)
-    public ResultModel updateResources(Integer id,String name,String tags,MultipartFile file,String description,String link, Integer type){
+    public ResultModel updateResources(Integer id,Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type){
         try {
-            resourcesService.updateResourcesItem( id, name, tags, file, description, link, type);
+            ResourcesBean resourcesBean = resourcesService.getResourcesById(id);
+            if(resourcesBean == null){
+                return Result.success("id无效");
+            }
+            boolean flag = resourcesService.updateResourcesItem( id, uid, name, tags, file, description, link, type);
+            if(flag){
+                return Result.success("更新成功");
+            }else{
+                return Result.success("更新失败");
 
-            return Result.success("查询成功");
-
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.success("更新异常");
+            return Result.fail("更新异常");
 
         }
     }
@@ -81,9 +90,8 @@ public class ResourcesController {
         try {
             Map<String,Object> map = new HashMap<>();
             List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags);
-            int count = resourcesService.getResourcesCount();
             map.put("list",list);
-            map.put("total",count);
+            map.put("total",list.size());
             return Result.success("查询成功",map);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,6 +128,7 @@ public class ResourcesController {
     @RequestMapping("/getResourceById")
     public ResultModel getResourceById(Integer id){
         try {
+            resourcesService.updateResourcesViews(id);
             return Result.success("查询成功",resourcesService.getResourcesById(id));
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +144,7 @@ public class ResourcesController {
     @RequestMapping("/getTopFiveByCreateTime")
     public ResultModel getTopFiveByCreateTime(){
         try {
-            return Result.fail("查询成功",resourcesService.getTopFiveByCreateTime());
+            return Result.success("查询成功",resourcesService.getTopFiveByCreateTime());
         } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("查询异常");
@@ -156,11 +165,53 @@ public class ResourcesController {
         }
     }
 
+    /**
+     * 下载文件
+     * @param id
+     * @param response
+     * @return
+     * @throws FileNotFoundException
+     */
     @ResponseBody
     @RequestMapping("/downLoadFile")
-    public ResultModel downLoadFile(){
+    public ResultModel downLoadFile(Integer id,HttpServletResponse response) throws FileNotFoundException {
         try {
-            return Result.success("下载成功");
+            ResourcesBean resourcesBean = resourcesService.getResourcesById(id);
+            // 文件的存放路径
+            String filePath = resourcesBean.getFile();
+            File file = new File(filePath);
+            String fileName = file.getName();
+            System.out.println(fileName);
+            // 设置输出的格式
+            response.setContentType("application/octet-stream");
+            response.setCharacterEncoding("UTF-8");
+            response.addHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(fileName,"UTF-8"));
+
+            byte[] buff = new byte[1024];
+            BufferedInputStream bis = null;
+            OutputStream os = null;
+            try {
+                os = response.getOutputStream();
+                bis = new BufferedInputStream(new FileInputStream(new File(filePath)));
+                int i = bis.read(buff);
+                while (i != -1) {
+                    os.write(buff, 0, buff.length);
+                    os.flush();
+                    i = bis.read(buff);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new Exception(e.getMessage());
+            } finally {
+                if (bis != null) {
+                    try {
+                        bis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return Result.success("文件下载成功", null);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.success("下载失败");
