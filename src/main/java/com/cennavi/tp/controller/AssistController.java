@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -100,6 +101,29 @@ public class AssistController {
             e.getStackTrace();
             return Result.build500("出现异常");
         }
+    }
+
+    /**
+     * 修改每条记录的权重信息
+     * @Param id 本条信息的id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/updateAssistItemWeightById",method = RequestMethod.GET )
+    public ResultModel updateAssistItemWeightById(int id, Boolean type, HttpServletRequest request) {
+        try {
+            Integer result =  assistService.updateAssistItemWeightById(id, type);
+
+            if(result == 1) {
+                return Result.success("成功修改数据",null);
+            } else {
+                return Result.success("修改数据失败",null);
+            }
+        } catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+
     }
 
 

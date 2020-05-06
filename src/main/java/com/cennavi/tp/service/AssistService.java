@@ -37,5 +37,11 @@ public interface AssistService {
      */
     Map<String,Object> getAssistList(Integer page, Integer pageSize);
 
+    /**
+     * 根据id根据权重信息
+     * @return
+     */
+    Integer updateAssistItemWeightById (Integer id,Boolean updateType);
+
 
 }

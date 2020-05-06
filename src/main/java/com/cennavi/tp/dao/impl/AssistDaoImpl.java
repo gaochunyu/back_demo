@@ -62,10 +62,9 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         // 文本型字段值两边加引号，日期型两边加#，数字、逻辑两边什么都不用加。
         String sql = "UPDATE assist SET question='"+assistBean.getQuestion()+
                 "',answer='"+assistBean.getAnswer()+
-                "',create_time='"+assistBean.getQuestion()+
                 "',category='"+assistBean.getCategory()+
-                "',weight="+assistBean.getWeight()+
-                " WHERE id="+assistBean.getId();
+                "' WHERE id="+assistBean.getId();
+
         int i = jdbcTemplate.update(sql);
         return i;
     }
@@ -105,7 +104,7 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         }
 
         int startIndex = (page-1) * pageSize;//提取分页开始索引
-        List<AssistBean> list = jdbcTemplate.query("SELECT * FROM assist LIMIT ? OFFSET ?", new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
+        List<AssistBean> list = jdbcTemplate.query("SELECT * FROM assist  ORDER BY id ASC LIMIT ? OFFSET ?", new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
         Map<String,Object> map = new HashMap<>();
         map.put("totalNumber", rows);
@@ -117,4 +116,27 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
 
     }
 
+    @Override
+    public Integer updateAssistItemWeightById(Integer id, Boolean updateType) {
+        // 首先根据id去获取数据库中保存的id
+        try {
+            String querySql =  "select weight from assist where id = "+id;
+            int weight = jdbcTemplate.queryForObject(querySql, null, Integer.class);
+            if(updateType) {
+                weight=weight+1;
+            } else {
+                weight=weight-1;
+            }
+
+            String sql = "UPDATE assist SET weight="+ weight +
+                    " WHERE id="+id;
+
+            int i = jdbcTemplate.update(sql);
+            return i;
+
+        } catch (Exception e){
+            e.getStackTrace();
+            return 0;
+        }
+    }
 }
