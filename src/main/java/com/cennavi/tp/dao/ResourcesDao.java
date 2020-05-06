@@ -10,13 +10,13 @@ public interface ResourcesDao  extends BaseDao<ResourcesBean> {
 
     int addResourcesItem(ResourcesBean resourcesBean);
 
-    int updateResourcesItem(ResourcesBean resourcesBean);
+    boolean updateResourcesItem(ResourcesBean resourcesBean);
 
     int getResourcesCount();
     
     List<ResourcesBean> getResourcesList(Integer start, Integer pageSize);
 
-    List<ResourcesBean> getResourcesListByTags(int start, Integer pageSize, String tags);
+    List<ResourcesBean> getResourcesListByTags(Integer start, Integer pageSize, String tags);
 
     List<ResourcesBean> getTopFiveByCreateTime();
     
@@ -24,6 +24,6 @@ public interface ResourcesDao  extends BaseDao<ResourcesBean> {
 
     Boolean updateResourcesStatus(Integer id,Integer status);
 
-    Boolean updateResourcesViews(Integer id);
+    Boolean updateResourcesViews(Integer id,Integer views);
 
 }
