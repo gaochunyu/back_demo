@@ -52,12 +52,12 @@ public class AssistServiceImpl implements AssistService {
 
             } else {
                 assistBean.setId(id);
+
                 if(assistDao.updateAssistItem(assistBean) == 1) {
                     // 如果更新成功，返回更新成功的id
-                    // 如果新增成功，返回新增的id
                     Map<String,Object> map = new HashMap<>();
-                    map.put("id",assistDao.addAssistItem(assistBean));
-                    return Result.success("成功更新一条数据",id);
+                    map.put("id", id);
+                    return Result.success("成功更新一条数据",map);
                 } else {
                     return Result.success("更新失败",null);
                 }
@@ -96,4 +96,11 @@ public class AssistServiceImpl implements AssistService {
     public Map<String,Object> getAssistList(Integer page, Integer pageSize){
         return assistDao.getAssistList(page, pageSize);
     }
+
+    @Override
+    public Integer updateAssistItemWeightById(Integer id, Boolean updateType) {
+        return assistDao.updateAssistItemWeightById(id, updateType);
+    }
+
+
 }
