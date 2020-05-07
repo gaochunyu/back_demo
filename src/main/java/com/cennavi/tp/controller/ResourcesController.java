@@ -90,8 +90,9 @@ public class ResourcesController {
         try {
             Map<String,Object> map = new HashMap<>();
             List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags);
+            int count = resourcesService.getResourcesCount();
             map.put("list",list);
-            map.put("total",list.size());
+            map.put("total",count);
             return Result.success("查询成功",map);
         } catch (Exception e) {
             e.printStackTrace();

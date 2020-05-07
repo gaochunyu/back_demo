@@ -58,7 +58,7 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
 
     @Override
     public int getResourcesCount(){
-        String sql = "select count(*) from resources";
+        String sql = "select count(*) from resources where status = 2";
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
