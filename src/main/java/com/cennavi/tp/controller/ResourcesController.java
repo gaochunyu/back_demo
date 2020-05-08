@@ -67,7 +67,7 @@ public class ResourcesController {
             if(flag){
                 return Result.success("更新成功");
             }else{
-                return Result.success("更新失败");
+                return Result.fail("更新失败");
 
             }
         } catch (Exception e) {
@@ -96,7 +96,7 @@ public class ResourcesController {
             return Result.success("查询成功",map);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.success("查询异常");
+            return Result.fail("查询异常");
         }
     }
 
@@ -117,7 +117,7 @@ public class ResourcesController {
              }
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.success("删除异常");
+            return Result.fail("删除异常");
         }
     }
     /**
@@ -133,7 +133,7 @@ public class ResourcesController {
             return Result.success("查询成功",resourcesService.getResourcesById(id));
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.success("查询异常");
+            return Result.fail("查询异常");
         }
     }
 
@@ -215,7 +215,7 @@ public class ResourcesController {
             return Result.success("文件下载成功", null);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.success("下载失败");
+            return Result.fail("下载失败");
         }
     }
 
