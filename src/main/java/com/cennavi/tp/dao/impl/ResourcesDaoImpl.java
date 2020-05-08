@@ -27,16 +27,8 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
         String sql = "insert into resources (uid,tags,name,file,description,link,create_time,status,type,views) values ("
                 + resourcesBean.getUid() + ",'" + resourcesBean.getTags() + "','" + resourcesBean.getName()
                 + "','" + resourcesBean.getFile() + "','" + resourcesBean.getDescription() + "','" + resourcesBean.getLink() + "','"
-//<<<<<<< HEAD
-//                + resourcesBean.getCreate_time() + "','" + 0 + "','" + resourcesBean.getType() + "','" + 0 + ")";
-//        int result = jdbcTemplate.update(sql);
-//
-//=======
-
                 + resourcesBean.getCreate_time() + "'," + 0 + "," + resourcesBean.getType() + "," + 0 + ") RETURNING id";
         int result = jdbcTemplate.queryForObject(sql,Integer.class);
-
-//>>>>>>> 37e97d3a2e99aa493a921fceb777a9329c6790e5
         return result;
 
     }
