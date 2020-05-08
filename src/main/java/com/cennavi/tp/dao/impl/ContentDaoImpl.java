@@ -31,6 +31,7 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
 
         String sql = "insert into content(id,title,sub_title,content,tags,file,create_time,uid) values ('"+contentBean.getId()+"','"+contentBean.getTitle()+"','"+contentBean.getSub_title()+"','"+contentBean.getContent()+"','"+contentBean.getTags()+"','"+contentBean.getFile()+"','"+contentBean.getCreate_time()+"',"+contentBean.getUid()+")";
         int result = jdbcTemplate.update(sql);
+
         return result;
     };
 

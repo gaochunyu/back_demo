@@ -1,21 +1,29 @@
 package com.cennavi.tp.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cennavi.tp.beans.ProjectBean;
+import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.dao.ProjectDataDao;
 import com.cennavi.tp.service.ProjectDataService;
+import com.cennavi.tp.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class ProjectDataServiceImpl implements ProjectDataService {
 
     @Autowired
     private ProjectDataDao projectDataDao;
+
+    @Value("${file_path}")
+    private String fileSavePath;
 
     /**
      *
@@ -55,5 +63,48 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         newMap.put("list",newList);
         newMap.put("totalSize",num);
         return newMap;
+    }
+
+    @Override
+    public boolean saveProjectInfo(String name, int tradeTypeId, int proTypeId, String proContent, String proUrl, int proSort, MultipartFile file , int uid) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+        Date date = new Date(System.currentTimeMillis());
+        String createTime = formatter.format(date);
+
+        Integer status = 1;  //是否展示  0-待审核   1-审核成功   2-审核失败
+
+        ProjectBean projectBean = new ProjectBean();
+        projectBean.setName(name);
+        projectBean.setTrade_type_id(tradeTypeId);
+        projectBean.setProject_type(proTypeId);
+        projectBean.setContent(proContent);
+        projectBean.setVisit_url(proUrl);
+        projectBean.setSort(proSort);
+        projectBean.setStatus(status);
+        projectBean.setCreateTime(createTime);
+        projectBean.setuId(uid);
+
+        if(file != null && !file.isEmpty()){
+            String fileName = file.getOriginalFilename();
+
+            // 创建保存图片的文件夹    E://test
+            String rootPath = fileSavePath + "project/img/";
+            File f = new File(rootPath + "/");
+            if (!f.getParentFile().exists()) {
+                // 判断 文件夹是否存在，如果不存在就新建
+                f.getParentFile().mkdir();
+            }
+
+            try{
+                file.transferTo(f); //保存文件
+                projectBean.setMain_img("/" + fileName);
+            }catch (IllegalStateException | IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        boolean flag = projectDataDao.saveProjectInfo(projectBean);
+        return flag;
     }
 }

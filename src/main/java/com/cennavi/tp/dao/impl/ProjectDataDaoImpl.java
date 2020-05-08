@@ -28,4 +28,17 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
         String sql = "select  count(DISTINCT info.id)  FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") ";
         return jdbcTemplate.queryForObject(sql,Integer.class);
     }
+
+    @Override
+    public boolean saveProjectInfo(ProjectBean projectBean) {
+        String sql = "insert into project_info (name, trade_type_id, project_type, content, visit_url, sort, main_img, status, creat_time, uid) values ('"
+                +projectBean.getName()+"','"+projectBean.getTrade_type_id()+"','"+projectBean.getProject_type()+"','"+projectBean.getContent()+"','"+projectBean.getVisit_url()+"','"+projectBean.getSort()+"',"+projectBean.getMain_img()
+                +projectBean.getStatus()+"','"+projectBean.getCreateTime()+"','"+projectBean.getuId()+")";
+        int result = jdbcTemplate.update(sql);
+        boolean flag = false;
+        if(result == 1){
+            flag = true;
+        }
+        return flag;
+    }
 }

@@ -7,17 +7,31 @@ import java.util.List;
 
 @MyTable("project_info")
 public class ProjectBean {
+    @IgnoreColumn("id")
     private int id;
+
     private String name;
     private int trade_type_id; //项目所属行业id
     private int project_type; //项目类型  1-项目  2-产品
     private String content;//项目描述
     private String visit_url;  //项目访问链接
     private int sort; //项目展示序号
+
     private String main_img;  //封面图片
     private String file;
+
     private int status;
     private String createTime;
+    private int uId;
+
+    public int getuId() {
+        return uId;
+    }
+
+    public void setuId(int uId) {
+        this.uId = uId;
+    }
+
     @IgnoreColumn("url")
     private String url;
     private List<String> urlList;
