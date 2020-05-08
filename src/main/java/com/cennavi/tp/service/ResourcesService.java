@@ -12,11 +12,20 @@ public interface ResourcesService {
 
     ResultModel addResourcesItem(Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type);
 
-    ResultModel updateResourcesItem(Integer id,String name,String tags,MultipartFile file,String description,String link, Integer type);
+    boolean updateResourcesItem(Integer id,Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type);
 
     int getResourcesCount();
 
     List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags);
 
-    public  Boolean deleteResource(Integer id);
+    Boolean deleteResource(Integer id);
+
+    List<ResourcesBean> getTopFiveByCreateTime();
+
+    List<ResourcesBean> getTopFiveByViews();
+//    修改资料的状态
+    Boolean updateResourcesStatus(Integer id,Integer status);
+//    修改资料的views
+    Boolean updateResourcesViews(Integer id);
+
 }

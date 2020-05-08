@@ -32,14 +32,6 @@ public class ContentDaoImpl extends BaseDaoImpl<ContentBean> implements ContentD
         String sql = "insert into content(id,title,sub_title,content,tags,file,create_time,uid) values ('"+contentBean.getId()+"','"+contentBean.getTitle()+"','"+contentBean.getSub_title()+"','"+contentBean.getContent()+"','"+contentBean.getTags()+"','"+contentBean.getFile()+"','"+contentBean.getCreate_time()+"',"+contentBean.getUid()+")";
         int result = jdbcTemplate.update(sql);
         return result;
-//        //获取插入数据的自增主键
-//        KeyHolder keyHolder = new GeneratedKeyHolder();
-//        jdbcTemplate.update(connection -> {
-//            PreparedStatement ps = connection.prepareStatement(sql,new String [] {"id"});
-//            return ps;
-//        }, keyHolder);
-//        long insertId = keyHolder.getKey().longValue();
-//        return insertId;
     };
 
     // 根据 id 查询某条数据
