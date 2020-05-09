@@ -1,5 +1,6 @@
 package com.cennavi.tp.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ public class MyWebConfig implements WebMvcConfigurer {
 
     @Resource
     MyInterceptor myInterceptor;
+    @Value("${file_path}")
+    private String fileSavePath;
 
     /**
      * 设置过滤路径
@@ -24,7 +27,7 @@ public class MyWebConfig implements WebMvcConfigurer {
     @Override
     public  void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(myInterceptor)
-                .excludePathPatterns("/logout","/userinfo/login","/userinfo/code","/error/**","/resources/**","/file/**","/projectData/*")
+                .excludePathPatterns("/logout","/userinfo/login","/userinfo/code","/error/**","/resources/**","/file/**")
 //                .excludePathPatterns("/**")
                 .addPathPatterns("/**");
     }
@@ -37,7 +40,7 @@ public class MyWebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 //        registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
         //访问jar包尾部资源
-        registry.addResourceHandler("/file/**").addResourceLocations("file:E:/test/");
+        registry.addResourceHandler("/file/**").addResourceLocations("file:"+fileSavePath);
     }
 
     /**

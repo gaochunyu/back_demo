@@ -9,4 +9,5 @@ import java.util.List;
 public interface ProjectDataDao extends BaseDao<ProjectBean> {
     List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType);
     Integer getProjectListNum(String tradeType , String projectType);
+    boolean saveProjectInfo(ProjectBean projectBean);
 }
