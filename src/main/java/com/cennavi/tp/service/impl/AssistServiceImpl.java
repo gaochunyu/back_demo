@@ -7,6 +7,7 @@ import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.AssistDao;
 import com.cennavi.tp.service.AssistService;
 
+import com.cennavi.tp.utils.MyDateUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,11 +40,9 @@ public class AssistServiceImpl implements AssistService {
 
             if(id==-1) {
                 // 获取时间戳并转化格式
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-                Date date = new Date(System.currentTimeMillis());
-                String createTime = formatter.format(date);
-                assistBean.setCreateTime(createTime);
-
+                String format = "yyyy-MM-dd HH:mm:ss";
+                String time = MyDateUtils.format(new Date(),format);
+                assistBean.setCreateTime(time);
 
                 // 如果新增成功，返回新增的id
                 Map<String,Object> map = new HashMap<>();
