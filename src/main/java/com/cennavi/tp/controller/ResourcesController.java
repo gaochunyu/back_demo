@@ -47,6 +47,7 @@ public class ResourcesController {
     /**
      * 更细数据
      * @param id
+     * @param uid
      * @param name
      * @param tags
      * @param file
@@ -90,7 +91,7 @@ public class ResourcesController {
         try {
             Map<String,Object> map = new HashMap<>();
             List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags);
-            int count = resourcesService.getResourcesCount();
+            int count = resourcesService.getResourcesCount(tags);
             map.put("list",list);
             map.put("total",count);
             return Result.success("查询成功",map);
@@ -159,7 +160,7 @@ public class ResourcesController {
     @RequestMapping("/getTopFiveByViews")
     public ResultModel getTopFiveByViews(){
         try {
-            return Result.fail("查询成功",resourcesService.getTopFiveByViews());
+            return Result.success("查询成功",resourcesService.getTopFiveByViews());
         } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("查询异常");
@@ -175,7 +176,7 @@ public class ResourcesController {
      */
     @ResponseBody
     @RequestMapping("/downLoadFile")
-    public ResultModel downLoadFile(Integer id,HttpServletResponse response) throws FileNotFoundException {
+    public void downLoadFile(Integer id,HttpServletResponse response) throws FileNotFoundException {
         try {
             ResourcesBean resourcesBean = resourcesService.getResourcesById(id);
             // 文件的存放路径
@@ -212,10 +213,8 @@ public class ResourcesController {
                     }
                 }
             }
-            return Result.success("文件下载成功", null);
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.fail("下载失败");
         }
     }
 

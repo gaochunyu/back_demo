@@ -3,6 +3,7 @@ package com.cennavi.tp.dao.impl;
 import com.cennavi.tp.beans.ResourcesBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.ResourcesDao;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +28,7 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
         String sql = "insert into resources (uid,tags,name,file,description,link,create_time,status,type,views) values ("
                 + resourcesBean.getUid() + ",'" + resourcesBean.getTags() + "','" + resourcesBean.getName()
                 + "','" + resourcesBean.getFile() + "','" + resourcesBean.getDescription() + "','" + resourcesBean.getLink() + "','"
-                + resourcesBean.getCreate_time() + "'," + 0 + "," + resourcesBean.getType() + "," + 0 + ") RETURNING id";
+                + resourcesBean.getCreate_time() + "'," + 2 + "," + resourcesBean.getType() + "," + 0 + ") RETURNING id";
         int result = jdbcTemplate.queryForObject(sql,Integer.class);
         return result;
 
@@ -49,22 +50,25 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
     }
 
     @Override
-    public int getResourcesCount(){
-        String sql = "select count(*) from resources where status = 2";
+    public int getResourcesCount(String tags){
+        String sql = "";
+        if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
+            sql = "select count(*) from resources where status = 2 and tags like '%" +tags +"%'";
+        }else{
+            sql = "select count(*) from resources where status = 2";
+        }
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     @Override
-    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize){
-        String sql = "select * from resources where status = 2 order by create_time desc limit " +pageSize+" offset "+start;
+    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags){
+        String sql = "";
+        if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
+            sql = "select * from resources where status = 2 and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
+        }else{
+            sql = "select * from resources where status = 2 order by create_time desc limit " +pageSize+" offset "+start;
+        }
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
-    }
-
-    @Override
-    public List<ResourcesBean> getResourcesListByTags(Integer start, Integer pageSize, String tags) {
-        String sql = "select * from resources where status = 2 and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
-        return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
-
     }
 
     @Override
