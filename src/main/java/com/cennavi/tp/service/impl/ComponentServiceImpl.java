@@ -21,9 +21,7 @@ public class ComponentServiceImpl implements ComponentService {
     @Autowired
     private ComponentDao componentDao;
 
-    /**
-     * 新增
-     */
+    // 新增
     @Override
     public ResultModel addComponent(Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
         try {
@@ -41,8 +39,9 @@ public class ComponentServiceImpl implements ComponentService {
             componentBean.setTest_url(testUrl);
             componentBean.setFile_url(fileUrl);
             componentBean.setCreate_time(createTime);
-            
-            if (componentDao.addComponent(componentBean)) {
+
+            Integer count = componentDao.addComponent(componentBean);
+            if (count == 1) {
                 return Result.success("成功添加组件");
             } else {
                 return Result.fail("添加组件失败");
@@ -52,4 +51,22 @@ public class ComponentServiceImpl implements ComponentService {
             return Result.fail("添加组件失败");
         }
     }
+
+    // 删除
+    @Override
+    public ResultModel delComponent(Integer id, Integer uid) {
+        Integer count = componentDao.delComponent(id,uid);
+        if (count == 0) {
+            return Result.fail("输入的id无对应数据", count);
+        }
+        else {
+            return Result.success("删除成功", count);
+        }
+    }
+
+    @Override
+    public ResultModel updateComponent(Integer id, Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
+        return null;
+    }
+
 }
