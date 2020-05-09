@@ -28,9 +28,8 @@ public class ComponentServiceImpl implements ComponentService {
     public ResultModel addComponent(Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
         try {
             // 获取当前时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-            Date date = new Date(System.currentTimeMillis());
-            String createTime = formatter.format(date);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String createTime = df.format(new Date());
 
             //todo ??
             ComponentBean componentBean = new ComponentBean();
