@@ -28,8 +28,8 @@ public class HelloWorld {
      */
     @ResponseBody
     @RequestMapping("/getUsers")
-    public ResultModel getUsers(int page,int pageSize) {
-        List<UserinfoBean> userList = userService.getUsers(page,pageSize);
+    public ResultModel getUsers(int page,int pageSize,String keyword) {
+        List<UserinfoBean> userList = userService.getUsers(page,pageSize,keyword);
         return Result.success("成功获取数据",userList);
     }
 

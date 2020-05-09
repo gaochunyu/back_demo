@@ -70,14 +70,14 @@ public class UserinfoServiceImpl implements UserinfoService {
     }
 
     @Override
-    public List<UserinfoBean> getUsers(Integer page, Integer pageSize) {
+    public List<UserinfoBean> getUsers(Integer page, Integer pageSize, String keyword) {
         int start = (page-1)*pageSize;
-        return userinfoDao.getUsers(start,pageSize);
+        return userinfoDao.getUsers(start,pageSize,keyword);
     }
 
     @Override
-    public int getUsersCount(Integer start, Integer pageSize) {
-        return userinfoDao.getUsersCount(start,pageSize);
+    public int getUsersCount(Integer start, Integer pageSize, String keyword) {
+        return userinfoDao.getUsersCount(start,pageSize,keyword);
     }
 
     @Override

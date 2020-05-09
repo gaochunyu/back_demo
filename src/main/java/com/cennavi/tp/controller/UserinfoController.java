@@ -73,11 +73,13 @@ public class UserinfoController {
      */
     @ResponseBody
     @GetMapping("getUsers")
-    public ResultModel getUsers(Integer page,Integer pageSize,HttpServletRequest request){
+    public ResultModel getUsers(Integer page,Integer pageSize,String keyword, HttpServletRequest request){
         try {
+            if (keyword == null)
+                keyword = "";
             Map<String,Object> map = new HashMap<>();
-            List<UserinfoBean> list = userService.getUsers(page,pageSize);
-            int count = userService.getUsersCount(page,pageSize);
+            List<UserinfoBean> list = userService.getUsers(page,pageSize,keyword);
+            int count = userService.getUsersCount(page,pageSize,keyword);
             map.put("list",list);
             map.put("total",count);
             ResultModel resultModel = Result.success("查询成功",map);

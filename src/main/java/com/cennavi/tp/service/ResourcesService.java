@@ -14,7 +14,7 @@ public interface ResourcesService {
 
     boolean updateResourcesItem(Integer id,Integer uid,String name,String tags,MultipartFile file,String description,String link, Integer type);
 
-    int getResourcesCount();
+    int getResourcesCount(String tags);
 
     List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags);
 

@@ -21,28 +21,27 @@ public class ComponentServiceImpl implements ComponentService {
     @Autowired
     private ComponentDao componentDao;
 
-    /**
-     * 新增
-     */
+    // 新增
     @Override
-    public ResultModel addComponent(ComponentBean componentBean) {
+    public ResultModel addComponent(Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
         try {
             // 获取当前时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
-            Date date = new Date(System.currentTimeMillis());
-            String createTime = formatter.format(date);
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String createTime = df.format(new Date());
 
             //todo ??
-            componentBean.setUid(componentBean.getUid());
-            componentBean.setName(componentBean.getName());
-            componentBean.setTags(componentBean.getTags());
-            componentBean.setCover(componentBean.getCover());
-            componentBean.setContent(componentBean.getContent());
-            componentBean.setTest_url(componentBean.getTest_url());
-            componentBean.setFile_url(componentBean.getFile_url());
+            ComponentBean componentBean = new ComponentBean();
+            componentBean.setUid(uid);
+            componentBean.setName(name);
+            componentBean.setTags(tags);
+            componentBean.setCover(cover);
+            componentBean.setContent(content);
+            componentBean.setTest_url(testUrl);
+            componentBean.setFile_url(fileUrl);
             componentBean.setCreate_time(createTime);
-            
-            if (componentDao.addComponent(componentBean)) {
+
+            Integer count = componentDao.addComponent(componentBean);
+            if (count == 1) {
                 return Result.success("成功添加组件");
             } else {
                 return Result.fail("添加组件失败");
@@ -52,4 +51,22 @@ public class ComponentServiceImpl implements ComponentService {
             return Result.fail("添加组件失败");
         }
     }
+
+    // 删除
+    @Override
+    public ResultModel delComponent(Integer id, Integer uid) {
+        Integer count = componentDao.delComponent(id,uid);
+        if (count == 0) {
+            return Result.fail("输入的id无对应数据", count);
+        }
+        else {
+            return Result.success("删除成功", count);
+        }
+    }
+
+    @Override
+    public ResultModel updateComponent(Integer id, Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
+        return null;
+    }
+
 }

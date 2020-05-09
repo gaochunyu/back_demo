@@ -21,7 +21,7 @@ public interface UserinfoService {
      * @param pageSize
      * @return
      */
-    List<UserinfoBean> getUsers(Integer page, Integer pageSize);
+    List<UserinfoBean> getUsers(Integer page, Integer pageSize, String keyword);
 
     /**
      * 获取用户数量
@@ -29,7 +29,7 @@ public interface UserinfoService {
      * @param pageSize
      * @return
      */
-    int getUsersCount(Integer start, Integer pageSize);
+    int getUsersCount(Integer start, Integer pageSize, String keyword);
 
     /**
      * 根据id获取用户
