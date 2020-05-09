@@ -28,12 +28,12 @@ public class ComponentController {
     // 接口4.分页搜索查询组件列表
     // 接口5.根据id查询组件及图片
 
-    // 添加
+    // 添加组件
     @ResponseBody
     @RequestMapping("/addComponent")
-    public ResultModel addComponent(@RequestBody ComponentBean componentBean) {
+    public ResultModel addComponent(Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
         try {
-            return componentService.addComponent(componentBean);
+            return componentService.addComponent(uid, name, tags, cover, content, testUrl, fileUrl);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.fail("查找数据失败", null);

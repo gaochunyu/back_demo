@@ -25,7 +25,7 @@ public class ComponentServiceImpl implements ComponentService {
      * 新增
      */
     @Override
-    public ResultModel addComponent(ComponentBean componentBean) {
+    public ResultModel addComponent(Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
         try {
             // 获取当前时间
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
@@ -33,13 +33,14 @@ public class ComponentServiceImpl implements ComponentService {
             String createTime = formatter.format(date);
 
             //todo ??
-            componentBean.setUid(componentBean.getUid());
-            componentBean.setName(componentBean.getName());
-            componentBean.setTags(componentBean.getTags());
-            componentBean.setCover(componentBean.getCover());
-            componentBean.setContent(componentBean.getContent());
-            componentBean.setTest_url(componentBean.getTest_url());
-            componentBean.setFile_url(componentBean.getFile_url());
+            ComponentBean componentBean = new ComponentBean();
+            componentBean.setUid(uid);
+            componentBean.setName(name);
+            componentBean.setTags(tags);
+            componentBean.setCover(cover);
+            componentBean.setContent(content);
+            componentBean.setTest_url(testUrl);
+            componentBean.setFile_url(fileUrl);
             componentBean.setCreate_time(createTime);
             
             if (componentDao.addComponent(componentBean)) {
