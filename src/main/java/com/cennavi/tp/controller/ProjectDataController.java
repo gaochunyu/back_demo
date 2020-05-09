@@ -42,7 +42,7 @@ public class ProjectDataController {
 
     @ResponseBody
     @RequestMapping("/saveProjectInfo")
-    public ResultModel saveProjectInfo(String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile file , HttpServletRequest request){
+    public ResultModel saveProjectInfo(int operation ,int id ,String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile mainImgFile , MultipartFile[] proImgFileList, HttpServletRequest request){
         try{
             Object obj = request.getSession().getAttribute("user");
             if(obj==null){
@@ -50,11 +50,28 @@ public class ProjectDataController {
             }
             UserinfoBean user = (UserinfoBean) obj;
             int uid = user.getId();
-            boolean flag = projectDataService.saveProjectInfo(name , tradeTypeId, proTypeId , proContent , proUrl , proSort , file ,uid);
+            boolean flag = projectDataService.saveProjectInfo(operation,id ,name , tradeTypeId, proTypeId , proContent , proUrl , proSort , mainImgFile ,proImgFileList ,uid);
             if(flag){
                 return Result.success("项目信息保存成功",flag);
             }else{
                 return Result.fail("项目信息保存失败",new Object());
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            System.out.println(e.getMessage() + e);
+            return Result.build500("出现异常");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/getProjectInfoById")
+    public ResultModel getProjectInfoById(@RequestParam(value = "proId") Integer proId){
+        try{
+            List list = projectDataService.getProjectInfoById(proId);
+            if(list == null && list.size() == 0){
+                return Result.fail("暂无数据",new ArrayList<>()); //1000
+            }else{
+                return Result.success("成功获取数据",list);  //200
             }
         }catch (Exception e){
             e.getStackTrace();

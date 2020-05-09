@@ -1,14 +1,19 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.ProjectBean;
+import com.cennavi.tp.beans.ProjectImgBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.ProjectDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
@@ -19,7 +24,7 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
 
     @Override
     public List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType) {
-        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , imgs.url FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") LIMIT "+ limitSize +" OFFSET " + offsetNum;
+        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , imgs.url FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
         return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
     }
 
@@ -30,17 +35,63 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
     }
 
     @Override
-    public boolean saveProjectInfo(ProjectBean projectBean) {
-        String sql = "insert into project_info (name, trade_type_id, project_type, content, visit_url, sort, main_img, status, creat_time, uid) values ('"
-                +projectBean.getName()+"','"+projectBean.getTrade_type_id()+"','"+projectBean.getProject_type()+"','"+projectBean.getContent()+"','"+projectBean.getVisit_url()+"','"+projectBean.getSort()+"','"+projectBean.getMain_img()+"','"
-                +projectBean.getStatus()+"','"+projectBean.getCreateTime()+"','"+projectBean.getuId()+"')";
-        System.out.println(sql);
-        int result = jdbcTemplate.update(sql);
-        System.out.println(result);
+    public boolean saveProjectInfo(int id , boolean mainImgIsUpdate ,ProjectBean projectBean , List<ProjectImgBean> list) {
         boolean flag = false;
-        if(result == 1){
-            flag = true;
+        if(id == 0){
+            String sql = "insert into project_info (name, trade_type_id, project_type, content, visit_url, sort, main_img, status, creat_time, uid) values ('"
+                    +projectBean.getName()+"','"+projectBean.getTrade_type_id()+"','"+projectBean.getProject_type()+"','"+projectBean.getContent()+"','"+projectBean.getVisit_url()+"','"+projectBean.getSort()+"','"+projectBean.getMain_img()+"','"
+                    +projectBean.getStatus()+"','"+projectBean.getCreateTime()+"','"+projectBean.getuId()+"')";
+
+            //int result = jdbcTemplate.update(sql);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql,new String [] {"id"});
+                return ps;
+            }, keyHolder);
+
+            long insertId = keyHolder.getKey().longValue();
+            if(insertId > 0){
+                String imgSql = "insert into project_imgs (url , project_id)  values ";
+                for(ProjectImgBean projectImgBean : list){
+                    imgSql += "('"+projectImgBean.getUrl() + "','"+ insertId +"'),";
+                }
+                if(imgSql.contains(",")){
+                    imgSql = imgSql.substring(0,imgSql.length() - 1);
+                    imgSql += ";";
+                    int result = jdbcTemplate.update(imgSql);
+                    if(result > 0){
+                        flag = true;
+                    }
+                }
+            }
+        }
+        if(id > 0){
+            //System.out.println("修改");
+            String sql = "";
+            if(mainImgIsUpdate){  //修改了 封面图片
+                sql = "update project_info set  name = '" +projectBean.getName() + "', trade_type_id = '" + projectBean.getTrade_type_id()
+                        + "', project_type = '" + projectBean.getProject_type() + "', content = '" + projectBean.getContent() + "', visit_url = '" + projectBean.getVisit_url()
+                        + "', sort = '" + projectBean.getSort() + "', main_img = '" + projectBean.getMain_img() + "', status = '" + projectBean.getStatus()
+                        + "', creat_time = '" + projectBean.getCreateTime() + "', uid = '" + projectBean.getuId() + "' where id = " + id;
+            }else{  //未修改封面图片
+                sql = "update project_info set  name = '" +projectBean.getName() + "', trade_type_id = '" + projectBean.getTrade_type_id()
+                        + "', project_type = '" + projectBean.getProject_type() + "', content = '" + projectBean.getContent() + "', visit_url = '" + projectBean.getVisit_url()
+                        + "', sort = '" + projectBean.getSort() + "', status = '" + projectBean.getStatus()
+                        + "', creat_time = '" + projectBean.getCreateTime() + "', uid = '" + projectBean.getuId() + "' where id = " + id;
+            }
+            //System.out.println("修改:===" + sql);
+            int result = jdbcTemplate.update(sql);
+            if(result > 0){
+                flag = true;
+            }
         }
         return flag;
     }
+
+    @Override
+    public List<ProjectBean> getProjectInfoById(Integer proId) {
+        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , imgs.url ,trades.name as trade_name FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id where info.id = " + proId;
+        return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
+    }
+
 }

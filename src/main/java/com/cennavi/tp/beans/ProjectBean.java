@@ -12,6 +12,8 @@ public class ProjectBean {
 
     private String name;
     private int trade_type_id; //项目所属行业id
+    private String tradeName;
+
     private int project_type; //项目类型  1-项目  2-产品
     private String content;//项目描述
     private String visit_url;  //项目访问链接
@@ -138,6 +140,14 @@ public class ProjectBean {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getTradeName() {
+        return tradeName;
+    }
+
+    public void setTradeName(String tradeName) {
+        this.tradeName = tradeName;
     }
 
     @Override
