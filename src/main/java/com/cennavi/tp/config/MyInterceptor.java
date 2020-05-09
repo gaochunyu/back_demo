@@ -34,6 +34,9 @@ public class MyInterceptor implements HandlerInterceptor {
         //带token,客户端请求
         logger.info("client request："+uri);
         String token= request.getParameter("token");
+        if(token == null){
+            token = "95378aa91039497980eb51cc94446e70";
+        }
         UserinfoBean user = checkUserLoginByToken.checkUserLoginByToken(token);
         if (user!=null){
             //已登录

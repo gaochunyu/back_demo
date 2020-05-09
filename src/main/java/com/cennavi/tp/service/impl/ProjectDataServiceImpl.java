@@ -87,17 +87,26 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         if(file != null && !file.isEmpty()){
             String fileName = file.getOriginalFilename();
 
-            // 创建保存图片的文件夹    E://test
-            String rootPath = fileSavePath + "project/img/";
-            File f = new File(rootPath + "/");
-            if (!f.getParentFile().exists()) {
+            // 创建保存图片的文件夹    D://test
+            String rootPath = fileSavePath + "project/img";
+            File test = new File(rootPath + "/");
+            if (!test.getParentFile().exists()) {
                 // 判断 文件夹是否存在，如果不存在就新建
+                test.getParentFile().mkdir();
+            }
+
+            // 拼接文件从存放的路径，创建project/img文件夹，保存对应的文件进去
+            String path = fileSavePath + "project/img";
+            File f = new File(path + "/" + fileName);
+
+            if (!f.getParentFile().exists()) {
+                //判断文件父目录是否存在
                 f.getParentFile().mkdir();
             }
 
             try{
                 file.transferTo(f); //保存文件
-                projectBean.setMain_img("/" + fileName);
+                projectBean.setMain_img("project/img/" + fileName);
             }catch (IllegalStateException | IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -32,9 +32,11 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
     @Override
     public boolean saveProjectInfo(ProjectBean projectBean) {
         String sql = "insert into project_info (name, trade_type_id, project_type, content, visit_url, sort, main_img, status, creat_time, uid) values ('"
-                +projectBean.getName()+"','"+projectBean.getTrade_type_id()+"','"+projectBean.getProject_type()+"','"+projectBean.getContent()+"','"+projectBean.getVisit_url()+"','"+projectBean.getSort()+"',"+projectBean.getMain_img()
-                +projectBean.getStatus()+"','"+projectBean.getCreateTime()+"','"+projectBean.getuId()+")";
+                +projectBean.getName()+"','"+projectBean.getTrade_type_id()+"','"+projectBean.getProject_type()+"','"+projectBean.getContent()+"','"+projectBean.getVisit_url()+"','"+projectBean.getSort()+"','"+projectBean.getMain_img()+"','"
+                +projectBean.getStatus()+"','"+projectBean.getCreateTime()+"','"+projectBean.getuId()+"')";
+        System.out.println(sql);
         int result = jdbcTemplate.update(sql);
+        System.out.println(result);
         boolean flag = false;
         if(result == 1){
             flag = true;
