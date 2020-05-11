@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Array;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,36 +40,17 @@ public class ProjectDataServiceImpl implements ProjectDataService {
     public Map<String , Object> getProjectList(Integer limitSize,Integer curPage , String tradeType ,String projectType) {
         Integer offsetNum = limitSize * (curPage - 1); //每页开始的条数  从第 offsetNum+1条开始查询，总共查询limitSize条
         List<ProjectBean> list = projectDataDao.getProjectList(limitSize,offsetNum,tradeType,projectType);
-        List<ProjectBean> newList = new ArrayList<>();
-        Map<Integer,ProjectBean> map=new HashMap<>();
 
-        if(list.size()>0){
-            list.forEach(item -> {
-                if(map.get(item.getId())==null){
-                    List<String> arr = new ArrayList();
-                    arr.add(item.getUrl());
-                    item.setUrlList(arr);
-                    map.put(item.getId(),item);
-                }else {
-                    ProjectBean projectBean=map.get(item.getId());
-                    List<String> arr=projectBean.getUrlList();
-                    arr.add(item.getUrl());
-                }
-
-            });
-        }
-        for(Map.Entry<Integer, ProjectBean> entry : map.entrySet()){
-            newList.add(entry.getValue());
-        }
         Integer num = projectDataDao.getProjectListNum(tradeType,projectType);
         Map<String , Object> newMap = new HashMap<>();
-        newMap.put("list",newList.stream().sorted((i, j) -> j.getSort() - i.getSort()).collect(Collectors.toList()));
+        //newMap.put("list",list.stream().sorted((i, j) -> j.getSort() - i.getSort()).collect(Collectors.toList()));
+        newMap.put("list",list);
         newMap.put("totalSize",num);
         return newMap;
     }
 
     @Override
-    public boolean saveProjectInfo(int operation , int id , String name, int tradeTypeId, int proTypeId, String proContent, String proUrl, int proSort, MultipartFile mainImgFile , MultipartFile[] proImgFileList ,int uid) {
+    public boolean saveProjectInfo(int operation , int id , String name, int tradeTypeId, int proTypeId, String proContent, String proUrl, int proSort, MultipartFile mainImgFile , MultipartFile[] proImgFileList ,String[] imgNameList,int uid) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
         Date date = new Date(System.currentTimeMillis());
         String createTime = formatter.format(date);
@@ -149,12 +131,18 @@ public class ProjectDataServiceImpl implements ProjectDataService {
                 }
             }
         }
+        String[] newImgList = new String[imgNameList.length];
+        if(imgNameList.length>0){
+            for(int i = 0 ; i < imgNameList.length; i++){
+                newImgList[i] = "project/img/" + imgNameList[i];
+            }
+        }
         boolean mainImgIsUpdate = true;
         if(id > 0 && mainImgFile == null){  //修改操作
             mainImgIsUpdate = false;// 不去修改 项目 图片地址
         }
 
-        boolean flag = projectDataDao.saveProjectInfo(id, mainImgIsUpdate , projectBean,list);
+        boolean flag = projectDataDao.saveProjectInfo(id, mainImgIsUpdate , projectBean,list ,newImgList);
         return flag;
     }
 
@@ -163,25 +151,8 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         List<ProjectBean> list = projectDataDao.getProjectInfoById(proId);
         List<ProjectBean> newList = new ArrayList<>();
         Map<Integer,ProjectBean> map=new HashMap<>();
-        if(list.size()>0){
-            list.forEach(item -> {
-                if(map.get(item.getId())==null){
-                    List<String> arr = new ArrayList();
-                    arr.add(item.getUrl());
-                    item.setUrlList(arr);
-                    map.put(item.getId(),item);
-                }else {
-                    ProjectBean projectBean=map.get(item.getId());
-                    List<String> arr=projectBean.getUrlList();
-                    arr.add(item.getUrl());
-                }
 
-            });
-        }
-        for(Map.Entry<Integer, ProjectBean> entry : map.entrySet()){
-            newList.add(entry.getValue());
-        }
-        return newList;
+        return list;
     }
 
 }

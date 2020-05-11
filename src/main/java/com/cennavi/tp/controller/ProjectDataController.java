@@ -42,7 +42,7 @@ public class ProjectDataController {
 
     @ResponseBody
     @RequestMapping("/saveProjectInfo")
-    public ResultModel saveProjectInfo(int operation ,int id ,String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile mainImgFile , MultipartFile[] proImgFileList, HttpServletRequest request){
+    public ResultModel saveProjectInfo(int operation ,int id ,String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile mainImgFile , MultipartFile[] proImgFileList, String[] imgNameList,HttpServletRequest request){
         try{
             Object obj = request.getSession().getAttribute("user");
             if(obj==null){
@@ -50,7 +50,7 @@ public class ProjectDataController {
             }
             UserinfoBean user = (UserinfoBean) obj;
             int uid = user.getId();
-            boolean flag = projectDataService.saveProjectInfo(operation,id ,name , tradeTypeId, proTypeId , proContent , proUrl , proSort , mainImgFile ,proImgFileList ,uid);
+            boolean flag = projectDataService.saveProjectInfo(operation,id ,name , tradeTypeId, proTypeId , proContent , proUrl , proSort , mainImgFile ,proImgFileList ,imgNameList ,uid);
             if(flag){
                 return Result.success("项目信息保存成功",flag);
             }else{
