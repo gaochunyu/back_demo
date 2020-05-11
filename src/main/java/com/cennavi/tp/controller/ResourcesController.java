@@ -87,11 +87,11 @@ public class ResourcesController {
      */
     @ResponseBody
     @RequestMapping("/getResourcesList")
-    public ResultModel getResourcesList(Integer page,Integer pageSize,String tags){
+    public ResultModel getResourcesList(Integer page,Integer pageSize,String tags,String status){
         try {
             Map<String,Object> map = new HashMap<>();
-            List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags);
-            int count = resourcesService.getResourcesCount(tags);
+            List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags ,status);
+            int count = resourcesService.getResourcesCount(tags,status);
             map.put("list",list);
             map.put("total",count);
             return Result.success("查询成功",map);
@@ -218,5 +218,25 @@ public class ResourcesController {
         }
     }
 
-
+    /**
+     *审核资料
+     * @param id
+     * @param status
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/verify")
+    public ResultModel verify(Integer id,Integer status){
+        try {
+            boolean flag = resourcesService.updateResourcesStatus(id,status);
+            if(flag){
+                return Result.success("审核成功");
+            }else{
+                return Result.fail("审核失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("审核异常");
+        }
+    }
 }
