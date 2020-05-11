@@ -29,6 +29,7 @@ public class AssistBean {
     private String createTime; // 创建时间
     private String category;   // 问题分类
     private int weight;        // 问题权重
+    private int status;        // 问题的状态  状态0录入中 1待审核 2审核通过 3被拒绝
 
 
     public int getId() {
@@ -81,6 +82,11 @@ public class AssistBean {
     }
 
 
+    public int getStatus() {
+        return status;
+    }
 
-
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }
