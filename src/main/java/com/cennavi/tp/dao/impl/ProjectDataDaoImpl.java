@@ -24,7 +24,8 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
 
     @Override
     public List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType) {
-        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , imgs.url FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
+        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , string_agg ( imgs.url,',') AS urlList FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") GROUP BY info.id order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
+        //System.out.println("修改"+sql);
         return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
     }
 
@@ -35,7 +36,7 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
     }
 
     @Override
-    public boolean saveProjectInfo(int id , boolean mainImgIsUpdate ,ProjectBean projectBean , List<ProjectImgBean> list) {
+    public boolean saveProjectInfo(int id , boolean mainImgIsUpdate ,ProjectBean projectBean , List<ProjectImgBean> list ,String[] nameList) {
         boolean flag = false;
         if(id == 0){
             String sql = "insert into project_info (name, trade_type_id, project_type, content, visit_url, sort, main_img, status, creat_time, uid) values ('"
@@ -79,9 +80,24 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
                         + "', sort = '" + projectBean.getSort() + "', status = '" + projectBean.getStatus()
                         + "', creat_time = '" + projectBean.getCreateTime() + "', uid = '" + projectBean.getuId() + "' where id = " + id;
             }
-            //System.out.println("修改:===" + sql);
             int result = jdbcTemplate.update(sql);
-            if(result > 0){
+
+            String sql2 = "DELETE FROM project_imgs where project_id = " + id;
+            int result2 = jdbcTemplate.update(sql2);
+
+            String sql3 = "insert into project_imgs (url , project_id)  values ";
+            for(String imgName : nameList){
+                sql3 += "('"+ imgName + "','"+ id +"'),";
+            }
+            int result3 = 0;
+            if(sql3.contains(",")){
+                sql3 = sql3.substring(0,sql3.length() - 1);
+                sql3 += ";";
+                result3 = jdbcTemplate.update(sql3);
+            }
+
+            //System.out.println("修改:===" + result3);
+            if(result > 0 && result2 > 0 && result3 > 0){
                 flag = true;
             }
         }
@@ -90,7 +106,7 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
 
     @Override
     public List<ProjectBean> getProjectInfoById(Integer proId) {
-        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , imgs.url ,trades.name as trade_name FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id where info.id = " + proId;
+        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , string_agg ( imgs.url,',') AS urlList , trades.name as tradeName FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id where info.id = " + proId + " GROUP BY info.id , trades.name ";
         return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
     }
 

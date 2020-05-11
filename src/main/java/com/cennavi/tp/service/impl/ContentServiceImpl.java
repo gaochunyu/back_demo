@@ -43,7 +43,7 @@ public class ContentServiceImpl implements ContentService {
 
     //新增一条数据
     @Override
-    public ResultModel addANewItem(int id, String title, String subTitle, String content, String tags, String autoSave, MultipartFile file, int uid) {
+    public ResultModel addANewItem(int id, String title, String subTitle, String content, String tags, String autoSave,MultipartFile file, int uid) {
 //        contentDao.save(contentBean);
         JSONObject json = new JSONObject();
         try {
@@ -133,7 +133,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
     // 更新数据
-    public ResultModel updateItemById(int id, String title, String subTitle, String content, String tags, String autoSave, MultipartFile file, int uid) {
+    public ResultModel updateItemById(int id, String title, String subTitle, String content, String tags, String autoSave,Boolean isHaveFile, MultipartFile file, int uid) {
 //
         JSONObject json = new JSONObject();
         try {
@@ -144,9 +144,8 @@ public class ContentServiceImpl implements ContentService {
             contentBean.setTags(tags);
             contentBean.setUid(uid);
 
-
-            if(file != null){
-                // 当文件不为空的时候进行文件的存储
+            // 当文件不为空的时候进行文件的存储
+            if(file != null) {
                 String fileName = file.getOriginalFilename();
                 if(!file.isEmpty()){
 
@@ -193,15 +192,23 @@ public class ContentServiceImpl implements ContentService {
 
                     }
                 }
-            }else{
-                //删除逻辑
-                String path = fileSavePath + id;
-                File dest = new File(path + "/" + 1111);
-                // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
-                File unique = new File(path);
-                deleteFile(unique);
+            }
+            else {
+                // 当文件为空的时候
+                if(isHaveFile) {
+                    // 1.用户删除了文件执行删除逻辑
 
-                contentBean.setFile("");
+                    String path = fileSavePath + id;
+                    File dest = new File(path + "/" + 1111);
+                    // 如果当前id的文件夹下已经存在了文件，先删除所有的文件
+                    File unique = new File(path);
+                    deleteFile(unique);
+
+                    contentBean.setFile("");
+
+                } else {
+                    // 2. 用户只是没有更新文件，依旧是之前的文件不需要再次上上传
+                }
 
             }
             if(autoSave.equals("auto")) {

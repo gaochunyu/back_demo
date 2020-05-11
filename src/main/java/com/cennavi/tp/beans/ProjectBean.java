@@ -36,13 +36,13 @@ public class ProjectBean {
 
     @IgnoreColumn("url")
     private String url;
-    private List<String> urlList;
+    private String urlList;
 
-    public List<String> getUrlList() {
+    public String getUrlList() {
         return urlList;
     }
 
-    public void setUrlList(List<String> urlList) {
+    public void setUrlList(String urlList) {
         this.urlList = urlList;
     }
 

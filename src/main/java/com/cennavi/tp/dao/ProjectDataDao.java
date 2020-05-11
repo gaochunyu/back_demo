@@ -10,6 +10,6 @@ import java.util.List;
 public interface ProjectDataDao extends BaseDao<ProjectBean> {
     List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType);
     Integer getProjectListNum(String tradeType , String projectType);
-    boolean saveProjectInfo(int id ,boolean mainImgIsUpdate , ProjectBean projectBean ,  List<ProjectImgBean> list);
+    boolean saveProjectInfo(int id ,boolean mainImgIsUpdate , ProjectBean projectBean ,  List<ProjectImgBean> list ,String[] nameList);
     List<ProjectBean> getProjectInfoById(Integer proId);
 }

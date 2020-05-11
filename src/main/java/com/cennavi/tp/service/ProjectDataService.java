@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ProjectDataService {
     Map<String , Object> getProjectList(Integer limitSize, Integer curPage , String tradeType , String projectType);
 
-    boolean saveProjectInfo(int operation ,int id ,String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile mainImgFile ,MultipartFile[] proImgFileList ,int uid);
+    boolean saveProjectInfo(int operation ,int id ,String name , int tradeTypeId, int proTypeId , String proContent , String proUrl , int proSort , MultipartFile mainImgFile ,MultipartFile[] proImgFileList ,String[] imgNameList , int uid);
 
     List<ProjectBean> getProjectInfoById(int proId);
 }
