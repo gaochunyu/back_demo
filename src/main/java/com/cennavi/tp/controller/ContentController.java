@@ -43,7 +43,7 @@ public class ContentController {
     // 新增 or 更新数据
     @ResponseBody
     @RequestMapping(value = "/addAContentItem", method = RequestMethod.POST)
-    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags,String autoSave, MultipartFile file,HttpServletRequest request) {
+    public ResultModel addAContentItem(int id, String title, String subTitle, String content, String tags,String autoSave,Boolean isHaveFile, MultipartFile file,HttpServletRequest request) {
 
         // 首先去判断是新增还是更新
         int type = 0;
@@ -58,7 +58,7 @@ public class ContentController {
             UserinfoBean user = (UserinfoBean) obj;
             if(contentBean1 != null) {
                 // 更新
-                return updateItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
+                return updateItem(id, title,subTitle,content,tags,autoSave,isHaveFile,file,user.getId());
             } else {
                 // 新增
                 return addItem(id, title,subTitle,content,tags,autoSave,file,user.getId());
@@ -75,8 +75,8 @@ public class ContentController {
         return contentService.addANewItem(id, title,subTitle,content,tags,autoSave,file,uid);
     }
     // 更新
-    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags,String autoSave, MultipartFile file,int uid){
-        return contentService.updateItemById(id, title,subTitle,content,tags,autoSave,file,uid);
+    private ResultModel updateItem(int id, String title, String subTitle, String content, String tags,String autoSave,Boolean isHaveFile, MultipartFile file,int uid){
+        return contentService.updateItemById(id, title,subTitle,content,tags,autoSave,isHaveFile,file,uid);
     }
 
 
