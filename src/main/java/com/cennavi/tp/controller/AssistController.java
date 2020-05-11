@@ -28,16 +28,18 @@ public class AssistController {
     /**
      * 获取帮助列表,采用分页的方式,默认分页为1
      * @Param uid 用户id
-     * @Param model all获取所有 visit 普通访问，verify审核,mydata 我的内容
+     * @Param model    页数，每页的大小，数据请求的模式（浏览,我的发布，我的审核）当前模式id 2-浏览模式  3-审核模式   4-我的发布
      * @return
      */
     @ResponseBody
     @RequestMapping("/getAssistTableList")
     // 请求帮助页的列表数据
-    public ResultModel getAssistTableList(int page, int pageSize,HttpServletRequest request){
-        try {
+    public ResultModel getAssistTableList(int page, int pageSize, int contentType, HttpServletRequest request){
 
-            Map<String,Object> list =  assistService.getAssistList(page,pageSize);
+        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        int userId = user.getId();
+        try {
+            Map<String,Object> list =  assistService.getAssistList(page,pageSize,contentType,userId);
             return Result.success("成功获取数据",list);
 
         } catch (Exception e){
@@ -56,13 +58,14 @@ public class AssistController {
     @RequestMapping(value = "/addOrUpdateAssistItem", method = RequestMethod.POST)
     // 请求帮助页的列表数据
     public ResultModel addOrUpdateAssistItem(@RequestParam(value = "question") String question,
-                                            @RequestParam(value = "answer") String answer,
-                                            @RequestParam(value = "category") String category,
+                                             @RequestParam(value = "answer") String answer,
+                                             @RequestParam(value = "category") String category,
+                                             @RequestParam(value = "saveType") Boolean saveType,
                                             int id,
                                             HttpServletRequest request)
     {
 
-        return assistService.addOrUpdateAssiatantListItem(question, answer,category,id,request);
+        return assistService.addOrUpdateAssiatantListItem(question, answer,category,id,saveType,request);
 
     }
 
@@ -124,6 +127,29 @@ public class AssistController {
             return Result.build500("出现异常");
         }
 
+    }
+
+    /**
+     *  超级用户审核通过 && 审核拒绝
+     * @Param id 本条信息的id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/checkAssistItem",method = RequestMethod.GET )
+    public ResultModel checkAssistItem(int id, Boolean checkType, HttpServletRequest request) {
+        Object obj = request.getSession().getAttribute("user");
+        try {
+            Integer result =  assistService.checkAssistItem(id, checkType);
+
+            if(result == 1) {
+                return Result.success("审核成功",null);
+            } else {
+                return Result.success("审核失败",null);
+            }
+        } catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
     }
 
 

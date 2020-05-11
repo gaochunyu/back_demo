@@ -22,7 +22,7 @@ public interface AssistService {
      * @return
      */
 
-    ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id,HttpServletRequest request);
+    ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id,Boolean saveType, HttpServletRequest request);
 
     // 删除数据
     ResultModel deleteAssistItemById(Integer id);
@@ -35,13 +35,16 @@ public interface AssistService {
      * @Param 分页
      * @return
      */
-    Map<String,Object> getAssistList(Integer page, Integer pageSize);
+    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId);
 
     /**
      * 根据id根据权重信息
      * @return
      */
     Integer updateAssistItemWeightById (Integer id,Boolean updateType);
+
+
+    Integer checkAssistItem(Integer id,Boolean checkType);
 
 
 }

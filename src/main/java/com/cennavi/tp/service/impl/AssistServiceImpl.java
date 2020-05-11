@@ -27,7 +27,7 @@ public class AssistServiceImpl implements AssistService {
     private AssistDao assistDao;
 
     @Override
-    public ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id, HttpServletRequest request) {
+    public ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id, Boolean saveType, HttpServletRequest request) {
         try{
             UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
             AssistBean assistBean = new AssistBean();
@@ -37,13 +37,22 @@ public class AssistServiceImpl implements AssistService {
             assistBean.setCategory(category);
             assistBean.setUserId(user.getId());
 
+            if(saveType) {
+                // 如果是自动保存，那麽这条数据的状态是 0 录入中
+                assistBean.setStatus(0);
+            } else {
+                // 如果是点击提交保存的，那么这条数据的状态 1 待审核
+                assistBean.setStatus(1);
+            }
+
+
+            // 新增一条数据
             if(id==-1) {
                 // 获取时间戳并转化格式
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
                 Date date = new Date(System.currentTimeMillis());
                 String createTime = formatter.format(date);
                 assistBean.setCreateTime(createTime);
-
 
                 // 如果新增成功，返回新增的id
                 Map<String,Object> map = new HashMap<>();
@@ -93,13 +102,18 @@ public class AssistServiceImpl implements AssistService {
 
 
     @Override
-    public Map<String,Object> getAssistList(Integer page, Integer pageSize){
-        return assistDao.getAssistList(page, pageSize);
+    public Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId){
+        return assistDao.getAssistList(page, pageSize,contentType,userId);
     }
 
     @Override
     public Integer updateAssistItemWeightById(Integer id, Boolean updateType) {
         return assistDao.updateAssistItemWeightById(id, updateType);
+    }
+
+    @Override
+    public Integer checkAssistItem(Integer id, Boolean checkType) {
+        return assistDao.checkAssistItem(id, checkType);
     }
 
 

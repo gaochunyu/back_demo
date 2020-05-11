@@ -16,7 +16,7 @@ public interface ContentService {
     // 删除一条数据
     void deleteItemById(int id);
     // 更新数据
-    ResultModel updateItemById(int id, String title, String subTitle, String content, String tags, String autoSave, MultipartFile file, int uid);
+    ResultModel updateItemById(int id, String title, String subTitle, String content, String tags, String autoSave,Boolean isHaveFile, MultipartFile file, int uid);
 
 //    void updateItemById(int id, ContentBean contentBean);
     // 查找数据

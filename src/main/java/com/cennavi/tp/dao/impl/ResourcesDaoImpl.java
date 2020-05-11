@@ -28,7 +28,7 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
         String sql = "insert into resources (uid,tags,name,file,description,link,create_time,status,type,views) values ("
                 + resourcesBean.getUid() + ",'" + resourcesBean.getTags() + "','" + resourcesBean.getName()
                 + "','" + resourcesBean.getFile() + "','" + resourcesBean.getDescription() + "','" + resourcesBean.getLink() + "','"
-                + resourcesBean.getCreate_time() + "'," + 2 + "," + resourcesBean.getType() + "," + 0 + ") RETURNING id";
+                + resourcesBean.getCreate_time() + "'," + 1 + "," + resourcesBean.getType() + "," + 0 + ") RETURNING id";
         int result = jdbcTemplate.queryForObject(sql,Integer.class);
         return result;
 
@@ -44,29 +44,61 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
                 + "', link = '" + resourcesBean.getLink()
                 + "', create_time = '" + resourcesBean.getCreate_time()
                 + "', type = " + resourcesBean.getType()
-                +"where id = " +resourcesBean.getId();
+                + ", status = 1"
+                +" where id = " +resourcesBean.getId();
         int result = jdbcTemplate.update(sql);
         return result == 1?true:false;
     }
 
     @Override
-    public int getResourcesCount(String tags){
+    public int getResourcesCount(String tags,String status){
         String sql = "";
+        String  statusCondition = "";
+        if(status.length() == 1){
+            statusCondition = "where status = " + Integer.parseInt(status);
+        }else if(status.length() == 2){
+            char[]  arr = status.toCharArray();
+            String s1 = String.valueOf(arr[0]);
+            String s2 = String.valueOf(arr[1]);
+            statusCondition = "where status = " + Integer.parseInt(s1) +" or status = "+ Integer.parseInt(s2);
+        }else {
+            statusCondition = "";
+        }
         if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
-            sql = "select count(*) from resources where status = 2 and tags like '%" +tags +"%'";
+            if(StringUtils.isBlank(statusCondition)){
+                sql = "select count(*) from resources where tags like '%" +tags +"%'";
+
+            }else {
+                sql = "select count(*) from resources "+statusCondition+" and tags like '%" +tags +"%'";
+            }
         }else{
-            sql = "select count(*) from resources where status = 2";
+            sql = "select count(*) from resources "+statusCondition;
         }
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     @Override
-    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags){
+    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags, String status){
         String sql = "";
+        String  statusCondition = "";
+        if(status.length() == 1){
+            statusCondition = "where status = " + Integer.parseInt(status);
+        }else if(status.length() == 2){
+            char[]  arr = status.toCharArray();
+            String s1 = String.valueOf(arr[0]);
+            String s2 = String.valueOf(arr[1]);
+            statusCondition = "where status = " + Integer.parseInt(s1) +" or status = "+ Integer.parseInt(s2);
+        }else {
+            statusCondition = "";
+        }
         if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
-            sql = "select * from resources where status = 2 and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
+            if(StringUtils.isBlank(statusCondition)){
+                sql = "select * from resources where tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
+            }else{
+                sql = "select * from resources "+statusCondition+" and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
+            }
         }else{
-            sql = "select * from resources where status = 2 order by create_time desc limit " +pageSize+" offset "+start;
+            sql = "select * from resources "+statusCondition+" order by create_time desc limit " +pageSize+" offset "+start;
         }
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
     }
