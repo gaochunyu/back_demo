@@ -51,54 +51,26 @@ public class ResourcesDaoImpl extends BaseDaoImpl<ResourcesBean> implements Reso
     }
 
     @Override
-    public int getResourcesCount(String tags,String status){
+    public int getResourcesCount(String tags,String status,String type){
         String sql = "";
-        String  statusCondition = "";
-        if(status.length() == 1){
-            statusCondition = "where status = " + Integer.parseInt(status);
-        }else if(status.length() == 2){
-            char[]  arr = status.toCharArray();
-            String s1 = String.valueOf(arr[0]);
-            String s2 = String.valueOf(arr[1]);
-            statusCondition = "where status = " + Integer.parseInt(s1) +" or status = "+ Integer.parseInt(s2);
-        }else {
-            statusCondition = "";
-        }
-        if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
-            if(StringUtils.isBlank(statusCondition)){
-                sql = "select count(*) from resources where tags like '%" +tags +"%'";
 
-            }else {
-                sql = "select count(*) from resources "+statusCondition+" and tags like '%" +tags +"%'";
-            }
+        if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
+            sql = "select count(*) from resources where status in (" +status + ") and type in (" +type+ ") and tags like '%" +tags +"%'";
+
         }else{
-            sql = "select count(*) from resources "+statusCondition;
+            sql = "select count(*) from resources where status in (" +status + ") and type in (" +type+ ")";
         }
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
 
     @Override
-    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags, String status){
+    public List<ResourcesBean> getResourcesList(Integer start, Integer pageSize, String tags, String status, String type){
         String sql = "";
-        String  statusCondition = "";
-        if(status.length() == 1){
-            statusCondition = "where status = " + Integer.parseInt(status);
-        }else if(status.length() == 2){
-            char[]  arr = status.toCharArray();
-            String s1 = String.valueOf(arr[0]);
-            String s2 = String.valueOf(arr[1]);
-            statusCondition = "where status = " + Integer.parseInt(s1) +" or status = "+ Integer.parseInt(s2);
-        }else {
-            statusCondition = "";
-        }
         if (StringUtils.isNotBlank(tags)&&tags != null) {//判断检索条件是否为空
-            if(StringUtils.isBlank(statusCondition)){
-                sql = "select * from resources where tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
-            }else{
-                sql = "select * from resources "+statusCondition+" and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
-            }
+            sql = "select * from resources where status in (" +status + ") and type in (" +type+ ") and tags like '%" +tags +"%' order by create_time desc limit " +pageSize+" offset "+start;
+
         }else{
-            sql = "select * from resources "+statusCondition+" order by create_time desc limit " +pageSize+" offset "+start;
+            sql = "select * from resources where status in (" +status + ") and type in (" +type+ ") order by create_time desc limit " +pageSize+" offset "+start;
         }
         return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ResourcesBean.class));
     }
