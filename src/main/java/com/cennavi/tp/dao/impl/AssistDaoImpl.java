@@ -7,6 +7,7 @@ import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.dao.AssistDao;
 import com.cennavi.tp.dao.ContentDao;
 //import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -95,56 +96,133 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         return list.size()==0?null:list.get(0);
     }
 
+
+
+
+
+    // 创建条件筛选的sql
+    private String createSelectTypeSQL(String[] categoryList) {
+        if(categoryList.length ==0) return "";
+        String selectSql =" " +"and" + " " + "(";
+        for (int i = 0; i < categoryList.length; i++) {
+
+            selectSql= selectSql + " " +"category='" +categoryList[i] +"'";
+            if(i != categoryList.length-1) {
+                selectSql = selectSql + " " + "or";
+            } else {
+                selectSql = selectSql  + ")";
+            }
+
+        }
+        return selectSql;
+    }
+
+    // 创建排序sql
+    private String createSingleSortTypeSQL(int type, String typeValue) {
+        String sql = "";
+
+        switch (typeValue) {
+            case "default":
+                break;
+            case "asc":
+                sql = type == 1? "create_time ASC" : "weight ASC";
+                break;
+            case "dec":
+                sql = type == 1? "create_time DESC" : "weight DESC";
+                break;
+        }
+        return sql;
+    }
+
+    // 拼接排序sql语句
+    private String createSelectTypeSQL(String createTimeSortType,String weightSortType) {
+        String sortSql = "";
+        String createTimeSortSql = createSingleSortTypeSQL(1, createTimeSortType);
+        String createWeightSortSql = createSingleSortTypeSQL(1, weightSortType);
+
+        if (createTimeSortSql == "" && createWeightSortSql == "") {
+
+        } else {
+            sortSql = "order by";
+            if(createTimeSortSql != "") {
+                sortSql = sortSql + createTimeSortSql;
+                if(createWeightSortSql != "") {
+                    sortSql = sortSql + "," + createWeightSortSql;
+                }
+            } else {
+                if(createWeightSortSql != "") {
+                    sortSql = sortSql + createWeightSortSql;
+                }
+
+            }
+        }
+        return sortSql;
+    }
     /**
      * 查询分页
      */
     @Override
-    public Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType, Integer userId) {
+    public Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType, Integer userId,
+                                            String[] categoryList,String createTimeSortType,String weightSortType,int statusValue) {
 
+        // 共有的  categoryList 分类筛选 createTimeSortType按照创建时间排序  weightSortType按照权重排序
+        // 管理员私有的   筛选特定状态的数据
+
+        String selectSql = createSelectTypeSQL(categoryList);
+        String sortSql = createSelectTypeSQL(createTimeSortType,weightSortType);
+
+
+        // 状态0录入中 1待审核 2审核通过 3被拒绝
         Integer offset = pageSize;
-
 
         int rows = 0;
         List<AssistBean> list = null;
 
         // 2-浏览模式  3-审核模式   4-我的发布
         if(contentType == 2) {
-            //查询总行数sql
-            rows = jdbcTemplate.queryForObject("select count(*) from assist", null, Integer.class);
+            // 查询所有审核通过的数据总行数
+            String scanSql = "select count(*) from assist where status=2" + selectSql + sortSql;
+            rows = jdbcTemplate.queryForObject(scanSql, null, Integer.class);
             if (page * pageSize > rows) {
                 // 超出总值的时候，需要计算offse的值
                 offset = rows - page * pageSize + pageSize;
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            list = jdbcTemplate.query("SELECT * FROM assist  ORDER BY id ASC LIMIT ? OFFSET ?", new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
+            String scanPageSql = "SELECT * FROM assist where status=2" + selectSql + " " +"ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            list = jdbcTemplate.query(scanPageSql, new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
 
         } else if(contentType == 3) {
+            String checkSql = "select count(*) from assist where status=1"+ selectSql + sortSql;
 
-
-            rows = jdbcTemplate.queryForObject("select count(*) from assist where status=1", null, Integer.class);
+            // 查询所有待审核的数据的总行数
+            rows = jdbcTemplate.queryForObject(checkSql, null, Integer.class);
             if (page * pageSize > rows) {
                 // 超出总值的时候，需要计算offse的值
                 offset = rows - page * pageSize + pageSize;
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            list = jdbcTemplate.query("SELECT * FROM assist where status=1 ORDER BY id ASC LIMIT ? OFFSET ?", new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
+            String checkPageSql = "SELECT * FROM assist where status=1" + selectSql + "ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            list = jdbcTemplate.query(checkPageSql, new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
 
         } else {
-            String sql = "select count(*) from assist where user_id=" + userId;
-            rows = jdbcTemplate.queryForObject(sql, null, Integer.class);
+            // 查询当前用户下面的数据
+
+            String statusSql = statusValue == 100 ? "": "and staus=" + statusValue;
+            String mangerSql = "select count(*) from assist where user_id=" + selectSql + statusSql +"ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            rows = jdbcTemplate.queryForObject(mangerSql, null, Integer.class);
             if (page * pageSize > rows) {
                 // 超出总值的时候，需要计算offse的值
                 offset = rows - page * pageSize + pageSize;
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            String sqlList = "SELECT * FROM assist WHERE user_id=? ORDER BY id ASC LIMIT ? OFFSET ?";
+            String mangerPageSql = "SELECT * FROM assist WHERE user_id=? ORDER BY id ASC LIMIT ? OFFSET ?" + selectSql + statusSql + sortSql;
 
-            list = jdbcTemplate.query(sqlList, new Object[]{userId,offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
+            list = jdbcTemplate.query(mangerPageSql, new Object[]{userId,offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
         }
 

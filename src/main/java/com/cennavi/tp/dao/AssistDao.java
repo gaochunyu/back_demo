@@ -24,7 +24,7 @@ public interface AssistDao extends BaseDao<AssistBean> {
     AssistBean getAssistItemById(Integer id);
 
     // 获取列表数据
-    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId);
+    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId,String[] categoryList,String createTimeSortType,String weightSortType,int statusValue);
 
     Integer updateAssistItemWeightById(Integer id, Boolean updateType);
 

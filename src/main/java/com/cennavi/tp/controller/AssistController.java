@@ -17,6 +17,8 @@ import java.util.Map;
 /**
  * Created by 姚文帅 on 2020/4/29 14:30. 帮助接口
  */
+
+
 @Controller
 @RequestMapping("/assist")
 public class AssistController {
@@ -27,19 +29,22 @@ public class AssistController {
 
     /**
      * 获取帮助列表,采用分页的方式,默认分页为1
-     * @Param uid 用户id
-     * @Param model    页数，每页的大小，数据请求的模式（浏览,我的发布，我的审核）当前模式id 2-浏览模式  3-审核模式   4-我的发布
-     * @return
+     * @Param    page页数，pageSize每页的大小
+     * @Param    数据请求的模式（浏览,我的发布，我的审核）当前模式id 2-浏览模式  3-审核模式   4-我的发布
+     * @Param    数据筛选条件 categoryList  1 默认分类  2 地图知识 3 基础知识 4 图层
+     * @Param    数据排序条件 createTimeSortType 根据日期排序 weightSortType 根据权重排序
+     * @Param    状态筛选，只有管理员有 statusValue
      */
     @ResponseBody
     @RequestMapping("/getAssistTableList")
     // 请求帮助页的列表数据
-    public ResultModel getAssistTableList(int page, int pageSize, int contentType, HttpServletRequest request){
+    public ResultModel getAssistTableList(int page, int pageSize, int contentType,
+                                         String[] categoryList,String createTimeSortType,String weightSortType,int statusValue, HttpServletRequest request){
 
         UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
         int userId = user.getId();
         try {
-            Map<String,Object> list =  assistService.getAssistList(page,pageSize,contentType,userId);
+            Map<String,Object> list =  assistService.getAssistList(page,pageSize,contentType,userId,categoryList,createTimeSortType,weightSortType,statusValue);
             return Result.success("成功获取数据",list);
 
         } catch (Exception e){

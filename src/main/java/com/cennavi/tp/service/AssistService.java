@@ -35,7 +35,7 @@ public interface AssistService {
      * @Param 分页
      * @return
      */
-    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId);
+    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId,String[] categoryList,String createTimeSortType,String weightSortType,int statusValue);
 
     /**
      * 根据id根据权重信息
