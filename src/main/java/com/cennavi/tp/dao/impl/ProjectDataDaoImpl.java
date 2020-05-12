@@ -23,9 +23,16 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType) {
-        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , string_agg ( imgs.url,',') AS urlList FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") GROUP BY info.id order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
-        //System.out.println("修改"+sql);
+    public List<ProjectBean> getProjectList(Integer limitSize,Integer offsetNum ,String tradeType ,String projectType ,String status , Integer userId) {
+        String sql = "";
+        sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.status, info.main_img ,string_agg ( imgs.url,',') AS urlList , trades.name as tradeName  FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id" +
+                " where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType + ") and status in (" + status + ") GROUP BY info.id , trades.name order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
+
+        if(userId != 0){
+            sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.status, info.main_img ,string_agg ( imgs.url,',') AS urlList , trades.name as tradeName  FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id" +
+                    " where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType + ") and status in (" + status + ") and uid = "+ userId +" GROUP BY info.id , trades.name order by info.sort desc LIMIT "+ limitSize +" OFFSET " + offsetNum;
+        }
+        //System.out.println("查询"+sql);
         return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
     }
 
@@ -106,8 +113,34 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
 
     @Override
     public List<ProjectBean> getProjectInfoById(Integer proId) {
-        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , string_agg ( imgs.url,',') AS urlList , trades.name as tradeName FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id where info.id = " + proId + " GROUP BY info.id , trades.name ";
+        String sql = "select info.id , info.name , info.trade_type_id , info.project_type , info.status , info.content , info.visit_url , info.sort , info.main_img , info.creat_time , string_agg ( imgs.url,',') AS urlList , trades.name as tradeName FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id LEFT JOIN trade_type as trades on info.trade_type_id = trades.id where info.id = " + proId + " GROUP BY info.id , trades.name ";
         return jdbcTemplate.query(sql , BeanPropertyRowMapper.newInstance(ProjectBean.class));
+    }
+
+    @Override
+    public boolean updateStatus(int id, int status) {
+        boolean flag = false;
+        String sql = "update project_info set status = "+ status +" where id = " + id;
+        int result = jdbcTemplate.update(sql);
+        if(result > 0){
+            flag = true;
+        }
+        return flag;
+    }
+
+    @Override
+    public boolean deleteProjectInfo(int id) {
+        boolean flag = false;
+        String sql = "delete  from project_info where id = " + id;
+        int result = jdbcTemplate.update(sql);
+
+        String sql2 = "delete  from project_imgs where project_id = " + id;
+        int result2 = jdbcTemplate.update(sql2);
+
+        if(result > 0 && result2 >0){
+            flag = true;
+        }
+        return flag;
     }
 
 }

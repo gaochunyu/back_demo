@@ -1,25 +1,16 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.AssistBean;
-import com.cennavi.tp.beans.ContentBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
-import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.dao.AssistDao;
-import com.cennavi.tp.dao.ContentDao;
-//import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

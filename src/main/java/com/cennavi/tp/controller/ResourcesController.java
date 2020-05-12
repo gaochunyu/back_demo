@@ -87,11 +87,11 @@ public class ResourcesController {
      */
     @ResponseBody
     @RequestMapping("/getResourcesList")
-    public ResultModel getResourcesList(Integer page,Integer pageSize,String tags,String status){
+    public ResultModel getResourcesList(Integer page,Integer pageSize,String tags,String status,String type){
         try {
             Map<String,Object> map = new HashMap<>();
-            List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags ,status);
-            int count = resourcesService.getResourcesCount(tags,status);
+            List<ResourcesBean> list = resourcesService.getResourcesList( page, pageSize, tags ,status, type);
+            int count = resourcesService.getResourcesCount(tags ,status, type);
             map.put("list",list);
             map.put("total",count);
             return Result.success("查询成功",map);

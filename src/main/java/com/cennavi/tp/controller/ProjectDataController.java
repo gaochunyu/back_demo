@@ -26,9 +26,9 @@ public class ProjectDataController {
 
     @ResponseBody
     @RequestMapping("/getProjectList")
-    public ResultModel getProjectList(@RequestParam(value = "limitSize") Integer limitSize ,@RequestParam(value = "curPage") Integer curPage , @RequestParam(value = "tradeType") String tradeType ,@RequestParam(value = "projectType") String projectType ){
+    public ResultModel getProjectList(@RequestParam(value = "limitSize") Integer limitSize ,@RequestParam(value = "curPage") Integer curPage , @RequestParam(value = "tradeType") String tradeType ,@RequestParam(value = "projectType") String projectType ,@RequestParam(value = "status") String status ,@RequestParam(value = "userId") Integer userId){
         try{
-            Map list = projectDataService.getProjectList(limitSize,curPage ,tradeType ,projectType);
+            Map list = projectDataService.getProjectList(limitSize,curPage ,tradeType ,projectType ,status ,userId);
             if(list == null && list.size() == 0){
                 return Result.fail("暂无数据",new ArrayList<>()); //1000
             }else{
@@ -72,6 +72,38 @@ public class ProjectDataController {
                 return Result.fail("暂无数据",new ArrayList<>()); //1000
             }else{
                 return Result.success("成功获取数据",list);  //200
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/updateProjectStatus")
+    public ResultModel updateStatusByProId(@RequestParam(value = "proId") Integer proId,@RequestParam(value = "status") Integer status){
+        try{
+            boolean flag = projectDataService.updateStatus(proId , status);
+            if(!flag){
+                return Result.fail("审核失败",new ArrayList<>()); //1000
+            }else{
+                return Result.success("审核成功",new ArrayList<>());  //200
+            }
+        }catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/deleteProjectInfo")
+    public ResultModel deleteProjectInfo(@RequestParam(value = "proId") Integer proId){
+        try{
+            boolean flag = projectDataService.deleteProjectInfo(proId);
+            if(!flag){
+                return Result.fail("删除失败",new ArrayList<>()); //1000
+            }else{
+                return Result.success("删除成功",new ArrayList<>());  //200
             }
         }catch (Exception e){
             e.getStackTrace();

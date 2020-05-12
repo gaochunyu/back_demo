@@ -37,9 +37,9 @@ public class ProjectDataServiceImpl implements ProjectDataService {
      * @return
      */
     @Override
-    public Map<String , Object> getProjectList(Integer limitSize,Integer curPage , String tradeType ,String projectType) {
+    public Map<String , Object> getProjectList(Integer limitSize,Integer curPage , String tradeType ,String projectType ,String status , Integer userId) {
         Integer offsetNum = limitSize * (curPage - 1); //每页开始的条数  从第 offsetNum+1条开始查询，总共查询limitSize条
-        List<ProjectBean> list = projectDataDao.getProjectList(limitSize,offsetNum,tradeType,projectType);
+        List<ProjectBean> list = projectDataDao.getProjectList(limitSize,offsetNum,tradeType,projectType ,status , userId);
 
         Integer num = projectDataDao.getProjectListNum(tradeType,projectType);
         Map<String , Object> newMap = new HashMap<>();
@@ -55,7 +55,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         Date date = new Date(System.currentTimeMillis());
         String createTime = formatter.format(date);
 
-        Integer status = 1;  //是否展示  0-待审核   1-审核成功   2-审核失败
+        Integer status = 1;  //是否展示  0-录入中  1-待审核   2-审核成功   3-审核失败
 
         ProjectBean projectBean = new ProjectBean();
         projectBean.setName(name);
@@ -153,6 +153,18 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         Map<Integer,ProjectBean> map=new HashMap<>();
 
         return list;
+    }
+
+    @Override
+    public boolean updateStatus(int id, int status) {
+        boolean flag = projectDataDao.updateStatus(id, status);
+        return flag;
+    }
+
+    @Override
+    public boolean deleteProjectInfo(int id) {
+        boolean flag = projectDataDao.deleteProjectInfo(id);
+        return flag;
     }
 
 }
