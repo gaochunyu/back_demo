@@ -141,15 +141,15 @@ public class ResourcesServiceImpl implements ResourcesService {
     }
 
     @Override
-    public int getResourcesCount(String tags,String status) {
-        int count = resourcesDao.getResourcesCount(tags,status);
+    public int getResourcesCount(String tags,String status,String type) {
+        int count = resourcesDao.getResourcesCount(tags, status, type);
         return count;
     }
 
     @Override
-    public List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags, String status) {
+    public List<ResourcesBean> getResourcesList(Integer page, Integer pageSize, String tags, String status,String type) {
         int start = (page - 1) * pageSize;
-        return resourcesDao.getResourcesList(start, pageSize, tags, status);
+        return resourcesDao.getResourcesList(start, pageSize, tags, status, type);
 
     }
 
