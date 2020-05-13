@@ -28,7 +28,7 @@ public interface AssistService {
     ResultModel deleteAssistItemById(Integer id);
 
     // 获取一条数据
-    AssistBean getAssistItemById(Integer id);
+    ResultModel getAssistItemById(Integer userID, Integer id);
 
     /**
      * 帮助列表分页查询数据
@@ -41,7 +41,7 @@ public interface AssistService {
      * 根据id根据权重信息
      * @return
      */
-    Integer updateAssistItemWeightById (Integer id,Boolean updateType);
+    ResultModel updateAssistItemWeightById (Integer userID,Integer id,Boolean updateType);
 
 
     Integer checkAssistItem(Integer id,Boolean checkType);

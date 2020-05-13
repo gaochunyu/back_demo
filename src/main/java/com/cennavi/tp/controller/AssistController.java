@@ -5,14 +5,13 @@ import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.AssistService;
+import com.cennavi.tp.service.UserAssistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Type;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +25,7 @@ public class AssistController {
 
     @Autowired
     private AssistService assistService;
+
 
 
     /**
@@ -102,17 +102,12 @@ public class AssistController {
     @RequestMapping("/getAssistItemById")
     // 请求帮助页的列表数据
     public ResultModel getAssistItemById(int id, HttpServletRequest request){
-        try {
-            AssistBean assistBean = assistService.getAssistItemById(id);
-            if(assistBean!= null) {
-                return Result.success("成功获取数据",assistBean);
-            } else {
-                return Result.success("没有获取到数据",null);
-            }
-        } catch (Exception e){
-            e.getStackTrace();
-            return Result.build500("出现异常");
-        }
+        // 获取用户 id
+        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        int userId = user.getId();
+
+        return assistService.getAssistItemById(userId,id);
+
     }
 
     /**
@@ -123,18 +118,11 @@ public class AssistController {
     @ResponseBody
     @RequestMapping(value = "/updateAssistItemWeightById",method = RequestMethod.GET )
     public ResultModel updateAssistItemWeightById(int id, Boolean type, HttpServletRequest request) {
-        try {
-            Integer result =  assistService.updateAssistItemWeightById(id, type);
+        // 获取用户 id
+        UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
+        int userId = user.getId();
 
-            if(result == 1) {
-                return Result.success("成功修改数据",null);
-            } else {
-                return Result.success("修改数据失败",null);
-            }
-        } catch (Exception e){
-            e.getStackTrace();
-            return Result.build500("出现异常");
-        }
+        return assistService.updateAssistItemWeightById(userId, id, type);
 
     }
 

@@ -3,9 +3,6 @@ package com.cennavi.tp.dao.impl;
 import com.cennavi.tp.beans.AssistBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.AssistDao;
-import com.cennavi.tp.dao.ContentDao;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-import org.springframework.beans.BeanUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -49,7 +46,6 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             long insertId = keyHolder.getKey().longValue();
 
             return insertId;
-
     }
 
 
@@ -89,9 +85,6 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         List<AssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
         return list.size()==0?null:list.get(0);
     }
-
-
-
 
 
     // 创建条件筛选的sql
