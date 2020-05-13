@@ -124,10 +124,10 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         switch (typeValue) {
             case "default":
                 break;
-            case "asc":
+            case "ascending":
                 sql = type == 1? "create_time ASC" : "weight ASC";
                 break;
-            case "dec":
+            case "descending":
                 sql = type == 1? "create_time DESC" : "weight DESC";
                 break;
         }
@@ -138,23 +138,14 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
     private String createSelectTypeSQL(String createTimeSortType,String weightSortType) {
         String sortSql = "";
         String createTimeSortSql = createSingleSortTypeSQL(1, createTimeSortType);
-        String createWeightSortSql = createSingleSortTypeSQL(1, weightSortType);
+        String createWeightSortSql = createSingleSortTypeSQL(2, weightSortType);
 
         if (createTimeSortSql == "" && createWeightSortSql == "") {
 
         } else {
-            sortSql = "order by";
-            if(createTimeSortSql != "") {
-                sortSql = sortSql + createTimeSortSql;
-                if(createWeightSortSql != "") {
-                    sortSql = sortSql + "," + createWeightSortSql;
-                }
-            } else {
-                if(createWeightSortSql != "") {
-                    sortSql = sortSql + createWeightSortSql;
-                }
+            if(createTimeSortSql != "" ) sortSql = "order by"+ " " + createTimeSortSql;
+            if(createWeightSortSql != "" ) sortSql = "order by"+ " " + createWeightSortSql;
 
-            }
         }
         return sortSql;
     }
@@ -181,7 +172,7 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
         // 2-浏览模式  3-审核模式   4-我的发布
         if(contentType == 2) {
             // 查询所有审核通过的数据总行数
-            String scanSql = "select count(*) from assist where status=2" + selectSql + sortSql;
+            String scanSql = "select count(*) from assist where status=2" + selectSql;
             rows = jdbcTemplate.queryForObject(scanSql, null, Integer.class);
             if (page * pageSize > rows) {
                 // 超出总值的时候，需要计算offse的值
@@ -189,12 +180,12 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            String scanPageSql = "SELECT * FROM assist where status=2" + selectSql + " " +"ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            String scanPageSql = "SELECT * FROM assist where status=2" + selectSql + " " + sortSql + " " + " LIMIT ? OFFSET ?";
             list = jdbcTemplate.query(scanPageSql, new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
 
         } else if(contentType == 3) {
-            String checkSql = "select count(*) from assist where status=1"+ selectSql + sortSql;
+            String checkSql = "select count(*) from assist where status=1"+ selectSql;
 
             // 查询所有待审核的数据的总行数
             rows = jdbcTemplate.queryForObject(checkSql, null, Integer.class);
@@ -204,15 +195,14 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            String checkPageSql = "SELECT * FROM assist where status=1" + selectSql + "ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            String checkPageSql = "SELECT * FROM assist where status=1" + selectSql + " "+ sortSql +  " " +" LIMIT ? OFFSET ?";
             list = jdbcTemplate.query(checkPageSql, new Object[]{offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
 
 
         } else {
             // 查询当前用户下面的数据
-
-            String statusSql = statusValue == 100 ? "": "and staus=" + statusValue;
-            String mangerSql = "select count(*) from assist where user_id=" + selectSql + statusSql +"ORDER BY id ASC"+ sortSql + " LIMIT ? OFFSET ?";
+            String statusSql = statusValue == 100 ? "": "and status=" + statusValue;
+            String mangerSql = "select count(*) from assist where user_id="+ userId + selectSql + " " + statusSql;
             rows = jdbcTemplate.queryForObject(mangerSql, null, Integer.class);
             if (page * pageSize > rows) {
                 // 超出总值的时候，需要计算offse的值
@@ -220,10 +210,8 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            String mangerPageSql = "SELECT * FROM assist WHERE user_id=? ORDER BY id ASC LIMIT ? OFFSET ?" + selectSql + statusSql + sortSql;
-
+            String mangerPageSql = "SELECT * FROM assist WHERE user_id=?"+selectSql  + " " +  statusSql +sortSql+ " " +"LIMIT ? OFFSET ?";
             list = jdbcTemplate.query(mangerPageSql, new Object[]{userId,offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
-
         }
 
         Map<String,Object> map = new HashMap<>();

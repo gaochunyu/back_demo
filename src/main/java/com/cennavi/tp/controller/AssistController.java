@@ -36,8 +36,7 @@ public class AssistController {
      * @Param    状态筛选，只有管理员有 statusValue
      */
     @ResponseBody
-    @RequestMapping("/getAssistTableList")
-    // 请求帮助页的列表数据
+    @RequestMapping(value = "/getAssistTableList", method = RequestMethod.POST)
     public ResultModel getAssistTableList(int page, int pageSize, int contentType,
                                          String[] categoryList,String createTimeSortType,String weightSortType,int statusValue, HttpServletRequest request){
 
