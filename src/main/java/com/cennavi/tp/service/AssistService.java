@@ -28,23 +28,27 @@ public interface AssistService {
     ResultModel deleteAssistItemById(Integer id);
 
     // 获取一条数据
-    AssistBean getAssistItemById(Integer id);
+    ResultModel getAssistItemById(Integer userID, Integer id);
 
     /**
      * 帮助列表分页查询数据
      * @Param 分页
      * @return
      */
-    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId);
+    Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId,String[] categoryList,String createTimeSortType,String weightSortType,int statusValue);
 
     /**
      * 根据id根据权重信息
      * @return
      */
-    Integer updateAssistItemWeightById (Integer id,Boolean updateType);
+    ResultModel updateAssistItemWeightById (Integer userID,Integer id,Boolean updateType);
 
 
     Integer checkAssistItem(Integer id,Boolean checkType);
+
+
+    Integer questionIsCorrect(String question);
+
 
 
 }

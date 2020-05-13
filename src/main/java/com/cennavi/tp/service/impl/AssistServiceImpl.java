@@ -7,7 +7,9 @@ import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.AssistDao;
 import com.cennavi.tp.service.AssistService;
 
+import com.cennavi.tp.service.UserAssistService;
 import com.cennavi.tp.utils.MyDateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +28,9 @@ public class AssistServiceImpl implements AssistService {
 
     @Resource
     private AssistDao assistDao;
+
+    @Autowired
+    private UserAssistService userAssistService;
 
     @Override
     public ResultModel addOrUpdateAssiatantListItem(String question, String answer, String category, int id, Boolean saveType, HttpServletRequest request) {
@@ -96,24 +101,62 @@ public class AssistServiceImpl implements AssistService {
     }
 
     @Override
-    public AssistBean getAssistItemById(Integer id) {
-        return assistDao.getAssistItemById(id);
+    public ResultModel getAssistItemById(Integer userID, Integer id) {
+
+        try {
+            AssistBean assistBean = assistDao.getAssistItemById(id);
+            if(assistBean!= null) {
+
+                Map<String,Object> map = new HashMap<>();
+                map.put("assistData", assistBean);
+                // 获取本条信息是否被赞过的状态
+                if(userAssistService.getAssistWeightStatus(userID, id)) {
+                    map.put("status", true);
+                } else {
+                   map.put("status", false);
+                }
+                return Result.success("成功获取数据",map);
+            } else {
+                return Result.success("没有获取到数据",null);
+            }
+        } catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
     }
 
 
     @Override
-    public Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId){
-        return assistDao.getAssistList(page, pageSize,contentType,userId);
+    public Map<String,Object> getAssistList(Integer page, Integer pageSize,Integer contentType,Integer userId,String[] categoryList,String createTimeSortType,String weightSortType,int statusValue){
+        return assistDao.getAssistList(page, pageSize,contentType,userId,categoryList,createTimeSortType,weightSortType,statusValue);
     }
 
     @Override
-    public Integer updateAssistItemWeightById(Integer id, Boolean updateType) {
-        return assistDao.updateAssistItemWeightById(id, updateType);
+    public ResultModel updateAssistItemWeightById(Integer userID, Integer id, Boolean updateType) {
+
+        try {
+            Integer result =  assistDao.updateAssistItemWeightById(id, updateType);
+            Integer result2 =  userAssistService.giveARedHeart(userID, id, updateType);
+
+            if(result == 1 && result2 == 1) {
+                return Result.success("成功修改数据",null);
+            } else {
+                return Result.success("修改数据失败",null);
+            }
+        } catch (Exception e){
+            e.getStackTrace();
+            return Result.build500("出现异常");
+        }
     }
 
     @Override
     public Integer checkAssistItem(Integer id, Boolean checkType) {
         return assistDao.checkAssistItem(id, checkType);
+    }
+
+    @Override
+    public Integer questionIsCorrect(String question) {
+        return assistDao.questionIsCorrect(question);
     }
 
 
