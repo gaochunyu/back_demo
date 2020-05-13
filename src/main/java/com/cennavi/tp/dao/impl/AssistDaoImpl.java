@@ -256,4 +256,23 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             return -1;
         }
     }
+
+    // 判断question是否存在
+    @Override
+    public Integer questionIsCorrect(String question) {
+        try {
+            String sql = "select * from assist where question='"+ question + "'";
+
+            List<AssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
+            if(list.size()!= 0){
+                return 1;
+            } else {
+                return -1;
+            }
+
+        } catch (Exception e){
+            e.getStackTrace();
+            return -1;
+        }
+    }
 }

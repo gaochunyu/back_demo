@@ -116,5 +116,10 @@ public class AssistServiceImpl implements AssistService {
         return assistDao.checkAssistItem(id, checkType);
     }
 
+    @Override
+    public Integer questionIsCorrect(String question) {
+        return assistDao.questionIsCorrect(question);
+    }
+
 
 }

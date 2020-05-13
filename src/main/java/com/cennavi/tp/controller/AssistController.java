@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,9 +69,13 @@ public class AssistController {
                                             int id,
                                             HttpServletRequest request)
     {
+        // 新增/更新之前先去判断修改后的title是否重复，不允许出现相同的两个问题
+        if(assistService.questionIsCorrect(question) == 1) {
+            return Result.buildResult(101, "改问题已经存在",null);
 
-        return assistService.addOrUpdateAssiatantListItem(question, answer,category,id,saveType,request);
-
+        } else {
+            return assistService.addOrUpdateAssiatantListItem(question, answer,category,id,saveType,request);
+        }
     }
 
 
