@@ -197,7 +197,7 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
             }
 
             int startIndex = (page-1) * pageSize;//提取分页开始索引
-            String mangerPageSql = "SELECT * FROM assist WHERE user_id=?"+selectSql  + " " +  statusSql +sortSql+ " " +"LIMIT ? OFFSET ?";
+            String mangerPageSql = "SELECT * FROM assist WHERE user_id=?"+selectSql  + " " +  statusSql + sortSql+ " " +"LIMIT ? OFFSET ?";
             list = jdbcTemplate.query(mangerPageSql, new Object[]{userId,offset,startIndex}, new BeanPropertyRowMapper<>(AssistBean.class));
         }
 
@@ -252,9 +252,16 @@ public class AssistDaoImpl extends BaseDaoImpl<AssistBean> implements AssistDao 
 
     // 判断question是否存在
     @Override
-    public Integer questionIsCorrect(String question) {
+    public Integer questionIsCorrect(String question, Integer id) {
+        // 当id为-1时
         try {
-            String sql = "select * from assist where question='"+ question + "'";
+            String sql = "";
+            if(id == -1) {
+                sql = "select * from assist where question='"+ question + "'";
+            } else {
+                sql = "select * from assist where question='"+ question + " " +"'and id=" + id;
+            }
+
 
             List<AssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(AssistBean.class));
             if(list.size()!= 0){
