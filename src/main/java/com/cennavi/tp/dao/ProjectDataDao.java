@@ -15,4 +15,11 @@ public interface ProjectDataDao extends BaseDao<ProjectBean> {
     boolean updateStatus(int id , int status);
     boolean deleteProjectInfo(int id);
 
+    /**
+     * 获取项目截图集合
+     * @param pid
+     * @return
+     */
+    List<ProjectImgBean> getProjectImgs(Integer pid);
+
 }
