@@ -47,7 +47,7 @@ public interface AssistService {
     Integer checkAssistItem(Integer id,Boolean checkType);
 
 
-    Integer questionIsCorrect(String question);
+    Integer questionIsCorrect(String question, Integer id);
 
 
 

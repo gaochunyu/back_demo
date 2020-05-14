@@ -70,7 +70,7 @@ public class AssistController {
                                             HttpServletRequest request)
     {
         // 新增/更新之前先去判断修改后的title是否重复，不允许出现相同的两个问题
-        if(assistService.questionIsCorrect(question) == 1) {
+        if(assistService.questionIsCorrect(question, id) == 1) {
             return Result.buildResult(101, "改问题已经存在",null);
 
         } else {
