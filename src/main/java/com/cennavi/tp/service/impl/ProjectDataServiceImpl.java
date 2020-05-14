@@ -163,6 +163,24 @@ public class ProjectDataServiceImpl implements ProjectDataService {
 
     @Override
     public boolean deleteProjectInfo(int id) {
+        //删除封面
+        ProjectBean project = projectDataDao.findById(id);
+        if(project!=null){
+            String path = project.getMain_img();
+            File file = new File(fileSavePath+path);
+            if(file.exists()){
+                file.delete();
+            }
+        }
+        //删除截图
+        List<ProjectImgBean> imgs = projectDataDao.getProjectImgs(id);
+        for(ProjectImgBean info : imgs){
+            String path = info.getUrl();
+            File file = new File(fileSavePath+path);
+            if(file.exists()){
+                file.delete();
+            }
+        }
         boolean flag = projectDataDao.deleteProjectInfo(id);
         return flag;
     }

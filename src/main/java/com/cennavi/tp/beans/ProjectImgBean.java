@@ -2,7 +2,7 @@ package com.cennavi.tp.beans;
 
 import com.cennavi.tp.common.MyTable;
 
-@MyTable
+@MyTable("project_imgs")
 public class ProjectImgBean {
     private int id;
     private String url;

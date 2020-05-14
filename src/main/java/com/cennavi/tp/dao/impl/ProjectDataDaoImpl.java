@@ -2,6 +2,7 @@ package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.ProjectBean;
 import com.cennavi.tp.beans.ProjectImgBean;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.base.dao.impl.BaseDaoImpl;
 import com.cennavi.tp.dao.ProjectDataDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,6 +142,12 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
             flag = true;
         }
         return flag;
+    }
+
+    @Override
+    public List<ProjectImgBean> getProjectImgs(Integer pid) {
+        String sql = "select * from project_imgs where project_id = "+pid;
+        return jdbcTemplate.query(sql,BeanPropertyRowMapper.newInstance(ProjectImgBean.class));
     }
 
 }
