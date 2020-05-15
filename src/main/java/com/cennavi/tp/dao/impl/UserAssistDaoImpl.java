@@ -29,12 +29,14 @@ public class UserAssistDaoImpl extends BaseDaoImpl<UserAssistBean> implements Us
 
         // 进行点赞，新增一条数据
         if(type) {
-            String sql = "insert into user_assist(user_id,assist_id) values (" +userId+ ","+assistId+")";
+            String sql = "insert into user_assist(user_id,assist_id) values (?, ?)";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql,new String [] {"id"});
+                ps.setInt(1,userId);
+                ps.setInt(2,assistId);
                 return ps;
             }, keyHolder);
 
@@ -43,8 +45,14 @@ public class UserAssistDaoImpl extends BaseDaoImpl<UserAssistBean> implements Us
 
         } else {
             // 取消点赞，删除数据
-            String sql = "delete from user_assist where user_id="+ userId + " " + "and assist_id=" + assistId;
-            int i = jdbcTemplate.update(sql);
+            String sql = "delete from user_assist where user_id=? and assist_id=?";
+
+            int i = jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setInt(1,userId);
+                ps.setInt(2,assistId);
+                return ps;
+            });
             return i;
         }
     }
@@ -52,9 +60,9 @@ public class UserAssistDaoImpl extends BaseDaoImpl<UserAssistBean> implements Us
     // 根据用户id和帮助列表的id获取本条数据的状态，是否已经点赞过
     @Override
     public Boolean getAssistWeightStatus(Integer userId, Integer assistId) {
-        String sql = "select * from user_assist where user_id="+ userId + " " + "and assist_id=" + assistId;
+        String sql = "select * from user_assist where user_id=? and assist_id=?";
 
-        List<UserAssistBean> list = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(UserAssistBean.class));
+        List<UserAssistBean> list = jdbcTemplate.query(sql, new Object[]{userId,assistId},BeanPropertyRowMapper.newInstance(UserAssistBean.class));
         if(list.size()!= 0) {
             // 这条数据存在，证明用户已经进行过了点赞
             return true;
