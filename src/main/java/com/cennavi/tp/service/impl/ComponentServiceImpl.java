@@ -55,58 +55,27 @@ public class ComponentServiceImpl implements ComponentService {
 
         // 处理coverImg封面图
         if (coverImg != null && !coverImg.isEmpty()) {
-            // 创建图片文件夹
-            String coverImgSavePath = fileSaveRootPath + "component/img/cover";
-            File pathTest = new File(coverImgSavePath + "/");
-            // 如果文件夹不存在就创建
-            if (!pathTest.exists()) {
-                pathTest.mkdirs();
-            }
-            String coverImgName = coverImg.getOriginalFilename();
-            // 拼接路径和文件名，并存入数据库
-            String coverImgPath = coverImgSavePath + "/" + coverImgName;
-            File f = new File(coverImgPath);
-
-            try {
-                // 保存封面图文件
-                coverImg.transferTo(f);
-                componentBean.setCover_img("component/img/cover/" + coverImgName);
-            } catch (IllegalStateException | IOException e) {
-                e.printStackTrace();
+            String coverImgRelativePath = handleFileUpload("component/img/cover/", coverImg);
+            if (coverImgRelativePath != null && coverImgRelativePath.length() != 0) {
+                componentBean.setCover_img(coverImgRelativePath);
+            } else {
+                return false;
             }
         }
 
         // 处理imgList展示图列表
-        List<ComponentImgBean> list = new ArrayList<>();
-        // 要保存到数据库的展示图的地址列表
-        List<String> imgDataPathList = new ArrayList<>();
+        List<ComponentImgBean> showImgList = new ArrayList<>();
         if ( imgList != null && imgList.size() > 0) {
             for (MultipartFile imgFile : imgList) {
                 // 如果当前图片文件存在
                 if (imgFile != null && !imgFile.isEmpty()) {
-                    String imgFilePath = fileSaveRootPath + "component/img/imgList";
-                    File testPath = new File(imgFilePath + "/");
-                    // 不存在路径，就创建
-                    if (!testPath.exists()) {
-                        testPath.mkdirs();
-                    }
-                    // 获取图片文件名称
-                    String fileName = imgFile.getOriginalFilename();
-                    // 拼接图片完整路径
-                    String fullFilePath = imgFilePath + "/" + fileName;
-                    // 创建文件并保存
-                    File f = new File(fullFilePath);
-
-                    try {
-                        // 保存文件
-                        imgFile.transferTo(f);
-                        String imgDataPath = "component/img/imgList/" + fileName;
+                    String showImgRelativePath = handleFileUpload("component/img/imgList/", imgFile);
+                    if (showImgRelativePath != null && showImgRelativePath.length() != 0) {
                         ComponentImgBean componentImgBean = new ComponentImgBean();
-                        componentImgBean.setImg_url(imgDataPath);
-                        list.add(componentImgBean);
-                        imgDataPathList.add(imgDataPath);
-                    } catch (IllegalStateException | IOException e) {
-                        e.printStackTrace();
+                        componentImgBean.setImg_url(showImgRelativePath);
+                        showImgList.add(componentImgBean);
+                    } else {
+                        return false;
                     }
                 }
             }
@@ -114,28 +83,15 @@ public class ComponentServiceImpl implements ComponentService {
 
         // 处理file上传文件
         if (file != null && !file.isEmpty()) {
-            // 创建文件文件夹
-            String fileSavePath = fileSaveRootPath + "component/file";
-            File pathTest = new File(fileSavePath + "/");
-            // 如果文件夹不存在就创建
-            if (!pathTest.exists()) {
-                pathTest.mkdirs();
-            }
-            String fileName = coverImg.getOriginalFilename();
-            // 拼接路径和文件名，并存入数据库
-            String fileFullPath = fileSavePath + "/" + fileName;
-            File f = new File(fileFullPath);
-
-            try {
-                // 保存封面图文件
-                file.transferTo(f);
-                componentBean.setFile_url("component/file/" + fileName);
-            } catch (IllegalStateException | IOException e) {
-                e.printStackTrace();
+            String fileRelativePath = handleFileUpload("component/file/", file);
+            if (fileRelativePath != null && fileRelativePath.length() != 0) {
+                componentBean.setFile_url(fileRelativePath);
+            } else {
+                return false;
             }
         }
 
-        return componentDao.addComponent(componentBean, list, imgDataPathList);
+        return componentDao.addComponent(componentBean, showImgList);
     }
 
     // 删除
@@ -159,6 +115,33 @@ public class ComponentServiceImpl implements ComponentService {
     @Override
     public List<ComponentTypeBean> getComponentTypeList() {
         return componentDao.getComponentTypeList();
+    }
+
+    /**
+     * 组件模块处理文件上传
+     * @param relativePath 文件要保存的相对路径
+     * @param file 要处理的由前端上传来的文件
+     * @return 存入数据库的相对路径
+     */
+    public String handleFileUpload(String relativePath, MultipartFile file) {
+        String absolutePath = fileSaveRootPath + relativePath;
+        String fileName = file.getOriginalFilename();
+        String relativeFullPath = relativePath + fileName;
+        String absoluteFullPath = absolutePath + fileName;
+        // 判断文件夹是否存在
+        File dirTest = new File(absolutePath);
+        if (!dirTest.exists()) {
+            dirTest.mkdirs();
+        }
+        // 获取文件
+        File f = new File(absoluteFullPath);
+        try {
+            // 保存文件
+            file.transferTo(f);
+        } catch (IllegalStateException | IOException e) {
+            e.printStackTrace();
+        }
+        return relativeFullPath;
     }
 
 }

@@ -7,7 +7,7 @@ import com.cennavi.tp.beans.ComponentTypeBean;
 import java.util.List;
 
 public interface ComponentDao {
-    boolean addComponent(ComponentBean componentBean, List<ComponentImgBean> list, List<String> imgDataPathList);
+    boolean addComponent(ComponentBean componentBean, List<ComponentImgBean> list);
 
     Integer delComponent(Integer id, Integer uid);
 
