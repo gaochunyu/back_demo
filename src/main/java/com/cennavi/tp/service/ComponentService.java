@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ComponentService {
     // 添加组件
-    boolean addComponent(Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> imgList, String visitUrl, MultipartFile file);
+    boolean addComponent(Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file);
     // 删除组件
     ResultModel delComponent(Integer id, Integer uid);
     // 更新组件

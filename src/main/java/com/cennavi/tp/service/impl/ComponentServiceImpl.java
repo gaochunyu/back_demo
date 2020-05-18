@@ -10,12 +10,12 @@ import com.cennavi.tp.service.ComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +32,9 @@ public class ComponentServiceImpl implements ComponentService {
     @Value("${file_path}")
     private String fileSaveRootPath;
 
-    // 新增
     @Override
-    public boolean addComponent(Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> imgList, String visitUrl, MultipartFile file) {
+    @Transactional
+    public boolean addComponent(Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file) {
         // 获取当前时间
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = df.format(new Date());
@@ -56,42 +56,41 @@ public class ComponentServiceImpl implements ComponentService {
         // 处理coverImg封面图
         if (coverImg != null && !coverImg.isEmpty()) {
             String coverImgRelativePath = handleFileUpload("component/img/cover/", coverImg);
-            if (coverImgRelativePath != null && coverImgRelativePath.length() != 0) {
-                componentBean.setCover_img(coverImgRelativePath);
-            } else {
-                return false;
-            }
-        }
-
-        // 处理imgList展示图列表
-        List<ComponentImgBean> showImgList = new ArrayList<>();
-        if ( imgList != null && imgList.size() > 0) {
-            for (MultipartFile imgFile : imgList) {
-                // 如果当前图片文件存在
-                if (imgFile != null && !imgFile.isEmpty()) {
-                    String showImgRelativePath = handleFileUpload("component/img/imgList/", imgFile);
-                    if (showImgRelativePath != null && showImgRelativePath.length() != 0) {
-                        ComponentImgBean componentImgBean = new ComponentImgBean();
-                        componentImgBean.setImg_url(showImgRelativePath);
-                        showImgList.add(componentImgBean);
-                    } else {
-                        return false;
-                    }
-                }
-            }
+            componentBean.setCover_img(coverImgRelativePath);
         }
 
         // 处理file上传文件
         if (file != null && !file.isEmpty()) {
             String fileRelativePath = handleFileUpload("component/file/", file);
-            if (fileRelativePath != null && fileRelativePath.length() != 0) {
-                componentBean.setFile_url(fileRelativePath);
-            } else {
-                return false;
-            }
+            componentBean.setFile_url(fileRelativePath);
         }
 
-        return componentDao.addComponent(componentBean, showImgList);
+        // 新增component信息
+        int insertId = componentDao.addComponent(componentBean);
+        // component信息新增成功
+        if (insertId > 0) {
+            // 如果有展示图则新增
+            if (showImgList != null && showImgList.size() > 0) {
+                for (MultipartFile showImgFile : showImgList) {
+                    // 如果当前图片文件存在
+                    if (showImgFile != null && !showImgFile.isEmpty()) {
+                        String showImgRelativePath = handleFileUpload("component/img/imgList/", showImgFile);
+                        // 生成ComponentImgBean
+                        ComponentImgBean componentImgBean = new ComponentImgBean();
+                        componentImgBean.setCid(insertId);
+                        componentImgBean.setImg_url(showImgRelativePath);
+                        boolean flag = componentDao.addComponentImg(componentImgBean);
+                        if (!flag) {
+                            throw new RuntimeException("组件图片新增失败");
+                        }
+                    }
+                }
+            }
+            return true;
+        } else {
+            // component信息新增失败
+            return false;
+        }
     }
 
     // 删除
@@ -123,7 +122,7 @@ public class ComponentServiceImpl implements ComponentService {
      * @param file 要处理的由前端上传来的文件
      * @return 存入数据库的相对路径
      */
-    public String handleFileUpload(String relativePath, MultipartFile file) {
+    private String handleFileUpload(String relativePath, MultipartFile file) {
         String absolutePath = fileSaveRootPath + relativePath;
         String fileName = file.getOriginalFilename();
         String relativeFullPath = relativePath + fileName;
