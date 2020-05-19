@@ -20,4 +20,10 @@ public interface ComponentDao {
 
     // 根据component_id新增组件展示图
     boolean addComponentImg(ComponentImgBean componentImgBean);
+
+    // 获取组件分页列表
+    List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type);
+
+    // 根据查询条件获取组件数量
+    int getComponentCount(String tags, String status, String type);
 }

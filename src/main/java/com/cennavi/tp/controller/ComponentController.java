@@ -1,5 +1,6 @@
 package com.cennavi.tp.controller;
 
+import com.cennavi.tp.beans.ComponentBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.ComponentService;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: chenfeng
@@ -76,5 +79,20 @@ public class ComponentController {
         }
     }
 
-    // 接口6.获取组件列表
+    // 获取组件分页列表
+    @ResponseBody
+    @RequestMapping(value = "/getComponentList", method = RequestMethod.POST)
+    public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            List<ComponentBean> list = componentService.getComponentList(pageNo,pageSize,tags,status,type);
+            int count = componentService.getComponentCount(tags,status,type);
+            map.put("list", list);
+            map.put("total",count);
+            return Result.success("查询成功",map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail("查询异常");
+        }
+    }
 }

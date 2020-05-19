@@ -53,4 +53,16 @@ public class ComponentDaoImpl implements ComponentDao {
         return count > 0;
     }
 
+    @Override
+    public List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type) {
+        String sql = "select * from component where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%' order by create_time desc limit " + pageSize + " offset " + startNo;
+        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(ComponentBean.class));
+    }
+
+    @Override
+    public int getComponentCount(String tags, String status, String type) {
+        String sql = "select count(*) from component where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%'";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
 }

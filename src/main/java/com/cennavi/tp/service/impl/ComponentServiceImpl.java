@@ -110,10 +110,20 @@ public class ComponentServiceImpl implements ComponentService {
         return null;
     }
 
-    // 获取组件类型列表
     @Override
     public List<ComponentTypeBean> getComponentTypeList() {
         return componentDao.getComponentTypeList();
+    }
+
+    @Override
+    public List<ComponentBean> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
+        int startNo = (pageNo - 1) * pageSize;
+        return componentDao.getComponentList(startNo, pageSize, tags, status, type);
+    }
+
+    @Override
+    public int getComponentCount(String tags, String status, String type) {
+        return componentDao.getComponentCount(tags, status, type);
     }
 
     /**
