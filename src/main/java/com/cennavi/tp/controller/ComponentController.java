@@ -81,7 +81,7 @@ public class ComponentController {
 
     // 获取组件分页列表
     @ResponseBody
-    @RequestMapping(value = "/getComponentList", method = RequestMethod.POST)
+    @RequestMapping("/getComponentList")
     public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
         try {
             Map<String, Object> map = new HashMap<>();
