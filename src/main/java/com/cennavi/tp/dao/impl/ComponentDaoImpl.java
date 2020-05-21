@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: chenfeng
@@ -45,7 +46,6 @@ public class ComponentDaoImpl implements ComponentDao {
         return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(ComponentTypeBean.class));
     }
 
-
     @Override
     public boolean addComponentImg(ComponentImgBean componentImgBean) {
         String sql = "insert into component_img (cid, img_url) values (" + componentImgBean.getCid() + ",'" + componentImgBean.getImg_url() + "')";
@@ -54,9 +54,9 @@ public class ComponentDaoImpl implements ComponentDao {
     }
 
     @Override
-    public List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type) {
-        String sql = "select * from component where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%' order by create_time desc limit " + pageSize + " offset " + startNo;
-        return jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(ComponentBean.class));
+    public List<Map<String, Object>> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type) {
+        String sql = "select c.* , string_agg ( c2.img_url,',') as img_list from component c left join component_img c2 on c.id = c2.cid where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%' group by c.id order by create_time desc limit " + pageSize + " offset " + startNo;
+        return jdbcTemplate.queryForList(sql);
     }
 
     @Override

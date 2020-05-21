@@ -6,6 +6,7 @@ import com.cennavi.tp.common.result.ResultModel;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ComponentService {
     // 添加组件
@@ -17,7 +18,7 @@ public interface ComponentService {
     // 获取组件类型列表
     List<ComponentTypeBean> getComponentTypeList();
     // 获取组件分页列表
-    List<ComponentBean> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type);
+    List<Map<String,Object>> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type);
     // 根据条件获取用户数量
     int getComponentCount(String tags, String status, String type);
 }

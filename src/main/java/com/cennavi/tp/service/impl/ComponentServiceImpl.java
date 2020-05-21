@@ -16,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: chenfeng
@@ -116,13 +118,25 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public List<ComponentBean> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
+    public List<Map<String, Object>> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
         int startNo = (pageNo - 1) * pageSize;
+        if (type == null || type.length() == 0) {
+            return new ArrayList<>();
+        }
+        if (status == null || status.length() == 0) {
+            return new ArrayList<>();
+        }
         return componentDao.getComponentList(startNo, pageSize, tags, status, type);
     }
 
     @Override
     public int getComponentCount(String tags, String status, String type) {
+        if (type == null || type.length() == 0) {
+            return 0;
+        }
+        if (status == null || status.length() == 0) {
+            return 0;
+        }
         return componentDao.getComponentCount(tags, status, type);
     }
 

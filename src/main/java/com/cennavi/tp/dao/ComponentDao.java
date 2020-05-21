@@ -5,6 +5,7 @@ import com.cennavi.tp.beans.ComponentImgBean;
 import com.cennavi.tp.beans.ComponentTypeBean;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ComponentDao {
     /**
@@ -22,7 +23,8 @@ public interface ComponentDao {
     boolean addComponentImg(ComponentImgBean componentImgBean);
 
     // 获取组件分页列表
-    List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type);
+//    List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type);
+    List<Map<String,Object>> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type);
 
     // 根据查询条件获取组件数量
     int getComponentCount(String tags, String status, String type);

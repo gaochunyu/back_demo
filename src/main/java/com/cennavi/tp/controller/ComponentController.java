@@ -85,7 +85,7 @@ public class ComponentController {
     public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
         try {
             Map<String, Object> map = new HashMap<>();
-            List<ComponentBean> list = componentService.getComponentList(pageNo,pageSize,tags,status,type);
+            List<Map<String,Object>> list = componentService.getComponentList(pageNo,pageSize,tags,status,type);
             int count = componentService.getComponentCount(tags,status,type);
             map.put("list", list);
             map.put("total",count);
