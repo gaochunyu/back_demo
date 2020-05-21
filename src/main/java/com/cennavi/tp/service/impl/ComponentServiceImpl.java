@@ -16,10 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: chenfeng
@@ -126,7 +123,17 @@ public class ComponentServiceImpl implements ComponentService {
         if (status == null || status.length() == 0) {
             return new ArrayList<>();
         }
-        return componentDao.getComponentList(startNo, pageSize, tags, status, type);
+        List<Map<String, Object>> list = componentDao.getComponentList(startNo, pageSize, tags, status, type);
+        for (Map<String,Object> map : list) {
+            Object imgList = map.get("img_list");
+            if (imgList == null) {
+                map.put("img_List", new ArrayList<>());
+            } else {
+                String imgList_s = imgList.toString();
+                map.put("img_List", Arrays.asList(imgList_s.split(",")));
+            }
+        }
+        return list;
     }
 
     @Override
