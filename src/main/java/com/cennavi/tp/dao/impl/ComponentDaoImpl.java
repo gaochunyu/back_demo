@@ -34,10 +34,9 @@ public class ComponentDaoImpl implements ComponentDao {
     }
 
     @Override
-    public Integer delComponent(Integer id, Integer uid) {
-        String sql = "delete from component where id = "+ id +" and uid = "+ uid;
-        Integer count = jdbcTemplate.update(sql);
-        return count;
+    public int deleteComponent(Integer id) {
+        String sql = "delete from component where id = "+ id;
+        return jdbcTemplate.update(sql);
     }
 
     @Override
@@ -54,15 +53,36 @@ public class ComponentDaoImpl implements ComponentDao {
     }
 
     @Override
-    public List<Map<String, Object>> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type) {
-        String sql = "select c.* , string_agg ( c2.img_url,',') as img_list from component c left join component_img c2 on c.id = c2.cid where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%' group by c.id order by create_time desc limit " + pageSize + " offset " + startNo;
+    public List<Map<String, Object>> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type, Integer uid) {
+        String sql = "select c.* , string_agg ( c2.img_url,',') as img_list from component c left join component_img c2 on c.id = c2.cid where type in (" + type + ") and status in (" + status + ")";
+        // 关联查询用户发布组件
+        if(uid != 0) {
+            sql += " and uid = " + uid;
+        }
+        sql +=  " and tags like '%" + tags + "%' group by c.id order by create_time desc limit " + pageSize + " offset " + startNo;
         return jdbcTemplate.queryForList(sql);
     }
 
     @Override
-    public int getComponentCount(String tags, String status, String type) {
-        String sql = "select count(*) from component where type in (" + type + ") and status in (" + status + ") and tags like '%" + tags + "%'";
+    public int getComponentCount(String tags, String status, String type, Integer uid) {
+        String sql = "select count(*) from component where type in (" + type + ") and status in (" + status + ")";
+        if(uid != 0) {
+            sql += " and uid = " + uid;
+        }
+        sql += " and tags like '%" + tags + "%'";
         return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    @Override
+    public int getComponentImgCountByCid(Integer cid) {
+        String sql = "select count(*) from component_img where cid = " + cid;
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    @Override
+    public int deleteComponentImgByCid(Integer cid) {
+        String sql = "delete from component_img where cid = " + cid;
+        return jdbcTemplate.update(sql);
     }
 
 }

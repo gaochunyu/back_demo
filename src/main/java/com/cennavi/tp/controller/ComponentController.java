@@ -4,6 +4,8 @@ import com.cennavi.tp.beans.ComponentBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.ComponentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/component")
 public class ComponentController {
+    private Logger logger = LoggerFactory.getLogger(ComponentController.class);
 
     @Autowired
     private ComponentService componentService;
@@ -50,9 +53,17 @@ public class ComponentController {
 
     // 删除组件 
     @ResponseBody
-    @RequestMapping("/delComponent")
-    public ResultModel delComponent(Integer id, Integer uid) {
-        return componentService.delComponent(id,uid);
+    @RequestMapping("/deleteComponent")
+    public ResultModel deleteComponent(Integer id) {
+        try {
+            componentService.delComponent(id);
+            return Result.success("删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.fail(e.getMessage(),null);
+//            logger.info("删除失败" + e.getStackTrace());
+        }
+
     }
 
     // 更新组件
@@ -82,11 +93,11 @@ public class ComponentController {
     // 获取组件分页列表
     @ResponseBody
     @RequestMapping("/getComponentList")
-    public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
+    public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type, Integer uid) {
         try {
             Map<String, Object> map = new HashMap<>();
-            List<Map<String,Object>> list = componentService.getComponentList(pageNo,pageSize,tags,status,type);
-            int count = componentService.getComponentCount(tags,status,type);
+            List<Map<String,Object>> list = componentService.getComponentList(pageNo, pageSize, tags, status, type, uid);
+            int count = componentService.getComponentCount(tags, status, type, uid);
             map.put("list", list);
             map.put("total",count);
             return Result.success("查询成功",map);

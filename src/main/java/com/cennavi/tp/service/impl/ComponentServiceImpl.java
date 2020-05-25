@@ -92,15 +92,18 @@ public class ComponentServiceImpl implements ComponentService {
         }
     }
 
-    // 删除
     @Override
-    public ResultModel delComponent(Integer id, Integer uid) {
-        Integer count = componentDao.delComponent(id,uid);
-        if (count == 0) {
-            return Result.fail("输入的id无对应数据", count);
+    @Transactional
+    public boolean delComponent(Integer id) {
+        int imgCount = componentDao.getComponentImgCountByCid(id);
+        if(imgCount > 0) {
+            componentDao.deleteComponentImgByCid(id);
         }
-        else {
-            return Result.success("删除成功", count);
+        int count = componentDao.deleteComponent(id);
+        if(count > 0) {
+            return true;
+        } else {
+            throw new RuntimeException("组件删除失败");
         }
     }
 
@@ -115,7 +118,7 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public List<Map<String, Object>> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type) {
+    public List<Map<String, Object>> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type, Integer uid) {
         int startNo = (pageNo - 1) * pageSize;
         if (type == null || type.length() == 0) {
             return new ArrayList<>();
@@ -123,28 +126,28 @@ public class ComponentServiceImpl implements ComponentService {
         if (status == null || status.length() == 0) {
             return new ArrayList<>();
         }
-        List<Map<String, Object>> list = componentDao.getComponentList(startNo, pageSize, tags, status, type);
+        List<Map<String, Object>> list = componentDao.getComponentList(startNo, pageSize, tags, status, type, uid);
         for (Map<String,Object> map : list) {
             Object imgList = map.get("img_list");
             if (imgList == null) {
-                map.put("img_List", new ArrayList<>());
+                map.put("img_list", new ArrayList<>());
             } else {
-                String imgList_s = imgList.toString();
-                map.put("img_List", Arrays.asList(imgList_s.split(",")));
+                String imgList_s = (String)imgList;
+                map.put("img_list", Arrays.asList(imgList_s.split(",")));
             }
         }
         return list;
     }
 
     @Override
-    public int getComponentCount(String tags, String status, String type) {
+    public int getComponentCount(String tags, String status, String type, Integer uid) {
         if (type == null || type.length() == 0) {
             return 0;
         }
         if (status == null || status.length() == 0) {
             return 0;
         }
-        return componentDao.getComponentCount(tags, status, type);
+        return componentDao.getComponentCount(tags, status, type, uid);
     }
 
     /**
