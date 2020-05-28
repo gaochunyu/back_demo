@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,8 +81,29 @@ public class ContentController {
     }
 
 
+    // 3. 查找数据：根据id获取content表是否存在这条信息的数据  RequestParam 默认参数是必填
+    @ResponseBody
+    @PostMapping("/contentHaveItemById")
+    public ResultModel contentHaveItemById(@RequestParam(value = "id") int id) {
 
-    // 3. 查找数据：根据id获取一条表数据  RequestParam 默认参数是必填
+        JSONObject json = new JSONObject();
+        try {
+            ContentBean contentBean =  contentService.getItemById(id);
+            if(contentBean != null) {
+                return Result.success("成功找到一条数据", true);
+            } else {
+                return Result.success("没有找到对应id的数据", false);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            json = JsonUtils.packJsonErr(e.getMessage());
+            return Result.fail("查找数据失败", JsonUtils.objectToJson(json,new String[]{}));
+        }
+    }
+
+
+    // 4. 查找数据：根据id获取一条表数据  RequestParam 默认参数是必填
     @ResponseBody
     @PostMapping("/getItemById")
     public ResultModel getItemById(@RequestParam(value = "id") int id) {
@@ -89,11 +111,25 @@ public class ContentController {
         JSONObject json = new JSONObject();
         try {
             ContentBean contentBean =  contentService.getItemById(id);
+            MenuSubtitleBean menuSubtitleBean = menuDataService.getMenuSubtitleBeanById(id);
             if(contentBean != null) {
-                String content = contentBean.getContent().replace("''","'");
-                contentBean.setContent(content);
-                contentBean.setFile(fileSavePath + contentBean.getFile());
-                return Result.success("成功找到一条数据", contentBean);
+
+//                // 查找content数据
+//                String content = contentBean.getContent().replace("''","'");
+//                contentBean.setContent(content);
+//                contentBean.setFile(fileSavePath + contentBean.getFile());
+//
+//                // 查找和菜单页相关的status和title数据
+                Map<String,Object> map = new HashMap<>();
+                map.put("id",menuSubtitleBean.getId());
+                map.put("title",menuSubtitleBean.getName());
+                map.put("subtitle",contentBean.getSub_title());
+                map.put("tags",contentBean.getTags());
+                map.put("content",contentBean.getContent());
+                map.put("file",fileSavePath + contentBean.getFile());
+                map.put("status",menuSubtitleBean.getStatus());
+
+                return Result.success("成功找到一条数据", map);
             } else {
                 return Result.success("没有找到对应id的数据", null);
             }
@@ -104,6 +140,32 @@ public class ContentController {
             return Result.fail("查找数据失败", JsonUtils.objectToJson(json,new String[]{}));
         }
     }
+
+
+
+//    // 4. 查找数据：根据id获取一条表数据  RequestParam 默认参数是必填
+//    @ResponseBody
+//    @PostMapping("/getItemById")
+//    public ResultModel getItemById(@RequestParam(value = "id") int id) {
+//
+//        JSONObject json = new JSONObject();
+//        try {
+//            ContentBean contentBean =  contentService.getItemById(id);
+//            if(contentBean != null) {
+//                String content = contentBean.getContent().replace("''","'");
+//                contentBean.setContent(content);
+//                contentBean.setFile(fileSavePath + contentBean.getFile());
+//                return Result.success("成功找到一条数据", contentBean);
+//            } else {
+//                return Result.success("没有找到对应id的数据", null);
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            json = JsonUtils.packJsonErr(e.getMessage());
+//            return Result.fail("查找数据失败", JsonUtils.objectToJson(json,new String[]{}));
+//        }
+//    }
 
 
 
