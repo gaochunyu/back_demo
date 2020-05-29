@@ -1,16 +1,16 @@
 package com.cennavi.tp.dao.impl;
 
 import com.cennavi.tp.beans.ComponentBean;
-import com.cennavi.tp.beans.ComponentImgBean;
 import com.cennavi.tp.beans.ComponentTypeBean;
 import com.cennavi.tp.dao.ComponentDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,19 +24,34 @@ public class ComponentDaoImpl implements ComponentDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     public int addComponent(ComponentBean componentBean) {
-        String sql = "insert into component(uid, name, type, tags, cover_img, content, create_time, visit_url, file_url, status) values ("
-                + componentBean.getUid() + ",'" + componentBean.getName() + "',"+ componentBean.getType() + ",'" + componentBean.getTags() + "','" + componentBean.getCover_img() + "','" + componentBean.getContent() + "','" + componentBean.getCreate_time() + "','" + componentBean.getVisit_url() + "','" + componentBean.getFile_url() + "'," + componentBean.getStatus() + ")";
-        // 获取component_id
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update( connection -> connection.prepareStatement(sql, new String [] {"id"}), keyHolder);
-        return keyHolder.getKey().intValue();
+        String sql = "insert into component(uid, name, type, tags, cover_img, img_list, content, create_time, visit_url, file_url, status) values ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, componentBean.getUid());
+            ps.setString(2, componentBean.getName());
+            ps.setString(3, componentBean.getType());
+            ps.setString(4, componentBean.getTags());
+            ps.setString(5, componentBean.getCover_img());
+            ps.setString(6, componentBean.getImg_list());
+            ps.setString(7, componentBean.getContent());
+            ps.setString(8, componentBean.getCreate_time());
+            ps.setString(9, componentBean.getVisit_url());
+            ps.setString(10, componentBean.getFile_url());
+            ps.setString(11, componentBean.getStatus());
+            return ps;
+        });
     }
 
     @Override
     public int deleteComponent(Integer id) {
-        String sql = "delete from component where id = "+ id;
-        return jdbcTemplate.update(sql);
+        String sql = "delete from component where id = ?";
+        return jdbcTemplate.update(conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            return ps;
+        });
     }
 
     @Override
@@ -46,43 +61,95 @@ public class ComponentDaoImpl implements ComponentDao {
     }
 
     @Override
-    public boolean addComponentImg(ComponentImgBean componentImgBean) {
-        String sql = "insert into component_img (cid, img_url) values (" + componentImgBean.getCid() + ",'" + componentImgBean.getImg_url() + "')";
-        int count = jdbcTemplate.update(sql);
-        return count > 0;
-    }
+    public List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type, Integer uid) {
+        List<Object> paramList = new ArrayList<>();
+        String sql = "select * from component where ";
 
-    @Override
-    public List<Map<String, Object>> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type, Integer uid) {
-        String sql = "select c.* , string_agg ( c2.img_url,',') as img_list from component c left join component_img c2 on c.id = c2.cid where type in (" + type + ") and status in (" + status + ")";
+        if (type != null && type.length() > 0) {
+            String[] typeArr = type.split(",");
+            sql += "type in (";
+            for(String typeItem : typeArr) {
+                sql += "?,";
+                paramList.add(typeItem);
+            }
+            sql = sql.substring(0, sql.length() - 1) + ")";
+        }
+
+        if (status != null && status.length() > 0) {
+            String[] statusArr = status.split(",");
+            sql += "and status in (";
+            for(String statusItem : statusArr) {
+                sql += "?,";
+                paramList.add(statusItem);
+            }
+            sql = sql.substring(0, sql.length() - 1) + ")";
+        }
+
         // 关联查询用户发布组件
         if(uid != 0) {
-            sql += " and uid = " + uid;
+            paramList.add(uid);
+            sql += "and uid = ? ";
         }
-        sql +=  " and tags like '%" + tags + "%' group by c.id order by create_time desc limit " + pageSize + " offset " + startNo;
-        return jdbcTemplate.queryForList(sql);
+
+        if(tags != null && tags.length() > 0) {
+            paramList.add(tags);
+            sql += "and tags like concat('%',?,'%')";
+        }
+        paramList.add(pageSize);
+        paramList.add(startNo);
+        sql +=  "order by create_time desc limit ? offset ?";
+        return jdbcTemplate.query(sql, paramList.toArray(), BeanPropertyRowMapper.newInstance(ComponentBean.class));
     }
 
     @Override
     public int getComponentCount(String tags, String status, String type, Integer uid) {
-        String sql = "select count(*) from component where type in (" + type + ") and status in (" + status + ")";
-        if(uid != 0) {
-            sql += " and uid = " + uid;
+        List<Object> paramList = new ArrayList<>();
+        String sql = "select count(*) from component where ";
+
+        if (type != null && type.length() > 0) {
+            String[] typeArr = type.split(",");
+            sql += "type in (";
+            for(String typeItem : typeArr) {
+                sql += "?,";
+                paramList.add(typeItem);
+            }
+            sql = sql.substring(0, sql.length() - 1) + ") ";
         }
-        sql += " and tags like '%" + tags + "%'";
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+
+        if (status != null && status.length() > 0) {
+            String[] statusArr = status.split(",");
+            sql += "and status in (";
+            for(String statusItem : statusArr) {
+                sql += "?,";
+                paramList.add(statusItem);
+            }
+            sql = sql.substring(0, sql.length() - 1) + ") ";
+        }
+
+        if(tags != null && tags.length() > 0) {
+            paramList.add(tags);
+            sql += "and tags like concat('%',?,'%')";
+        }
+        return jdbcTemplate.queryForObject(sql, paramList.toArray(), Integer.class);
     }
 
     @Override
-    public int getComponentImgCountByCid(Integer cid) {
-        String sql = "select count(*) from component_img where cid = " + cid;
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+    public int updateComponent(ComponentBean componentBean) {
+        return 0;
     }
 
-    @Override
-    public int deleteComponentImgByCid(Integer cid) {
-        String sql = "delete from component_img where cid = " + cid;
-        return jdbcTemplate.update(sql);
+    private Map<String, Object> formatFilterParam(String param, List<Object> paramList) {
+        Map<String, Object> map = new HashMap<>();
+        String[] paramArr = param.split(",");
+        String sql = "";
+        List<Object> list = paramList;
+        for (String paramItem : paramArr) {
+            sql += "?,";
+            paramList.add(paramItem);
+        }
+        sql = sql.substring(0, sql.length() - 1) + ")";
+        map.put("sql", sql);
+        map.put("list", list);
+        return map;
     }
-
 }

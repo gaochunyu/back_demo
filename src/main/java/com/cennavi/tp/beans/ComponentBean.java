@@ -17,8 +17,26 @@ public class ComponentBean {
     private String create_time;
     private String visit_url;
     private String file_url;
-    private int status;
-    private int type;
+    private String status;
+    private String type;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private String img_list;
 
     public int getId() {
         return id;
@@ -92,19 +110,11 @@ public class ComponentBean {
         this.file_url = file_url;
     }
 
-    public int getStatus() {
-        return status;
+    public String getImg_list() {
+        return img_list;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
+    public void setImg_list(String img_list) {
+        this.img_list = img_list;
     }
 }

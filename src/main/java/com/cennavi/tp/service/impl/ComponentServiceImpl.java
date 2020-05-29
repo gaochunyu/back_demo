@@ -1,12 +1,10 @@
 package com.cennavi.tp.service.impl;
 
 import com.cennavi.tp.beans.ComponentBean;
-import com.cennavi.tp.beans.ComponentImgBean;
 import com.cennavi.tp.beans.ComponentTypeBean;
-import com.cennavi.tp.common.result.Result;
-import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.ComponentDao;
 import com.cennavi.tp.service.ComponentService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,14 +30,13 @@ public class ComponentServiceImpl implements ComponentService {
     private String fileSaveRootPath;
 
     @Override
-    @Transactional
-    public boolean addComponent(Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file) {
+    public boolean addComponent(Integer uid, String name, String type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file) {
         // 获取当前时间
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = df.format(new Date());
 
         // 组件状态 0-录入中 1-待审核(默认) 2-审核成功 3-审核失败
-        int status = 1;
+        String status = "1";
 
         // coverImg/imgList/file 另行处理
         ComponentBean componentBean = new ComponentBean();
@@ -58,58 +55,38 @@ public class ComponentServiceImpl implements ComponentService {
             componentBean.setCover_img(coverImgRelativePath);
         }
 
+        // 处理展示图列表
+        if (showImgList != null && showImgList.size() > 0) {
+            List<String> imgDataList = new ArrayList<>();
+            // 获取每个展示图路径
+            for (MultipartFile showImgFile : showImgList) {
+                // 如果当前图片文件参数存在
+                if (showImgFile != null && !showImgFile.isEmpty()) {
+                    String showImgRelativePath = handleFileUpload("component/img/imgList/", showImgFile);
+                    imgDataList.add(showImgRelativePath);
+                }
+            }
+            // imglist存入数据库
+            String imgData = StringUtils.join(imgDataList.toArray(), ",");
+            componentBean.setImg_list(imgData);
+        }
+
         // 处理file上传文件
         if (file != null && !file.isEmpty()) {
             String fileRelativePath = handleFileUpload("component/file/", file);
             componentBean.setFile_url(fileRelativePath);
+        } else {
+            componentBean.setFile_url("");
         }
 
-        // 新增component信息
-        int insertId = componentDao.addComponent(componentBean);
-        // component信息新增成功
-        if (insertId > 0) {
-            // 如果有展示图则新增
-            if (showImgList != null && showImgList.size() > 0) {
-                for (MultipartFile showImgFile : showImgList) {
-                    // 如果当前图片文件存在
-                    if (showImgFile != null && !showImgFile.isEmpty()) {
-                        String showImgRelativePath = handleFileUpload("component/img/imgList/", showImgFile);
-                        // 生成ComponentImgBean
-                        ComponentImgBean componentImgBean = new ComponentImgBean();
-                        componentImgBean.setCid(insertId);
-                        componentImgBean.setImg_url(showImgRelativePath);
-                        boolean flag = componentDao.addComponentImg(componentImgBean);
-                        if (!flag) {
-                            throw new RuntimeException("组件图片新增失败");
-                        }
-                    }
-                }
-            }
-            return true;
-        } else {
-            // component信息新增失败
-            return false;
-        }
+        int count = componentDao.addComponent(componentBean);
+        return count > 0;
     }
 
     @Override
-    @Transactional
     public boolean delComponent(Integer id) {
-        int imgCount = componentDao.getComponentImgCountByCid(id);
-        if(imgCount > 0) {
-            componentDao.deleteComponentImgByCid(id);
-        }
         int count = componentDao.deleteComponent(id);
-        if(count > 0) {
-            return true;
-        } else {
-            throw new RuntimeException("组件删除失败");
-        }
-    }
-
-    @Override
-    public ResultModel updateComponent(Integer id, Integer uid, String name, String tags, String cover, String content, String testUrl, String fileUrl) {
-        return null;
+        return count > 0;
     }
 
     @Override
@@ -118,7 +95,7 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public List<Map<String, Object>> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type, Integer uid) {
+    public List<ComponentBean> getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type, Integer uid) {
         int startNo = (pageNo - 1) * pageSize;
         if (type == null || type.length() == 0) {
             return new ArrayList<>();
@@ -126,15 +103,10 @@ public class ComponentServiceImpl implements ComponentService {
         if (status == null || status.length() == 0) {
             return new ArrayList<>();
         }
-        List<Map<String, Object>> list = componentDao.getComponentList(startNo, pageSize, tags, status, type, uid);
-        for (Map<String,Object> map : list) {
-            Object imgList = map.get("img_list");
-            if (imgList == null) {
-                map.put("img_list", new ArrayList<>());
-            } else {
-                String imgList_s = (String)imgList;
-                map.put("img_list", Arrays.asList(imgList_s.split(",")));
-            }
+        List<ComponentBean> list = componentDao.getComponentList(startNo, pageSize, tags, status, type, uid);
+        for (ComponentBean componentBean : list) {
+            if (componentBean.getImg_list() == null) componentBean.setImg_list("");
+            if (componentBean.getFile_url() == null) componentBean.setFile_url("");
         }
         return list;
     }
@@ -148,6 +120,20 @@ public class ComponentServiceImpl implements ComponentService {
             return 0;
         }
         return componentDao.getComponentCount(tags, status, type, uid);
+    }
+
+    @Override
+    public boolean updateComponent(Integer id, Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file) {
+        // 若coverImg不为null，则说明是file格式文件，且有修改操作
+        // 若coverImg为null，则说明file是String，没有修改操作
+        System.out.println(33333);
+        if (coverImg != null && !coverImg.isEmpty()) {
+            String fileName = coverImg.getOriginalFilename();
+            System.out.println(fileName);
+//            String coverImgRelativePath = handleFileUpload("component/img/cover/", coverImg);
+//            componentBean.setCover_img(coverImgRelativePath);
+        }
+        return false;
     }
 
     /**
