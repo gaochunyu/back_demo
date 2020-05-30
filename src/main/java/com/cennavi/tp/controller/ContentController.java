@@ -50,6 +50,11 @@ public class ContentController {
         int type = 0;
         JSONObject json = new JSONObject();
         try {
+
+            // 获取菜单页面的title
+            MenuSubtitleBean menuSubtitleBean = menuDataService.getMenuSubtitleBeanById(id);
+            title = menuSubtitleBean.getName();
+
             content = content.replace("'","''");
             ContentBean contentBean1 =  contentService.getItemById(id);
             Object obj = request.getSession().getAttribute("user");
@@ -123,10 +128,10 @@ public class ContentController {
                 Map<String,Object> map = new HashMap<>();
                 map.put("id",menuSubtitleBean.getId());
                 map.put("title",menuSubtitleBean.getName());
-                map.put("subtitle",contentBean.getSub_title());
+                map.put("subTitle",contentBean.getSub_title());
                 map.put("tags",contentBean.getTags());
                 map.put("content",contentBean.getContent());
-                map.put("file",fileSavePath + contentBean.getFile());
+                map.put("file", contentBean.getFile());
                 map.put("status",menuSubtitleBean.getStatus());
 
                 return Result.success("成功找到一条数据", map);
