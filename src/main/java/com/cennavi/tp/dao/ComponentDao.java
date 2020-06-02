@@ -4,7 +4,6 @@ import com.cennavi.tp.beans.ComponentBean;
 import com.cennavi.tp.beans.ComponentTypeBean;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ComponentDao {
     // 新增组件

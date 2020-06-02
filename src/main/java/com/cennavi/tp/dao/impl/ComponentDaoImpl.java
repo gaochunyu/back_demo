@@ -72,7 +72,7 @@ public class ComponentDaoImpl implements ComponentDao {
                 sql += "?,";
                 paramList.add(typeItem);
             }
-            sql = sql.substring(0, sql.length() - 1) + ")";
+            sql = sql.substring(0, sql.length() - 1) + ") ";
         }
 
         if (status != null && status.length() > 0) {
@@ -82,7 +82,7 @@ public class ComponentDaoImpl implements ComponentDao {
                 sql += "?,";
                 paramList.add(statusItem);
             }
-            sql = sql.substring(0, sql.length() - 1) + ")";
+            sql = sql.substring(0, sql.length() - 1) + ") ";
         }
 
         // 关联查询用户发布组件
@@ -93,7 +93,7 @@ public class ComponentDaoImpl implements ComponentDao {
 
         if(tags != null && tags.length() > 0) {
             paramList.add(tags);
-            sql += "and tags like concat('%',?,'%')";
+            sql += "and tags like concat('%',?,'%') ";
         }
         paramList.add(pageSize);
         paramList.add(startNo);
@@ -126,6 +126,12 @@ public class ComponentDaoImpl implements ComponentDao {
             sql = sql.substring(0, sql.length() - 1) + ") ";
         }
 
+        // 关联查询用户发布组件
+        if(uid != 0) {
+            paramList.add(uid);
+            sql += "and uid = ? ";
+        }
+
         if(tags != null && tags.length() > 0) {
             paramList.add(tags);
             sql += "and tags like concat('%',?,'%')";
@@ -135,7 +141,20 @@ public class ComponentDaoImpl implements ComponentDao {
 
     @Override
     public int updateComponent(ComponentBean componentBean) {
-        return 0;
+        String sql = "update component set name=?, type=?, tags=?, content=?, cover_img=?, img_list=?, visit_url=?, file_url=? where id = ?";
+        return jdbcTemplate.update( conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, componentBean.getName());
+            ps.setString(2, componentBean.getType());
+            ps.setString(3, componentBean.getTags());
+            ps.setString(4, componentBean.getContent());
+            ps.setString(5, componentBean.getCover_img());
+            ps.setString(6, componentBean.getImg_list());
+            ps.setString(7, componentBean.getVisit_url());
+            ps.setString(8, componentBean.getFile_url());
+            ps.setInt(9, componentBean.getId());
+            return ps;
+        });
     }
 
     private Map<String, Object> formatFilterParam(String param, List<Object> paramList) {

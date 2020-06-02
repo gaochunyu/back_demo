@@ -8,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -57,18 +56,8 @@ public class ComponentServiceImpl implements ComponentService {
 
         // 处理展示图列表
         if (showImgList != null && showImgList.size() > 0) {
-            List<String> imgDataList = new ArrayList<>();
-            // 获取每个展示图路径
-            for (MultipartFile showImgFile : showImgList) {
-                // 如果当前图片文件参数存在
-                if (showImgFile != null && !showImgFile.isEmpty()) {
-                    String showImgRelativePath = handleFileUpload("component/img/imgList/", showImgFile);
-                    imgDataList.add(showImgRelativePath);
-                }
-            }
-            // imglist存入数据库
-            String imgData = StringUtils.join(imgDataList.toArray(), ",");
-            componentBean.setImg_list(imgData);
+            String imgListData = handleShowImgFileList(showImgList);
+            componentBean.setImg_list(imgListData);
         }
 
         // 处理file上传文件
@@ -84,14 +73,24 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public boolean delComponent(Integer id) {
+    public boolean deleteComponent(Integer id) {
         int count = componentDao.deleteComponent(id);
         return count > 0;
     }
 
     @Override
-    public List<ComponentTypeBean> getComponentTypeList() {
-        return componentDao.getComponentTypeList();
+    public List<Map<String, Object>> getComponentTypeList() {
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        // type id转成string
+        List<ComponentTypeBean> list = componentDao.getComponentTypeList();
+        for (ComponentTypeBean componentTypeBean : list) {
+            Map<String, Object> map = new HashMap<>();
+            int typeId = componentTypeBean.getId();
+            map.put("id", typeId + "");
+            map.put("name", componentTypeBean.getName());
+            mapList.add(map);
+        }
+        return mapList;
     }
 
     @Override
@@ -123,17 +122,56 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
-    public boolean updateComponent(Integer id, Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> showImgList, String visitUrl, MultipartFile file) {
-        // 若coverImg不为null，则说明是file格式文件，且有修改操作
-        // 若coverImg为null，则说明file是String，没有修改操作
-        System.out.println(33333);
-        if (coverImg != null && !coverImg.isEmpty()) {
-            String fileName = coverImg.getOriginalFilename();
-            System.out.println(fileName);
-//            String coverImgRelativePath = handleFileUpload("component/img/cover/", coverImg);
-//            componentBean.setCover_img(coverImgRelativePath);
+    public boolean updateComponent(Integer id, String name, String type, String tags, String content,
+                                   MultipartFile coverImg, String coverUploadedPath, List<MultipartFile> showImgList, String showImgUploadedPathList,
+                                   String visitUrl, MultipartFile file, String fileUploadedPath) {
+        ComponentBean componentBean = new ComponentBean();
+        componentBean.setId(id);
+        componentBean.setName(name);
+        componentBean.setType(type);
+        componentBean.setTags(tags);
+        componentBean.setContent(content);
+        componentBean.setVisit_url(visitUrl);
+
+        // 处理coverImg
+        if (coverImg == null) {// 若coverImg未新上传
+            componentBean.setCover_img(coverUploadedPath);
+        } else {
+            String coverUrlData = handleFileUpload("component/img/cover/", coverImg);
+            componentBean.setCover_img(coverUrlData);
         }
-        return false;
+
+        // 处理showImg是否有新增
+        if (showImgList == null) {
+            componentBean.setImg_list(showImgUploadedPathList);
+        } else {
+            String imgListPath = "";
+            String imgData = "";
+            if (showImgList.size() > 0) {
+                imgListPath += handleShowImgFileList(showImgList);
+            }
+            if (imgListPath.length() > 0 && showImgUploadedPathList.length() > 0) {
+                imgData = imgListPath + "," + showImgUploadedPathList;
+            }
+            if (imgListPath.length() > 0 && showImgUploadedPathList.length() == 0) {
+                imgData = imgListPath;
+            }
+            if (imgListPath.length() == 0 && showImgUploadedPathList.length() > 0) {
+                imgData = showImgUploadedPathList;
+            }
+            componentBean.setImg_list(imgData);
+        }
+
+        // 处理file
+        if (file == null) {
+            componentBean.setFile_url(fileUploadedPath);
+        } else {
+            String fileData = handleFileUpload("component/file/", file);
+            componentBean.setFile_url(fileData);
+        }
+
+        int count = componentDao.updateComponent(componentBean);
+        return count > 0;
     }
 
     /**
@@ -163,4 +201,19 @@ public class ComponentServiceImpl implements ComponentService {
         return relativeFullPath;
     }
 
+    // 处理展示图上传文件列表
+    private String handleShowImgFileList(List<MultipartFile> showImgFileList) {
+        List<String> imgDataList = new ArrayList<>();
+        // 获取每个展示图路径
+        for (MultipartFile showImgFile : showImgFileList) {
+            // 如果当前图片文件参数存在
+            if (showImgFile != null && !showImgFile.isEmpty()) {
+                String showImgRelativePath = handleFileUpload("component/img/imgList/", showImgFile);
+                imgDataList.add(showImgRelativePath);
+            }
+        }
+        // imglist存入数据库
+        String imgData = StringUtils.join(imgDataList.toArray(), ",");
+        return imgData;
+    }
 }

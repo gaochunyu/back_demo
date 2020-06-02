@@ -1,7 +1,6 @@
 package com.cennavi.tp.controller;
 
 import com.cennavi.tp.beans.ComponentBean;
-import com.cennavi.tp.beans.ComponentTypeBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.ComponentService;
@@ -50,8 +49,12 @@ public class ComponentController {
     @RequestMapping("/deleteComponent")
     public ResultModel deleteComponent(Integer id) {
         try {
-            componentService.delComponent(id);
-            return Result.success("删除成功");
+            boolean flag = componentService.deleteComponent(id);
+            if (flag) {
+                return Result.success("删除成功");
+            } else {
+                return Result.fail("删除失败");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return Result.build500(e.getMessage(),null);
@@ -62,9 +65,12 @@ public class ComponentController {
     // 更新组件
     @ResponseBody
     @RequestMapping("/updateComponent")
-    public ResultModel updateComponent(Integer id, Integer uid, String name, Integer type, String tags, String content, MultipartFile coverImg, List<MultipartFile> imgList, String visitUrl, MultipartFile file) {
+    public ResultModel updateComponent(Integer id, String name, String type, String tags, String content,
+                                       MultipartFile coverImg, String coverUploadedPath, List<MultipartFile> imgList, String imgUploadedPathList,
+                                       String visitUrl, MultipartFile file, String fileUploadedPath) {
         try {
-            boolean flag = componentService.updateComponent(id, uid, name, type, tags, content, coverImg, imgList, visitUrl, file);
+//            return Result.fail("更新失败");
+            boolean flag = componentService.updateComponent(id, name, type, tags, content, coverImg, coverUploadedPath, imgList, imgUploadedPathList, visitUrl, file, fileUploadedPath);
             if (flag) {
                 return Result.success("更新成功");
             } else {
@@ -81,7 +87,7 @@ public class ComponentController {
     @RequestMapping("/getComponentTypeList")
     public ResultModel getComponentTypeList() {
         try {
-            List<ComponentTypeBean> list = componentService.getComponentTypeList();
+            List<Map<String, Object>> list = componentService.getComponentTypeList();
             if (list == null && list.size() == 0) {
                 return Result.fail("暂无数据", new ArrayList<>());
             } else {
