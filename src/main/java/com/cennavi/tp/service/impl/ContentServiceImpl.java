@@ -44,7 +44,6 @@ public class ContentServiceImpl implements ContentService {
     //新增一条数据
     @Override
     public ResultModel addANewItem(int id, String title, String subTitle, String content, String tags, String autoSave,MultipartFile file, int uid) {
-//        contentDao.save(contentBean);
         JSONObject json = new JSONObject();
         try {
             // 获取时间戳并转化格式
