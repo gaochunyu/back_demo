@@ -157,6 +157,14 @@ public class ComponentDaoImpl implements ComponentDao {
         });
     }
 
+    @Override
+    public ComponentBean getComponentById(Integer id) {
+        String sql = "select * from component where id = ?";
+        Integer[] arr = {id};
+        List<ComponentBean> list = jdbcTemplate.query(sql, arr, BeanPropertyRowMapper.newInstance(ComponentBean.class));
+        return list.size() == 0 ? null : list.get(0);
+    }
+
     private Map<String, Object> formatFilterParam(String param, List<Object> paramList) {
         Map<String, Object> map = new HashMap<>();
         String[] paramArr = param.split(",");

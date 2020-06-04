@@ -18,4 +18,6 @@ public interface ComponentDao {
     int getComponentCount(String tags, String status, String type, Integer uid);
     // 更新component信息
     int updateComponent(ComponentBean componentBean);
+    // 根据id获取组件
+    ComponentBean getComponentById(Integer id);
 }

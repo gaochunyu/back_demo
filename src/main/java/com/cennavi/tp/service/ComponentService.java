@@ -21,4 +21,6 @@ public interface ComponentService {
     boolean updateComponent(Integer id, String name, String type, String tags, String content,
                             MultipartFile coverImg, String  coverUploadedPath, List<MultipartFile> showImgList, String showImgUploadedPathList,
                             String visitUrl, MultipartFile file, String fileUploadedPath);
+    // 根据id获取组件
+    ComponentBean getComponentById(Integer id);
 }
