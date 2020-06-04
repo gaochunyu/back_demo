@@ -115,4 +115,21 @@ public class ComponentController {
             return Result.build500("出现异常");
         }
     }
+
+    // 根据id获取组件
+    @ResponseBody
+    @RequestMapping("/getComponentById")
+    public ResultModel getComponentById(Integer id) {
+        try {
+            ComponentBean componentBean = componentService.getComponentById(id);
+            if (componentBean == null) {
+                return Result.fail("获取组件失败");
+            } else {
+                return Result.success("获取组件成功", componentBean);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
 }

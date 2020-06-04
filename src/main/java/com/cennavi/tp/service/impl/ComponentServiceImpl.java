@@ -55,18 +55,18 @@ public class ComponentServiceImpl implements ComponentService {
         }
 
         // 处理展示图列表
+        String imgListData = "";
         if (showImgList != null && showImgList.size() > 0) {
-            String imgListData = handleShowImgFileList(showImgList);
-            componentBean.setImg_list(imgListData);
+            imgListData = handleShowImgFileList(showImgList);
         }
+        componentBean.setImg_list(imgListData);
 
         // 处理file上传文件
+        String fileRelativePath = "";
         if (file != null && !file.isEmpty()) {
-            String fileRelativePath = handleFileUpload("component/file/", file);
-            componentBean.setFile_url(fileRelativePath);
-        } else {
-            componentBean.setFile_url("");
+            fileRelativePath = handleFileUpload("component/file/", file);
         }
+        componentBean.setFile_url(fileRelativePath);
 
         int count = componentDao.addComponent(componentBean);
         return count > 0;
@@ -172,6 +172,11 @@ public class ComponentServiceImpl implements ComponentService {
 
         int count = componentDao.updateComponent(componentBean);
         return count > 0;
+    }
+
+    @Override
+    public ComponentBean getComponentById(Integer id) {
+        return componentDao.getComponentById(id);
     }
 
     /**
