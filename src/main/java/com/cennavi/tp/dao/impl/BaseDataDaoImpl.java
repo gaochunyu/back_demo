@@ -55,10 +55,10 @@ BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
     public List<Map<String, Object>> getComponentCardInfo(Integer uid) {
         String sql = "select \n" +
                 "CASE\n" +
-                "when status=0 then '编辑中' \n" +
-                "when status=1 then '待审核' \n" +
-                "when status=2 then '已通过' \n" +
-                "when status=3 then '已拒绝' \n" +
+                "when status='0' then '编辑中' \n" +
+                "when status='1' then '待审核' \n" +
+                "when status='2' then '已通过' \n" +
+                "when status='3' then '已拒绝' \n" +
                 "END \n" +
                 "status,\n" +
                 "count(*)\n" +
@@ -125,11 +125,11 @@ BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
     public List<Map<String, Object>> getComponentVerify(Integer uid) {
         String sql = "select \n" +
                 "CASE\n" +
-                "when status=1 then '待审核' \n" +
+                "when status='1' then '待审核' \n" +
                 "END \n" +
                 "status,\n" +
                 "count(*)\n" +
-                "from component where status = 1 GROUP BY status ORDER BY status ASC";
+                "from component where status = '1' GROUP BY status ORDER BY status ASC";
         return jdbcTemplate.queryForList(sql);
     }
 
