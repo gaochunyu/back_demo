@@ -12,12 +12,31 @@ public class ComponentBean {
     private int uid;
     private String name;
     private String tags;
-    private String cover;
+    private String cover_img;
     private String content;
     private String create_time;
-    private String test_url;
+    private String visit_url;
     private String file_url;
     private String status;
+    private String type;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private String img_list;
 
     public int getId() {
         return id;
@@ -51,12 +70,12 @@ public class ComponentBean {
         this.tags = tags;
     }
 
-    public String getCover() {
-        return cover;
+    public String getCover_img() {
+        return cover_img;
     }
 
-    public void setCover(String cover) {
-        this.cover = cover;
+    public void setCover_img(String cover_img) {
+        this.cover_img = cover_img;
     }
 
     public String getContent() {
@@ -75,12 +94,12 @@ public class ComponentBean {
         this.create_time = create_time;
     }
 
-    public String getTest_url() {
-        return test_url;
+    public String getVisit_url() {
+        return visit_url;
     }
 
-    public void setTest_url(String test_url) {
-        this.test_url = test_url;
+    public void setVisit_url(String visit_url) {
+        this.visit_url = visit_url;
     }
 
     public String getFile_url() {
@@ -91,11 +110,11 @@ public class ComponentBean {
         this.file_url = file_url;
     }
 
-    public String getStatus() {
-        return status;
+    public String getImg_list() {
+        return img_list;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setImg_list(String img_list) {
+        this.img_list = img_list;
     }
 }

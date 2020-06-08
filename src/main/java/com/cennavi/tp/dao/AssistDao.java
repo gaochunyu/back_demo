@@ -31,6 +31,6 @@ public interface AssistDao extends BaseDao<AssistBean> {
 
     Integer checkAssistItem(Integer id, Boolean checkType);
 
-    Integer questionIsCorrect(String question);
+    Integer questionIsCorrect(String question, Integer id);
 
 }

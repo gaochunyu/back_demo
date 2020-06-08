@@ -7,6 +7,7 @@ import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.dao.ProjectDataDao;
 import com.cennavi.tp.service.ProjectDataService;
 import com.cennavi.tp.utils.JsonUtils;
+import com.cennavi.tp.utils.MyDateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -68,9 +69,11 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         projectBean.setCreateTime(createTime);
         projectBean.setuId(uid);
 
+        String format = "yyyy-MM-ddHHmmsss";
+        String tpath = MyDateUtils.format(new Date(),format);
         if(mainImgFile != null && !mainImgFile.isEmpty()){
             // 创建保存图片的文件夹    D://test
-            String rootPath = fileSavePath + "project/mainImg";
+            String rootPath = fileSavePath + "project/mainImg/"+tpath;
             File test = new File(rootPath + "/");
             if (!test.getParentFile().exists()) {
                 // 判断 文件夹是否存在，如果不存在就新建
@@ -79,7 +82,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
 
             String fileName = mainImgFile.getOriginalFilename();
             // 拼接文件从存放的路径，创建project/img文件夹，保存对应的文件进去
-            String path = fileSavePath + "project/mainImg";
+            String path = fileSavePath + "project/mainImg/"+tpath;
             File f = new File(path + "/" + fileName);
 
             if (!f.getParentFile().exists()) {
@@ -89,7 +92,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
 
             try{
                 mainImgFile.transferTo(f); //保存文件
-                projectBean.setMain_img("project/mainImg/" + fileName);
+                projectBean.setMain_img("project/mainImg/" + tpath + "/" + fileName);
             }catch (IllegalStateException | IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -102,7 +105,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
             for(MultipartFile proImgFile : proImgFileList){
                 if(proImgFile != null && !proImgFile.isEmpty()){
                     // 创建保存图片的文件夹    D://test
-                    String rootPath = fileSavePath + "project/img";
+                    String rootPath = fileSavePath + "project/img/"+tpath;
                     File test = new File(rootPath + "/");
                     if (!test.getParentFile().exists()) {
                         // 判断 文件夹是否存在，如果不存在就新建
@@ -111,7 +114,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
 
                     String fileName = proImgFile.getOriginalFilename();
                     // 拼接文件从存放的路径，创建project/img文件夹，保存对应的文件进去
-                    String path = fileSavePath + "project/img";
+                    String path = fileSavePath + "project/img/"+tpath;
                     File f = new File(path + "/" + fileName);
 
                     if (!f.getParentFile().exists()) {
@@ -122,7 +125,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
                     try{
                         proImgFile.transferTo(f); //保存文件
                         ProjectImgBean projectImgBean = new ProjectImgBean();
-                        projectImgBean.setUrl("project/img/" + fileName);
+                        projectImgBean.setUrl("project/img/"+tpath + "/" + fileName);
                         list.add(projectImgBean);
                     }catch (IllegalStateException | IOException e) {
                         // TODO Auto-generated catch block
@@ -134,7 +137,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         String[] newImgList = new String[imgNameList.length];
         if(imgNameList.length>0){
             for(int i = 0 ; i < imgNameList.length; i++){
-                newImgList[i] = "project/img/" + imgNameList[i];
+                newImgList[i] = "project/img/"+tpath + "/" + imgNameList[i];
             }
         }
         boolean mainImgIsUpdate = true;
@@ -163,6 +166,24 @@ public class ProjectDataServiceImpl implements ProjectDataService {
 
     @Override
     public boolean deleteProjectInfo(int id) {
+        //删除封面
+        ProjectBean project = projectDataDao.findById(id);
+        if(project!=null){
+            String path = project.getMain_img();
+            File file = new File(fileSavePath+path);
+            if(file.exists()){
+                file.delete();
+            }
+        }
+        //删除截图
+        List<ProjectImgBean> imgs = projectDataDao.getProjectImgs(id);
+        for(ProjectImgBean info : imgs){
+            String path = info.getUrl();
+            File file = new File(fileSavePath+path);
+            if(file.exists()){
+                file.delete();
+            }
+        }
         boolean flag = projectDataDao.deleteProjectInfo(id);
         return flag;
     }

@@ -155,8 +155,8 @@ public class AssistServiceImpl implements AssistService {
     }
 
     @Override
-    public Integer questionIsCorrect(String question) {
-        return assistDao.questionIsCorrect(question);
+    public Integer questionIsCorrect(String question, Integer id) {
+        return assistDao.questionIsCorrect(question, id);
     }
 
 
