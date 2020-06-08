@@ -2,6 +2,7 @@ package com.cennavi.tp.beans;
 
 import com.cennavi.tp.common.IgnoreColumn;
 import com.cennavi.tp.common.MyTable;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 
 /**
  * @author 胡伟伟
@@ -24,6 +25,7 @@ public class FeedbackBean {
     private String img_url;
     private String createtime;
     private String updatetime;
+    private String username;
 
     public int getId() {
         return id;
@@ -87,5 +89,13 @@ public class FeedbackBean {
 
     public void setUpdatetime(String updatetime) {
         this.updatetime = updatetime;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

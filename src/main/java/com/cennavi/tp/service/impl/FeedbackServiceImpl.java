@@ -6,16 +6,40 @@ import com.cennavi.tp.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
 
     @Autowired
     private FeedbackDao feedbackDao;
+
     @Override
     public boolean addFeedback(FeedbackBean feedback) {
-        try{
+        try {
             feedbackDao.save(feedback);
-        }catch (Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int getFeedbackCount(Integer page, Integer pageSize, String keyword) {
+        return feedbackDao.getFeedbackCount(page, pageSize, keyword);
+    }
+
+    @Override
+    public List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword) {
+        return feedbackDao.getFeedbackList(page, pageSize, keyword);
+    }
+
+    @Override
+    public boolean deleteFeedback(Integer id) {
+        try {
+            feedbackDao.delete(id);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
