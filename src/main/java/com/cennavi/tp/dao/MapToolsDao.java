@@ -23,7 +23,7 @@ public interface MapToolsDao extends BaseDao<MapToolsBean> {
     MapToolsBean getMapToolsById(Integer id);
 
     // 获取列表数据
-    Map<String,Object> getMapToolsList(Integer page, Integer pageSize,Integer model, String type, Integer uid, String searchKey, int statusValue);
+    Map<String,Object> getMapToolsList(Integer page, Integer pageSize,Integer model,Integer userId,String type,String status);
 
 
 }

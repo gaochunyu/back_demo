@@ -5,16 +5,20 @@ import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.dao.MapToolsDao;
 import com.cennavi.tp.service.MapToolsService;
+import com.cennavi.tp.utils.UploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
- *  Created by 马立伟 on 2020/6/3 22:49.
+ * Created by 马立伟 on 2020/6/3 22:49.
  */
 
 
@@ -27,25 +31,28 @@ public class MapToolsController {
     @Autowired
     private MapToolsDao mapToolsDao;
 
+    @Value("${file_path}")
+    private String fileSavePath;
+
 
     /**
      * 获取列表
+     *
      * @param offset
      * @param limit
      * @param model
      * @param type
-     * @param searchKey
-     * @param statusValue
      * @param request
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/getMapToolsList")
-    public ResultModel getMapToolsList(Integer offset, Integer limit, Integer model, String type,String searchKey, Integer statusValue, HttpServletRequest request){
+    public ResultModel getMapToolsList(Integer offset, Integer limit, Integer model, String type, String status,HttpServletRequest request) {
+//    public ResultModel getMapToolsList(Integer offset, Integer limit,Integer model, HttpServletRequest request) {
         try {
-            ResultModel resultModel =  mapToolsService.getMapToolsList(offset, limit, model, type, searchKey, statusValue,request);
+            ResultModel resultModel = mapToolsService.getMapToolsList(offset, limit, model,type,status,request);
             return resultModel;
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Result.build500("出现异常");
         }
@@ -54,51 +61,71 @@ public class MapToolsController {
 
     /**
      * 请求帮助页的列表数据
-     * @Param id 本条信息的id
+     *
      * @return
+     * @Param id 本条信息的id
      */
     @ResponseBody
-    @RequestMapping(value = "/addOrUpdate", method = RequestMethod.POST)
-    public ResultModel addOrUpdate(Integer id,String name,String icon,String type,String img,String help_info,String tags,int self,String url,HttpServletRequest request){
-        if(id==null){//增加
-            return mapToolsService.addMapTools(name,icon,type,img,help_info,tags,self,url,request);
-        }else{//修改
-            return mapToolsService.updateMapTools(id,name,icon,type,img,help_info,tags,self,url,request);
+    @RequestMapping(value = "/addOrUpdate")
+//    public ResultModel addOrUpdate(Integer id, String name, String icon, String type, String img, String help_info, String tags, int self, String url, Integer status, HttpServletRequest request) {
+    public ResultModel addOrUpdate(Integer id, String name, String icon, String type, String img, String help_info, String tags,String url,
+                                   int self,Integer status,Integer uid,MultipartFile file,HttpServletRequest request) {
+//    public ResultModel addOrUpdate(MapToolsBean mapToolsBean,MultipartFile coverImg,HttpServletRequest request) {
+//        if (file != null){
+//            img = dealuUploadFile(file);
+//        }
+        if (id == null) {//增加
+//            return mapToolsService.addMapTools(mapToolsBean, request);
+            return mapToolsService.addMapTools(uid,name, icon, type, img, help_info, tags, self, url, request);
+        } else {//修改
+            return mapToolsService.updateMapTools(id, name, icon, type, img, help_info,status,tags, self, url, request);
+//            return mapToolsService.updateMapTools(id, name, icon, type, img, help_info,status,tags, self, url, request);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/uploadToolsImg")
+    public String dealuUploadFile(MultipartFile file) {
+        StringBuffer pathString = new StringBuffer();
+        String finalPath = UploadUtil.handleFileUpload(fileSavePath, "maptools/", file);
+        pathString.append(finalPath);
+        return pathString.toString();
     }
 
 
     /**
      * 请求帮助页的列表数据
-     * @Param id 本条信息的id
+     *
      * @return
+     * @Param id 本条信息的id
      */
     @ResponseBody
     @RequestMapping("/deleteMapToolsById")
-    public ResultModel deleteMapToolsById(int id, HttpServletRequest request){
+    public ResultModel deleteMapToolsById(int id, HttpServletRequest request) {
         return mapToolsService.deleteById(id);
     }
 
 
-
     /**
      * 请求帮助页的列表数据
-     * @Param id 本条信息的id
+     *
      * @return
+     * @Param id 本条信息的id
      */
     @ResponseBody
     @RequestMapping("/getMapToolsById")
-    public ResultModel getMapToolsById(int id, HttpServletRequest request){
-        MapToolsBean mapToolsBean =  mapToolsService.getMapToolsById(id);
-        return Result.success("查询成功",mapToolsBean);
+    public ResultModel getMapToolsById(int id, HttpServletRequest request) {
+        MapToolsBean mapToolsBean = mapToolsService.getMapToolsById(id);
+        return Result.success("查询成功", mapToolsBean);
     }
 
 
     /**
-     *  超级用户审核通过 && 审核拒绝
+     * 超级用户审核通过 && 审核拒绝
+     *
+     * @return
      * @Param id 信息id
      * @Param status 状态 true通过，false拒绝
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/verify")
@@ -106,18 +133,18 @@ public class MapToolsController {
         Object obj = request.getSession().getAttribute("user");
         try {
             MapToolsBean mapToolsBean = mapToolsService.getMapToolsById(id);
-            if(status){
+            if (status) {
                 mapToolsBean.setStatus(2);
-            }else{
+            } else {
                 mapToolsBean.setStatus(3);
             }
             int count = mapToolsDao.updateMapTools(mapToolsBean);
-            if(count>0){
+            if (count > 0) {
                 return Result.success("操作成功");
-            }else{
+            } else {
                 return Result.fail("操作失败");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.getStackTrace();
             return Result.build500("出现异常");
         }

@@ -23,12 +23,14 @@ public class MapToolsServiceImpl implements MapToolsService {
     @Resource
     private MapToolsDao mapToolsDao;
 
-
     @Override
-    public ResultModel addMapTools(String name,String icon,String type,String img,String help_info,String tags,Integer self,String url, HttpServletRequest request) {
+//    public ResultModel addMapTools(String name,String icon,String type,String img,String help_info,String tags,Integer self,String url, HttpServletRequest request) {
+    public ResultModel addMapTools(int uid,String name,String icon,String type,String img,String help_info,String tags,Integer self,String url, HttpServletRequest request) {
         //获取当前登录账号
         UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
-        if(user==null) Result.buildUnLogin();
+        if(user==null){
+            Result.buildUnLogin();
+        }
         MapToolsBean maptools = new MapToolsBean();
         maptools.setName(name);
         maptools.setIcon(icon);
@@ -47,11 +49,16 @@ public class MapToolsServiceImpl implements MapToolsService {
         return Result.success("插入成功");
     }
 
+
+
+
     @Override
-    public ResultModel updateMapTools(int id,String name,String icon,String type,String img,String help_info,String tags,Integer self,String url, HttpServletRequest request) {
+    public ResultModel updateMapTools(int id,String name,String icon,String type,String img,String help_info,Integer status,String tags,Integer self,String url, HttpServletRequest request) {
         //获取当前登录账号
         UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
-        if(user==null) Result.buildUnLogin();
+        if(user==null){
+            Result.buildUnLogin();
+        }
         MapToolsBean maptools = mapToolsDao.getMapToolsById(id);
         if(maptools==null){
             return Result.fail("无id对应数据");
@@ -62,6 +69,7 @@ public class MapToolsServiceImpl implements MapToolsService {
         maptools.setImg(img);
         maptools.setHelp_info(help_info);
         maptools.setTags(tags);
+        maptools.setStatus(status);
         maptools.setSelf(self);
         maptools.setUrl(url);
         maptools.setUid(user.getId());
@@ -86,15 +94,16 @@ public class MapToolsServiceImpl implements MapToolsService {
     }
 
     @Override
-    public ResultModel getMapToolsList(Integer page, Integer pageSize, Integer model, String type, String searchKey, Integer statusValue, HttpServletRequest request) {
+    public ResultModel getMapToolsList(Integer page, Integer pageSize, Integer model, String type,String status, HttpServletRequest request) {
         Map<String,Object> map=null;
         if(model==null || model==1){//浏览模式  审核模式  我的发布
             model=1;
-            map = mapToolsDao.getMapToolsList(page,pageSize,model,"",0,"",0);
+//            map = mapToolsDao.getMapToolsList(page,pageSize,model,"",0,"",0);
+            map = mapToolsDao.getMapToolsList(page,pageSize,model,0,type,status);
         }else if(model==2 || model==3){
             UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
             if(user==null)return Result.buildUnLogin();
-            map = mapToolsDao.getMapToolsList(page,pageSize,model,type,user.getId(),searchKey,statusValue);
+            map = mapToolsDao.getMapToolsList(page,pageSize,model,user.getId(),type,status);
         }
         return Result.success("查询成功",map);
     }
