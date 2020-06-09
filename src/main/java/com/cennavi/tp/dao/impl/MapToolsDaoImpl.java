@@ -154,17 +154,42 @@ public class MapToolsDaoImpl extends BaseDaoImpl<MapToolsBean> implements MapToo
                 params.add(offset);
                 String checkPageSql = "SELECT * FROM mine_map_tools where " + " " + selectSql + " LIMIT ? OFFSET ?";
                 list = jdbcTemplate.query(checkPageSql, params.toArray(), new BeanPropertyRowMapper<>(MapToolsBean.class));
-            }
-//            } else {
-//                // 查询当前用户下面的数据
+            }else {
+
+                params.add(0,uid);
+
+                if (type != null && type.length() > 0) {
+                    String[] typeArr = type.split(",");
+                    selectSql += "type in (";
+                    for (String typeItem : typeArr) {
+                        selectSql += "?,";
+                        params.add(typeItem);
+                    }
+                    selectSql = selectSql.substring(0, selectSql.length() - 1) + ") ";
+                }
+
+                if (status != null && status.length() > 0) {
+                    String[] statusArr = status.split(",");
+                    selectSql += "and status in (";
+                    for (String statusItem : statusArr) {
+                        selectSql += "?,";
+                        params.add(Integer.parseInt(statusItem));
+                    }
+                    selectSql = selectSql.substring(0, selectSql.length() - 1) + ") ";
+                }
+
+                // 查询当前用户下面的数据
 //                String statusSql = statusValue == 100 ? "": "and status=?";
 //                String mangerSql = "select count(*) from mine_map_tools where uid=?"+ " " + selectSql + " " + statusSql;
-//                params.add(0,uid);
+                String mangerSql = "select count(*) from mine_map_tools where uid=?" + "  and  " + selectSql;
 //                if(statusValue != 100)    params.add(statusValue);
-//                rows = jdbcTemplate.queryForObject(mangerSql, params.toArray(), Integer.class);
+                rows = jdbcTemplate.queryForObject(mangerSql, params.toArray(), Integer.class);
+                String mangerPageSql = "select * from mine_map_tools where uid=? " + "  and  " + selectSql +  " LIMIT ? OFFSET ?";
+                params.add(limit);
+                params.add(offset);
 //                String mangerPageSql = "select * from mine_map_tools where user_id=?"+ " " + selectSql + " " + statusSql + "LIMIT ? OFFSET ?";
-//                list = jdbcTemplate.query(mangerPageSql, params.toArray(), new BeanPropertyRowMapper<>(MapToolsBean.class));
-//            }
+                list = jdbcTemplate.query(mangerPageSql, params.toArray(), new BeanPropertyRowMapper<>(MapToolsBean.class));
+            }
             Map<String,Object> map = new HashMap<>();
             map.put("sum", rows);
             map.put("dataList", list);
