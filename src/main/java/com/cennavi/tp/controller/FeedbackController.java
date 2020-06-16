@@ -107,4 +107,17 @@ public class FeedbackController {
             return Result.fail("删除失败");
         }
     }
+
+
+    @ResponseBody
+    @RequestMapping("/updateFeedbackState")
+    public ResultModel updateFeedbackState(Integer id,Integer state){
+        boolean flag = feedbackService.updateFeedbackState(id,state);
+        if(flag){
+            return Result.success("更新成功");
+        }else{
+            return Result.fail("更新失败");
+        }
+    }
+
 }
