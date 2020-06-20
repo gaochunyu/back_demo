@@ -38,8 +38,8 @@ public class ProjectDataDaoImpl extends BaseDaoImpl<ProjectBean> implements Proj
     }
 
     @Override
-    public Integer getProjectListNum(String tradeType , String projectType) {
-        String sql = "select  count(DISTINCT info.id)  FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") ";
+    public Integer getProjectListNum(String tradeType , String projectType,String status) {
+        String sql = "select  count(DISTINCT info.id)  FROM project_info as info LEFT JOIN project_imgs as imgs on info.id = imgs.project_id where trade_type_id in ("+ tradeType +") and project_type in ("+ projectType +") and status in (" + status + ") ";
         return jdbcTemplate.queryForObject(sql,Integer.class);
     }
 

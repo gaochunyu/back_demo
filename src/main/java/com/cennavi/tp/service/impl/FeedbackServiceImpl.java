@@ -45,4 +45,19 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return true;
     }
+
+    @Override
+    public boolean updateFeedbackState(Integer id,Integer state) {
+        try {
+            int i = feedbackDao.updateFeedbackState(id, state);
+            if (i>0){
+               return true;
+            }else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

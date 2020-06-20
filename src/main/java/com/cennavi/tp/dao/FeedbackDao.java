@@ -10,4 +10,6 @@ public interface FeedbackDao extends BaseDao<FeedbackBean> {
     int getFeedbackCount(Integer page, Integer pageSize, String keyword);
 
     List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword);
+
+    int updateFeedbackState(Integer id, Integer state);
 }

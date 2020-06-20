@@ -42,7 +42,7 @@ public class ProjectDataServiceImpl implements ProjectDataService {
         Integer offsetNum = limitSize * (curPage - 1); //每页开始的条数  从第 offsetNum+1条开始查询，总共查询limitSize条
         List<ProjectBean> list = projectDataDao.getProjectList(limitSize,offsetNum,tradeType,projectType ,status , userId);
 
-        Integer num = projectDataDao.getProjectListNum(tradeType,projectType);
+        Integer num = projectDataDao.getProjectListNum(tradeType,projectType,status);
         Map<String , Object> newMap = new HashMap<>();
         //newMap.put("list",list.stream().sorted((i, j) -> j.getSort() - i.getSort()).collect(Collectors.toList()));
         newMap.put("list",list);

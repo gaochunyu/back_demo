@@ -14,4 +14,5 @@ public interface FeedbackService {
 
     boolean deleteFeedback(Integer id);
 
+    boolean updateFeedbackState(Integer id,Integer state);
 }
