@@ -21,14 +21,14 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
 
     @Override
     public List<MenuSubtitleBean> getMenuSubtitles(Integer uid,String model) {
-        String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,u.username " +
+        String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,m.level,u.username " +
                 "from menu m inner join userinfo u on m.uid = u.id ";
         if("visit".equals(model)){
-            sql+="and m.status = 2 ";
+            sql+="and (m.status = 2  or level =1 or level =2)";
         }else if("verify".equals(model)){
-            sql+="and m.status = 1 ";
+            sql+="and (m.status = 1  or level =1 or level =2)";
         }else if("mydata".equals(model)){
-            sql+="and m.uid = "+uid;
+            sql+="and (m.uid = "+uid+" and level !=1 and level !=2) ";
         }
         sql+=" order by sort asc ";
 
@@ -58,7 +58,8 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
     @Override
     public Integer updateMenu(MenuSubtitleBean menu) {
         String sql = " UPDATE menu SET name='"+menu.getName()+"',parent="+menu.getParent()+",sort="+menu.getSort()+"," +
-                "uid="+menu.getUid()+",create_time='"+menu.getCreateTime()+"',status="+menu.getStatus()+" WHERE id="+menu.getId();
+                "uid="+menu.getUid()+",create_time='"+menu.getCreateTime()+"',status="+menu.getStatus()+",level="+menu.getLevel()+
+                " WHERE id="+menu.getId();
         int i = jdbcTemplate.update(sql);
         return i;
     }
