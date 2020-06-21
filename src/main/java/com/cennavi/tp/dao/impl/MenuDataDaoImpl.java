@@ -23,12 +23,14 @@ public class MenuDataDaoImpl extends BaseDaoImpl<MenuSubtitleBean> implements Me
     public List<MenuSubtitleBean> getMenuSubtitles(Integer uid,String model) {
         String sql = "select m.id , m.name , m.parent ,m.sort, m.uid, m.create_time createTime, m.status,m.level,u.username " +
                 "from menu m inner join userinfo u on m.uid = u.id ";
-        if("visit".equals(model)){
+        if("visit".equals(model)){//普通浏览
             sql+="and (m.status = 2  or level =1 or level =2)";
-        }else if("verify".equals(model)){
+        }else if("verify".equals(model)){//超级管理员菜单管理
             sql+="and (m.status = 1  or level =1 or level =2)";
-        }else if("mydata".equals(model)){
-            sql+="and (m.uid = "+uid+" and level !=1 and level !=2) ";
+        }else if("mydata".equals(model)){//管理员菜单管理
+            sql+="and (m.uid = "+uid+" or m.level=1 or m.level=2) ";
+        }else if("publish".equals(model)){
+            sql+="and (m.uid = "+uid+" and m.level!=1 and m.level!=2) ";
         }
         sql+=" order by sort asc ";
 

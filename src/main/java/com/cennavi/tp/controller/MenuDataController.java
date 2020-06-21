@@ -39,7 +39,7 @@ public class MenuDataController {
             if(user==null)return Result.buildUnLogin();
             List list;
             if(model.equals("mydata")){
-                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(user.getId(),model);
+                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(user.getId(),"publish");
                 Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
                 for(MenuSubtitleBean menu : menuList){
                     if(map.get(menu.getStatus()) == null){
