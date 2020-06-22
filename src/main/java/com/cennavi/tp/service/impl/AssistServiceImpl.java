@@ -55,7 +55,7 @@ public class AssistServiceImpl implements AssistService {
             // 新增一条数据
             if(id==-1) {
                 // 获取时间戳并转化格式
-                String format = "yyyy-MM-dd HH:mm:ss";
+                String format = "yyyy-MM-dd";
                 String time = MyDateUtils.format(new Date(),format);
                 assistBean.setCreateTime(time);
 

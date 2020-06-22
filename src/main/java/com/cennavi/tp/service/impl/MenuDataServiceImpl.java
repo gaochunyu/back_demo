@@ -37,6 +37,7 @@ public class MenuDataServiceImpl implements MenuDataService {
                 map.put("id",menu.getId());
                 map.put("name",menu.getName());
                 map.put("status",menu.getStatus());
+                map.put("level",menu.getLevel());
                 if(menuList != null && menuList.size()!=0){
                     map.put("children",getMenuTree(menuList,myMap));
                 }
@@ -60,6 +61,7 @@ public class MenuDataServiceImpl implements MenuDataService {
                 map.put("uid",menu.getUid());
                 map.put("create_time",menu.getCreateTime());
                 map.put("status",menu.getStatus());
+                map.put("level",menu.getLevel());
                 map.put("username",menu.getUsername());
                 if(menuList != null && menuList.size()!=0){
                     map.put("children",getMenuAllAttrTree(menuList,myMap));

@@ -22,6 +22,8 @@ public class MenuSubtitleBean {
     private String createTime;
     //状态0录入中 1待审核 2审核通过 3被拒绝
     private int status;
+    //层级 1 2 3
+    private int level;
     @IgnoreColumn("username")
     private String username;//创建者
 
@@ -80,6 +82,14 @@ public class MenuSubtitleBean {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public String getUsername() {
