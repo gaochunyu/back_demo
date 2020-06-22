@@ -11,5 +11,5 @@ public interface FeedbackDao extends BaseDao<FeedbackBean> {
 
     List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword);
 
-    int updateFeedbackState(Integer id, Integer state);
+    int updateFeedbackState(FeedbackBean feedbackBean);
 }

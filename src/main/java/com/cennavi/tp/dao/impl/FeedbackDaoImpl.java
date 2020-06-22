@@ -32,12 +32,14 @@ public class FeedbackDaoImpl extends BaseDaoImpl<FeedbackBean>  implements Feedb
     }
 
     @Override
-    public int updateFeedbackState(Integer id, Integer state) {
-        String sql = "update feedback set state =? where id = ?";
+    public int updateFeedbackState(FeedbackBean feedbackBean) {
+        String sql = "update feedback set state =?,updatetime=? where id = ?";
         return jdbcTemplate.update( conn -> {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, state);
-            ps.setInt(2, id);
+            ps.setInt(1, Integer.parseInt(feedbackBean.getState()));
+            ps.setString(2,feedbackBean.getUpdatetime());
+            ps.setInt(3, feedbackBean.getId());
+
             return ps;
         });
     }

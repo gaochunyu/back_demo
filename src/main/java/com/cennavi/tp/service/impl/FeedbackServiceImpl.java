@@ -47,9 +47,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public boolean updateFeedbackState(Integer id,Integer state) {
+    public boolean updateFeedbackState(FeedbackBean feedbackBean) {
         try {
-            int i = feedbackDao.updateFeedbackState(id, state);
+            int i = feedbackDao.updateFeedbackState(feedbackBean);
             if (i>0){
                return true;
             }else {
@@ -59,5 +59,11 @@ public class FeedbackServiceImpl implements FeedbackService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean updateFeedback(FeedbackBean feedbackBean) {
+
+        return false;
     }
 }
