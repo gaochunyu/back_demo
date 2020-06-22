@@ -28,6 +28,7 @@ public class MapToolsDaoImpl extends BaseDaoImpl<MapToolsBean> implements MapToo
     private JdbcTemplate jdbcTemplate;
 
     // 插入一条新数据并返回插入数据的自增主键
+    @Override
     public long addMapTools(MapToolsBean mapTools) {
             String sql = "insert into mine_map_tools(name,icon,type,img,help_info,tags,status,create_time,url,self,uid) values (?,?,?,?,?,?,?,?,?,?,?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
