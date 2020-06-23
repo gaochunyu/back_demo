@@ -4,6 +4,7 @@ import com.cennavi.tp.beans.ComponentBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.ComponentService;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +28,11 @@ public class ComponentController {
     @Autowired
     private ComponentService componentService;
 
-    // 添加组件
+    // 添加模块
     @ResponseBody
     @RequestMapping(value = "/addComponent", method = RequestMethod.POST)
-    public ResultModel addComponent(Integer uid, String name, String type, String tags, String content, MultipartFile coverImg, List<MultipartFile> imgList, String visitUrl, MultipartFile file) {
+    public ResultModel addComponent(Integer uid, String name, String type, String tags, String content,
+                                    MultipartFile coverImg, List<MultipartFile> imgList, String visitUrl, MultipartFile file) {
         try {
             boolean flag = componentService.addComponent(uid, name, type, tags, content, coverImg, imgList, visitUrl, file);
             if (flag) {
@@ -44,7 +46,7 @@ public class ComponentController {
         }
     }
 
-    // 删除组件 
+    // 删除模块
     @ResponseBody
     @RequestMapping("/deleteComponent")
     public ResultModel deleteComponent(Integer id) {
@@ -62,14 +64,13 @@ public class ComponentController {
 
     }
 
-    // 更新组件
+    // 更新模块
     @ResponseBody
     @RequestMapping("/updateComponent")
     public ResultModel updateComponent(Integer id, String name, String type, String tags, String content,
                                        MultipartFile coverImg, String coverUploadedPath, List<MultipartFile> imgList, String imgUploadedPathList,
                                        String visitUrl, MultipartFile file, String fileUploadedPath) {
         try {
-//            return Result.fail("更新失败");
             boolean flag = componentService.updateComponent(id, name, type, tags, content, coverImg, coverUploadedPath, imgList, imgUploadedPathList, visitUrl, file, fileUploadedPath);
             if (flag) {
                 return Result.success("更新成功");
@@ -82,7 +83,7 @@ public class ComponentController {
         }
     }
 
-    // 获取组件类型列表
+    // 获取模块类型列表
     @ResponseBody
     @RequestMapping("/getComponentTypeList")
     public ResultModel getComponentTypeList() {
@@ -99,7 +100,7 @@ public class ComponentController {
         }
     }
 
-    // 获取组件分页列表
+    // 获取模块分页列表
     @ResponseBody
     @RequestMapping("/getComponentList")
     public ResultModel getComponentList(Integer pageNo, Integer pageSize, String tags, String status, String type, Integer uid) {
@@ -116,16 +117,33 @@ public class ComponentController {
         }
     }
 
-    // 根据id获取组件
+    // 根据id获取模块
     @ResponseBody
     @RequestMapping("/getComponentById")
     public ResultModel getComponentById(Integer id) {
         try {
             ComponentBean componentBean = componentService.getComponentById(id);
             if (componentBean == null) {
-                return Result.fail("获取组件失败");
+                return Result.fail("获取模块失败");
             } else {
-                return Result.success("获取组件成功", componentBean);
+                return Result.success("获取模块成功", componentBean);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.build500("出现异常");
+        }
+    }
+
+    // 更改模块状态
+    @ResponseBody
+    @RequestMapping("/updateModuleStatus")
+    public ResultModel updateModuleStatus(Integer id, Boolean checkResult) {
+        try {
+            boolean flag = componentService.updateModuleStatus(id, checkResult);
+            if (flag) {
+                return Result.success("更新成功");
+            } else {
+                return  Result.fail("更新失败");
             }
         } catch (Exception e) {
             e.printStackTrace();

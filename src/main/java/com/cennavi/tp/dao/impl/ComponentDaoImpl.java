@@ -165,6 +165,19 @@ public class ComponentDaoImpl implements ComponentDao {
         return list.size() == 0 ? null : list.get(0);
     }
 
+    @Override
+    public int updateModuleStatus(Integer id, Boolean checkResult) {
+        // 2-已审核 3-拒绝
+        String status = checkResult ? "2" : "3";
+        String sql = "UPDATE component SET status=? WHERE id=?";
+        return jdbcTemplate.update( conn -> {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, status);
+            ps.setInt(2, id);
+            return ps;
+        });
+    }
+
     private Map<String, Object> formatFilterParam(String param, List<Object> paramList) {
         Map<String, Object> map = new HashMap<>();
         String[] paramArr = param.split(",");

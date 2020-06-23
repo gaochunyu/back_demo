@@ -179,6 +179,12 @@ public class ComponentServiceImpl implements ComponentService {
         return componentDao.getComponentById(id);
     }
 
+    @Override
+    public boolean updateModuleStatus(Integer id, Boolean checkResult) {
+        int count = componentDao.updateModuleStatus(id, checkResult);
+        return count > 0;
+    }
+
     /**
      * 组件模块处理文件上传
      * @param relativePath 文件要保存的相对路径
