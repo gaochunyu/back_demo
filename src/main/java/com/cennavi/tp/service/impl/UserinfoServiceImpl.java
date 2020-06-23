@@ -44,8 +44,8 @@ public class UserinfoServiceImpl implements UserinfoService {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(3600);
             session.setAttribute("user",user);
-            //清空之前的登录状态
-            loginStatusService.removeByUid(user.getId());
+            //清空之前的登录状态（不允许多人登录）
+//            loginStatusService.removeByUid(user.getId());
             //记录登录状态
             LoginStatusBean loginStatus = new LoginStatusBean();
             String token = UUID.randomUUID().toString().replace("-","");

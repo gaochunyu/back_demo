@@ -39,7 +39,7 @@ public class MenuDataController {
             if(user==null)return Result.buildUnLogin();
             List list;
             if(model.equals("mydata")){
-                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(user.getId(),model);
+                List<MenuSubtitleBean> menuList = menuDataService.getMenuList(user.getId(),"publish");
                 Map<Integer, List<MenuSubtitleBean>> map = new HashMap<>();
                 for(MenuSubtitleBean menu : menuList){
                     if(map.get(menu.getStatus()) == null){
@@ -168,6 +168,7 @@ public class MenuDataController {
     public ResultModel addMenuSubtitle(@RequestParam(value = "name") String name,
                                        @RequestParam(value = "parent") Integer parent,
                                        @RequestParam(value = "sort") Integer sort,
+                                       @RequestParam(value = "level") Integer level,
                                        HttpServletRequest request){
         try{
             UserinfoBean user = (UserinfoBean) request.getSession().getAttribute("user");
@@ -175,6 +176,7 @@ public class MenuDataController {
             menuSubtitleBean.setName(name);
             menuSubtitleBean.setParent(parent);
             menuSubtitleBean.setSort(sort);
+            menuSubtitleBean.setLevel(level);
             menuSubtitleBean.setUid(user.getId());
             String format = "yyyy-MM-dd HH:mm:ss";
             String time = MyDateUtils.format(new Date(),format);
@@ -201,7 +203,8 @@ public class MenuDataController {
     public ResultModel updateMenuSubtitle(@RequestParam(value = "id") Integer id,
                                           @RequestParam(value = "name") String name,
                                           @RequestParam(value = "parent") Integer parent,
-                                          @RequestParam(value = "sort") Integer sort){
+                                          @RequestParam(value = "sort") Integer sort,
+                                          @RequestParam(value = "level") Integer level){
         try{
             MenuSubtitleBean menuSubtitleBean = menuDataService.getMenuSubtitleBeanById(id);
             if(menuSubtitleBean==null){
@@ -210,6 +213,7 @@ public class MenuDataController {
             menuSubtitleBean.setName(name);
             menuSubtitleBean.setParent(parent);
             menuSubtitleBean.setSort(sort);
+            menuSubtitleBean.setLevel(level);
             menuDataService.updateMenuSubtitleBean(menuSubtitleBean);
             return Result.success("修改成功",1);
         }catch (Exception e){
