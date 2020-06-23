@@ -194,8 +194,9 @@ public class ComponentServiceImpl implements ComponentService {
     private String handleFileUpload(String relativePath, MultipartFile file) {
         String absolutePath = fileSaveRootPath + relativePath;
         String fileName = file.getOriginalFilename();
-        String relativeFullPath = relativePath + fileName;
-        String absoluteFullPath = absolutePath + fileName;
+        long stamp = new Date().getTime();
+        String relativeFullPath = relativePath + stamp + "-" + fileName;
+        String absoluteFullPath = absolutePath + stamp + "-" + fileName;
         // 判断文件夹是否存在
         File dirTest = new File(absolutePath);
         if (!dirTest.exists()) {
