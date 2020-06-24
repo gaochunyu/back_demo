@@ -17,6 +17,8 @@ public class UserinfoBean {
     private String createTime;
     private int enable;
     private int role;
+    private String model;
+    private String expireTime;
 
     public int getId() {
         return id;
@@ -66,6 +68,22 @@ public class UserinfoBean {
 
     public void setRole(int role) {
         this.role = role;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getExpireTime() {
+        return expireTime;
+    }
+
+    public void setExpireTime(String expireTime) {
+        this.expireTime = expireTime;
     }
 
     @Override

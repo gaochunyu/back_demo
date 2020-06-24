@@ -111,8 +111,33 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/updateFeedbackState")
-    public ResultModel updateFeedbackState(Integer id,Integer state){
-        boolean flag = feedbackService.updateFeedbackState(id,state);
+    public ResultModel updateFeedbackState(FeedbackBean feedbackBean){
+
+        String format = "yyyy-MM-dd HH:mm:ss";
+        String time = MyDateUtils.format(new Date(),format);
+        feedbackBean.setUpdatetime(time);
+        boolean flag = feedbackService.updateFeedbackState(feedbackBean);
+        if(flag){
+            return Result.success("更新成功");
+        }else{
+            return Result.fail("更新失败");
+        }
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/updateFeedback")
+    public ResultModel updateFeedback(FeedbackBean feedbackBean,List<MultipartFile> imgList){
+
+//        String format = "yyyy-MM-dd HH:mm:ss";
+//        String time = MyDateUtils.format(new Date(),format);
+//        feedbackBean.setUpdatetime(time);
+        //imgList.size()>0,说明图片有更新，重新上传
+        if (imgList.size()>0){
+            String path = dealuUploadFile(imgList);
+            feedbackBean.setImg_url(path);
+        }
+        boolean flag = feedbackService.updateFeedback(feedbackBean);
         if(flag){
             return Result.success("更新成功");
         }else{

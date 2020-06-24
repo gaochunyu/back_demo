@@ -18,13 +18,14 @@ public class FeedbackBean {
     //反馈内容（详情描述）
     private String description;
     //反馈者
-    private String feedbackBy;
+    private Integer feedbackBy;
     //状态
     private String state;
     //图片路径
     private String img_url;
     private String createtime;
     private String updatetime;
+    @IgnoreColumn("")
     private String username;
 
     public int getId() {
@@ -51,11 +52,11 @@ public class FeedbackBean {
         this.description = description;
     }
 
-    public String getFeedbackBy() {
+    public Integer getFeedbackBy() {
         return feedbackBy;
     }
 
-    public void setFeedbackBy(String feedbackBy) {
+    public void setFeedbackBy(Integer feedbackBy) {
         this.feedbackBy = feedbackBy;
     }
 

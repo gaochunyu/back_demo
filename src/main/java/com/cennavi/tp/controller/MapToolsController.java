@@ -70,10 +70,9 @@ public class MapToolsController {
 //    public ResultModel addOrUpdate(Integer id, String name, String icon, String type, String img, String help_info, String tags, int self, String url, Integer status, HttpServletRequest request) {
     public ResultModel addOrUpdate(Integer id, String name, String icon, String type, String img, String help_info, String tags,String url,
                                    int self,Integer status,Integer uid,MultipartFile file,HttpServletRequest request) {
-//    public ResultModel addOrUpdate(MapToolsBean mapToolsBean,MultipartFile coverImg,HttpServletRequest request) {
-//        if (file != null){
-//            img = dealuUploadFile(file);
-//        }
+        if (tags !=null){
+            tags = tags.replace("，",",");
+        }
         if (id == null) {//增加
 //            return mapToolsService.addMapTools(mapToolsBean, request);
             return mapToolsService.addMapTools(uid,name, icon, type, img, help_info, tags, self, url, request);
@@ -87,7 +86,7 @@ public class MapToolsController {
     @RequestMapping(value = "/uploadToolsImg")
     public String dealuUploadFile(MultipartFile file) {
         StringBuffer pathString = new StringBuffer();
-        String finalPath = UploadUtil.handleFileUpload(fileSavePath, "maptools/", file);
+        String finalPath = UploadUtil.handleFileUpload(fileSavePath, "test/", file);
         pathString.append(finalPath);
         return pathString.toString();
     }
