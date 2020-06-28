@@ -119,7 +119,7 @@ public class UserinfoController {
      */
     @ResponseBody
     @RequestMapping("/updateUser")
-    public ResultModel updateUser(Integer id,String username,Integer enable,Integer role,String model,String date) {
+    public ResultModel updateUser(Integer id,String username,Integer enable,Integer role,String model,String expireTime) {
         try{
             int count = userService.getUsersCountByIdAndUserName(id,username);
             if(count>0){
@@ -132,7 +132,7 @@ public class UserinfoController {
             user.setUsername(username);
             user.setEnable(enable);
             user.setRole(role);
-            user.setExpireTime(date);
+            user.setExpireTime(expireTime);
             user.setModel(model);
 //            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.updateUser(user);
@@ -169,7 +169,7 @@ public class UserinfoController {
      */
     @ResponseBody
     @RequestMapping("/saveUser")
-    public ResultModel saveUser(Integer id,String username,Integer enable,Integer role,String model,String date) {
+    public ResultModel saveUser(Integer id,String username,Integer enable,Integer role,String model,String expireTime) {
         try{
             int count = userService.getUsersCountByUserName(username);
             if(count>0){
@@ -183,7 +183,7 @@ public class UserinfoController {
             String format = "yyyy-MM-dd HH:mm:ss";
             String time = MyDateUtils.format(new Date(),format);
             user.setCreateTime(time);
-            user.setExpireTime(date);
+            user.setExpireTime(expireTime);
             user.setModel(model);
 //            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.addUser(user);
