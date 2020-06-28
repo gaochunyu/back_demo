@@ -133,7 +133,8 @@ public class UserinfoController {
             user.setEnable(enable);
             user.setRole(role);
             user.setExpireTime(date);
-            user.setModel(Tools.getModelsMap(model));
+            user.setModel(model);
+//            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.updateUser(user);
             if(flag){
                 return Result.success("修改成功");
@@ -183,7 +184,8 @@ public class UserinfoController {
             String time = MyDateUtils.format(new Date(),format);
             user.setCreateTime(time);
             user.setExpireTime(date);
-            user.setModel(Tools.getModelsMap(model));
+            user.setModel(model);
+//            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.addUser(user);
             if(flag){
                 return Result.success("添加成功");
