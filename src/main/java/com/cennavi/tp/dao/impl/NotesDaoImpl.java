@@ -7,10 +7,12 @@ import com.cennavi.tp.dao.NotesDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.time.DayOfWeek;
 import java.util.List;
 
+@Repository
 public class NotesDaoImpl extends BaseDaoImpl<NotesBean> implements NotesDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;

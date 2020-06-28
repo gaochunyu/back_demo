@@ -7,6 +7,7 @@ import com.cennavi.tp.service.NotesService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class NotesController {
     @Resource
     private NotesService notesService;
 
+    @ResponseBody
+    @RequestMapping("/getNotesList")
     public ResultModel getNotesList(@RequestParam(value = "limitSize") Integer limitSize , @RequestParam(value = "curPage") Integer curPage , @RequestParam(value = "notesType") String notesType , @RequestParam(value = "status") String status , @RequestParam(value = "userId") Integer userId){
         try{
             Map list = notesService.getNotesList(limitSize,curPage ,notesType ,status ,userId);
