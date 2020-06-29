@@ -2,7 +2,6 @@ package com.cennavi.tp.dao;
 
 import com.cennavi.tp.beans.ComponentBean;
 import com.cennavi.tp.beans.ComponentTypeBean;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.List;
 
