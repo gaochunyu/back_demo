@@ -1,10 +1,13 @@
 package com.cennavi.tp.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.UserinfoService;
 import com.cennavi.tp.utils.MyDateUtils;
+import com.cennavi.tp.utils.Tools;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
@@ -116,7 +119,7 @@ public class UserinfoController {
      */
     @ResponseBody
     @RequestMapping("/updateUser")
-    public ResultModel updateUser(Integer id,String username,Integer enable,Integer role) {
+    public ResultModel updateUser(Integer id,String username,Integer enable,Integer role,String model,String expireTime) {
         try{
             int count = userService.getUsersCountByIdAndUserName(id,username);
             if(count>0){
@@ -129,6 +132,9 @@ public class UserinfoController {
             user.setUsername(username);
             user.setEnable(enable);
             user.setRole(role);
+            user.setExpireTime(expireTime);
+            user.setModel(model);
+//            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.updateUser(user);
             if(flag){
                 return Result.success("修改成功");
@@ -163,7 +169,7 @@ public class UserinfoController {
      */
     @ResponseBody
     @RequestMapping("/saveUser")
-    public ResultModel saveUser(Integer id,String username,Integer enable,Integer role) {
+    public ResultModel saveUser(Integer id,String username,Integer enable,Integer role,String model,String expireTime) {
         try{
             int count = userService.getUsersCountByUserName(username);
             if(count>0){
@@ -177,6 +183,9 @@ public class UserinfoController {
             String format = "yyyy-MM-dd HH:mm:ss";
             String time = MyDateUtils.format(new Date(),format);
             user.setCreateTime(time);
+            user.setExpireTime(expireTime);
+            user.setModel(model);
+//            user.setModel(Tools.getModelsMap(model));
             boolean flag = userService.addUser(user);
             if(flag){
                 return Result.success("添加成功");

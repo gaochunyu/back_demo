@@ -1,5 +1,6 @@
 package com.cennavi.tp.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.cennavi.tp.beans.*;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
@@ -61,6 +62,8 @@ public class UserinfoServiceImpl implements UserinfoService {
             map.put("token",token);
             map.put("id",user.getId());
             map.put("role",user.getRole());
+            map.put("model",user.getModel());
+            map.put("expireTime",user.getExpireTime());
             ResultModel resultModel = Result.success("登录成功",map);
             resultModel.putExcludes("username","password","createTime");
             return resultModel;
@@ -126,6 +129,14 @@ public class UserinfoServiceImpl implements UserinfoService {
     @Override
     public int getUsersCountByIdAndUserName(Integer id, String username) {
         return userinfoDao.getUsersCountByIdAndUserName(id,username);
+    }
+
+    public static void main(String[] args) {
+        Map<String,String> map = new HashMap<>();
+        map.put("a","d");
+        map.put("c","a");
+        String jsonString= JSON.toJSONString(map);
+        System.out.println(jsonString);
     }
 
 }
