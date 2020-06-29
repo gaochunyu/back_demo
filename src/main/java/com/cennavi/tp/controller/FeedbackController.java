@@ -1,6 +1,8 @@
 package com.cennavi.tp.controller;
 
 import com.cennavi.tp.beans.FeedbackBean;
+import com.cennavi.tp.beans.User;
+import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.FeedbackService;
@@ -8,14 +10,13 @@ import com.cennavi.tp.utils.MyDateUtils;
 import com.cennavi.tp.utils.UploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ public class FeedbackController {
         StringBuffer pathString=new StringBuffer();
         int count = 0;
         for (MultipartFile multipartFile: imgList) {
-            String finalPath = UploadUtil.handleFileUpload(fileSavePath, "test/", multipartFile);
+            String finalPath = UploadUtil.handleFileUpload(fileSavePath, "feedback/", multipartFile);
             if (count<imgList.size()-1){
                 pathString.append(finalPath).append(",");
             }else {
@@ -75,15 +76,17 @@ public class FeedbackController {
 
     @ResponseBody
     @RequestMapping("/getFeedbackList")
-    public ResultModel getFeedbackList(Integer page,Integer pageSize,String keyword, HttpServletRequest request){
+    public ResultModel getFeedbackList(Integer page, Integer pageSize, String keyword, HttpSession session){
 
+        UserinfoBean user = (UserinfoBean) session.getAttribute("user");
+        System.out.println();
         try {
             if (keyword == null) {
                 keyword = "";
             }
             Map<String,Object> map = new HashMap<>();
-            List<FeedbackBean> list = feedbackService.getFeedbackList(page,pageSize,keyword);
-            int count = feedbackService.getFeedbackCount(page,pageSize,keyword);
+            int count = feedbackService.getFeedbackCount(page,pageSize,keyword,user.getId());
+            List<FeedbackBean> list = feedbackService.getFeedbackList(page,pageSize,keyword,user.getId());
             map.put("list",list);
             map.put("total",count);
             ResultModel resultModel = Result.success("查询成功",map);
@@ -108,6 +111,17 @@ public class FeedbackController {
         }
     }
 
+    @ResponseBody
+    @RequestMapping("/getFeedbackDetail")
+    public ResultModel getFeedbackDetail(Integer id){
+
+        FeedbackBean feedbackBean = feedbackService.getFeedbackDetail(id);
+        if(feedbackBean != null){
+            return Result.success("获取成功",feedbackBean);
+        }else{
+            return Result.fail("获取失败");
+        }
+    }
 
     @ResponseBody
     @RequestMapping("/updateFeedbackState")
