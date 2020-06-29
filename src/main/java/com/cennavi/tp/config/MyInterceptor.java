@@ -29,7 +29,7 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        String context =  request.getContextPath();
+//        String context =  request.getContextPath();
         String uri = request.getRequestURI();
         //带token,客户端请求
         logger.info("client request："+uri);
@@ -48,7 +48,7 @@ public class MyInterceptor implements HandlerInterceptor {
             return true;
         }else{
             logger.info("unlogin："+uri);
-            response.sendRedirect(context+"/error/unlogin");
+            request.getRequestDispatcher("/error/unlogin").forward(request,response);
             return false;
         }
 
