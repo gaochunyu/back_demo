@@ -103,10 +103,6 @@ public class ComponentServiceImpl implements ComponentService {
             return new ArrayList<>();
         }
         List<ComponentBean> list = componentDao.getComponentList(startNo, pageSize, tags, status, type, uid);
-        for (ComponentBean componentBean : list) {
-            if (componentBean.getImg_list() == null) componentBean.setImg_list("");
-            if (componentBean.getFile_url() == null) componentBean.setFile_url("");
-        }
         return list;
     }
 
