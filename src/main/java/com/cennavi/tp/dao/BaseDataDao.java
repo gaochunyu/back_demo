@@ -19,9 +19,13 @@ public interface BaseDataDao extends BaseDao<Object> {
 
     List<Map<String, Object>> getResourcesCardInfo(Integer uid);
 
+    List<Map<String, Object>> getNotesCardInfo(Integer uid);
+
     List<Map<String,Object>> getContentVerify(Integer uid);
 
     List<Map<String, Object>> getAssistVerify(Integer uid);
+
+    List<Map<String, Object>> getNotesVerify(Integer uid);
 
     List<Map<String, Object>> getComponentVerify(Integer uid);
 

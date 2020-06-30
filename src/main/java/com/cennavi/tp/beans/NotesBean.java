@@ -9,15 +9,20 @@ public class NotesBean {
     @IgnoreColumn("id")
     private int id;
 
-    private String title;
+    private String title; //标题
     private String content;
     private int notes_type; // 类型
+    private String name;  //类型名称
     private String file;
     private int notes_state;  //状态
-    private String createTime;
+    private String creat_time;//上传时间
     private int sort;  //排序
     private int view_num;  //访问量
-    private int favour_num;  //
+    private int favour_num;  //点赞数
+
+    private String username;//用户名
+    private int uid;
+
 
     public int getId() {
         return id;
@@ -67,12 +72,12 @@ public class NotesBean {
         this.notes_state = notes_state;
     }
 
-    public String getCreateTime() {
-        return createTime;
+    public String getCreat_time() {
+        return creat_time;
     }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
+    public void setCreat_time(String creat_time) {
+        this.creat_time = creat_time;
     }
 
     public int getSort() {
@@ -97,5 +102,29 @@ public class NotesBean {
 
     public void setFavour_num(int favour_num) {
         this.favour_num = favour_num;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }
