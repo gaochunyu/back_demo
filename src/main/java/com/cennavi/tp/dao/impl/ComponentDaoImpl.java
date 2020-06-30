@@ -63,7 +63,7 @@ public class ComponentDaoImpl implements ComponentDao {
     @Override
     public List<ComponentBean> getComponentList(Integer startNo, Integer pageSize, String tags, String status, String type, Integer uid) {
         List<Object> paramList = new ArrayList<>();
-        String sql = "select * from component where ";
+        String sql = "SELECT id, uid, name, tags, cover_img, create_time, status FROM component WHERE ";
 
         if (type != null && type.length() > 0) {
             String[] typeArr = type.split(",");
