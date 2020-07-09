@@ -1,7 +1,6 @@
 package com.cennavi.tp.controller;
 
 import com.cennavi.tp.beans.FeedbackBean;
-import com.cennavi.tp.beans.User;
 import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
