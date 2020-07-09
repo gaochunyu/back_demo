@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface FeedbackDao extends BaseDao<FeedbackBean> {
 
-    int getFeedbackCount(Integer page, Integer pageSize, String keyword);
+    int getFeedbackCount(Integer page, Integer pageSize, String keyword,Integer userId);
 
-    List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword);
+    List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword,Integer userId);
 
     int updateFeedbackState(FeedbackBean feedbackBean);
+
+    FeedbackBean getFeedbackDetail(Integer id);
 }

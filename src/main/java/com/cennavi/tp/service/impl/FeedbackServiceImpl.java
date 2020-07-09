@@ -6,6 +6,7 @@ import com.cennavi.tp.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Service
@@ -26,13 +27,13 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    public int getFeedbackCount(Integer page, Integer pageSize, String keyword) {
-        return feedbackDao.getFeedbackCount(page, pageSize, keyword);
+    public int getFeedbackCount(Integer page, Integer pageSize, String keyword, Integer userId) {
+        return feedbackDao.getFeedbackCount(page, pageSize, keyword,userId);
     }
 
     @Override
-    public List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword) {
-        return feedbackDao.getFeedbackList(page, pageSize, keyword);
+    public List<FeedbackBean> getFeedbackList(Integer page, Integer pageSize, String keyword, Integer userId) {
+        return feedbackDao.getFeedbackList(page, pageSize, keyword,userId);
     }
 
     @Override
@@ -65,5 +66,10 @@ public class FeedbackServiceImpl implements FeedbackService {
     public boolean updateFeedback(FeedbackBean feedbackBean) {
 
         return false;
+    }
+
+    @Override
+    public FeedbackBean getFeedbackDetail(Integer id) {
+        return feedbackDao.getFeedbackDetail(id);
     }
 }

@@ -96,6 +96,22 @@ BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
         return jdbcTemplate.queryForList(sql);
     }
 
+    @Override
+    public List<Map<String, Object>> getNotesCardInfo(Integer uid) {
+        String sql = "select \n" +
+                "CASE\n" +
+                "when notes_state=0 then '编辑中' \n" +
+                "when notes_state=1 then '待审核' \n" +
+                "when notes_state=2 then '已通过' \n" +
+                "when notes_state=3 then '已拒绝' \n" +
+                "END \n" +
+                "status,\n" +
+                "count(*)\n" +
+                "from notes where uid = "+uid+" GROUP BY notes_state ORDER BY notes_state ASC";
+
+        return jdbcTemplate.queryForList(sql);
+    }
+
     //以下查询待审核信息
     @Override
     public List<Map<String, Object>> getContentVerify(Integer uid){
@@ -118,6 +134,18 @@ BaseDataDaoImpl extends BaseDaoImpl<Object> implements BaseDataDao {
                 "status,\n" +
                 "count(*)\n" +
                 "from assist where status = 1 GROUP BY status ORDER BY status ASC";
+        return jdbcTemplate.queryForList(sql);
+    }
+
+    @Override
+    public List<Map<String, Object>> getNotesVerify(Integer uid) {
+        String sql = "select \n" +
+                "CASE\n" +
+                "when notes_state=1 then '待审核' \n" +
+                "END \n" +
+                "status,\n" +
+                "count(*)\n" +
+                "from notes where notes_state = 1 GROUP BY notes_state ORDER BY notes_state ASC";
         return jdbcTemplate.queryForList(sql);
     }
 
