@@ -1,6 +1,5 @@
 package com.cennavi.tp.controller;
 
-import com.cennavi.tp.beans.MenuSubtitleBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.TradeDataService;
