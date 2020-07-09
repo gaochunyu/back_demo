@@ -1,13 +1,10 @@
 package com.cennavi.tp.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.cennavi.tp.beans.UserinfoBean;
 import com.cennavi.tp.common.result.Result;
 import com.cennavi.tp.common.result.ResultModel;
 import com.cennavi.tp.service.UserinfoService;
 import com.cennavi.tp.utils.MyDateUtils;
-import com.cennavi.tp.utils.Tools;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.wf.captcha.ArithmeticCaptcha;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.MediaType;
